@@ -2,7 +2,7 @@
 import pymongo
 from flask import Flask, render_template
 app = Flask(__name__)
-client = pymongo.MongoClient("mongodb+srv://GrupoH:H6keoAzQKEXBg46j@desarrollonubegrupoh-0rfcm.gcp.mongodb.net/test?retryWrites=true&w=majority")
+client = pymongo.MongoClient("")
 db = client['pruebaNube']['prueba']
 
 
