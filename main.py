@@ -10,7 +10,7 @@ db = client['pruebaNube']['prueba']
 def hello():
     """Return a friendly HTTP greeting."""
     t = db.find_one()
-    return render_template("holamundo.html", prueba=t['nombreAsignatura'], sergio="sergio bbeee", barranco="Carlos Barranco")
+    return render_template("holamundo.html", prueba=t['nombreAsignatura'], sergio="sergio bbeee", fran="Francisco Manuel", barranco="Carlos Barranco")
 
 
 if __name__ == '__main__':
