@@ -1,3 +1,4 @@
+bson
 Flask==1.1.1
 pymongo==3.8.0
 dnspython==1.16.0

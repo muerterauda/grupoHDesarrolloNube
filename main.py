@@ -13,11 +13,10 @@ from requests_oauthlib import OAuth2Session
 #
 # GOOGLE_LOGIN_CLIENT_ID = "433051237268-etqt25o974bg52mmto23hs4lrg141ihq.apps.googleusercontent.com"
 # GOOGLE_LOGIN_CLIENT_SECRET = "MuH32nfjnOETmzIaNAP9vPoQ"
+from mongo.mongo_manager import usuarios
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-client = pymongo.MongoClient(
-    "mongodb+srv://GrupoH:H6keoAzQKEXBg46j@desarrollonubegrupoh-0rfcm.gcp.mongodb.net/test?retryWrites=true&w=majority")
-mongodb = client['pruebaNube']['usuario']
 
 """App Configuration"""
 
@@ -92,7 +91,7 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     if user_id:
-        res = mongodb.find_one({"id": user_id})
+        res = usuarios.find_one({"id": user_id})
         if res is not None:
             return User.dict_to_user(res)
         else:
@@ -164,14 +163,14 @@ def callback():
         if resp.status_code == 200:
             user_data = resp.json()
             email = user_data['email']
-            user = mongodb.find_one({"id": email})
+            user = usuarios.find_one({"id": email})
             if user is None:
                 user = User()
                 user.id = email
                 user.name = user_data['name']
                 user.tokens = json.dumps(token)
                 user.avatar = user_data['picture']
-                mongodb.insert_one(user.user_to_dict())
+                usuarios.insert_one(user.user_to_dict())
             else:
                 user = User.dict_to_user(user)
                 cambiado = False
@@ -183,9 +182,9 @@ def callback():
                     cambiado = True
                 user.tokens = json.dumps(token)
                 if cambiado:
-                    mongodb.replace_one({"id": user.id}, user.user_to_dict())
+                    usuarios.replace_one({"id": user.id}, user.user_to_dict())
                 else:
-                    mongodb.update_one({"id": user.id}, {"$set": {"tokens": user.tokens}})
+                    usuarios.update_one({"id": user.id}, {"$set": {"tokens": user.tokens}})
             # session.update('user', user)
             login_user(user)
             if next_f:
