@@ -1,12 +1,11 @@
-import datetime
 import json
 import os
 
 import flask
+import pymongo
 from flask import Flask, url_for, redirect, \
-    render_template, session, request, Config
+    render_template, session, request
 from flask_login import LoginManager, login_required, current_user, logout_user, login_user, UserMixin
-from flask_sqlalchemy import SQLAlchemy
 from mysqlx import Auth
 from requests.exceptions import HTTPError
 from requests_oauthlib import OAuth2Session
@@ -16,6 +15,10 @@ from requests_oauthlib import OAuth2Session
 # GOOGLE_LOGIN_CLIENT_SECRET = "MuH32nfjnOETmzIaNAP9vPoQ"
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+client = pymongo.MongoClient(
+    "mongodb+srv://GrupoH:H6keoAzQKEXBg46j@desarrollonubegrupoh-0rfcm.gcp.mongodb.net/test?retryWrites=true&w=majority")
+mongodb = client['pruebaNube']['usuario']
+
 """App Configuration"""
 
 
@@ -23,7 +26,8 @@ class Auth:
     """Google Project Credentials"""
     CLIENT_ID = '433051237268-etqt25o974bg52mmto23hs4lrg141ihq.apps.googleusercontent.com'
     CLIENT_SECRET = 'MuH32nfjnOETmzIaNAP9vPoQ'
-    REDIRECT_URI = 'https://localhost:5000/gCallback'
+    REDIRECT_URI = 'https://nubeprueba.appspot.com/gCallback'
+    # REDIRECT_URI = 'https://localhost:5000/gCallback'
     AUTH_URI = 'https://accounts.google.com/o/oauth2/auth'
     TOKEN_URI = 'https://accounts.google.com/o/oauth2/token'
     USER_INFO = 'https://www.googleapis.com/userinfo/v2/me'
@@ -58,26 +62,41 @@ config = {
 """APP creation and configuration"""
 app = Flask(__name__)
 app.config.from_object(config['dev'])
-db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 login_manager.session_protection = "strong"
 
 
-class User(db.Model, UserMixin):
-    __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    name = db.Column(db.String(100), nullable=True)
-    avatar = db.Column(db.String(200))
-    tokens = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+class User(UserMixin):
+    id = ""
+    name = ""
+    avatar = ""
+    admin = False
+    access_tokens = {}
+
+    @staticmethod
+    def dict_to_user(diccionario: dict):
+        u = User()
+        u.id = diccionario.get('id')
+        u.name = diccionario.get('name')
+        u.avatar = diccionario.get('avatar')
+        u.access_tokens = diccionario.get('tokens')
+        u.admin = diccionario.get('admin')
+        return u
+
+    def user_to_dict(self) -> dict:
+        return {"id": self.id, "name": self.name, "avatar": self.avatar, "admin": self.admin,
+                "tokens": self.access_tokens}
 
 
 @login_manager.user_loader
 def load_user(user_id):
     if user_id:
-        return User.query.get(int(user_id))
+        res = mongodb.find_one({"id": user_id})
+        if res is not None:
+            return User.dict_to_user(res)
+        else:
+            return None
     else:
         return None
 
@@ -124,7 +143,7 @@ def login():
 def callback():
     next_f = session.get('next_f')
     if current_user is not None and current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for(next_f))
     if 'error' in request.args:
         if request.args.get('error') == 'access_denied':
             return 'You denied access.'
@@ -145,21 +164,34 @@ def callback():
         if resp.status_code == 200:
             user_data = resp.json()
             email = user_data['email']
-            user = User.query.filter_by(email=email).first()
+            user = mongodb.find_one({"id": email})
             if user is None:
                 user = User()
-                user.email = email
-            user.name = user_data['name']
-            print(token)
-            user.tokens = json.dumps(token)
-            user.avatar = user_data['picture']
-            db.session.add(user)
-            db.session.commit()
+                user.id = email
+                user.name = user_data['name']
+                user.tokens = json.dumps(token)
+                user.avatar = user_data['picture']
+                mongodb.insert_one(user.user_to_dict())
+            else:
+                user = User.dict_to_user(user)
+                cambiado = False
+                if user_data['name'] != user.name:
+                    user.name = user_data['name']
+                    cambiado = True
+                if user.avatar != user_data['picture']:
+                    user.avatar = user_data['picture']
+                    cambiado = True
+                user.tokens = json.dumps(token)
+                if cambiado:
+                    mongodb.replace_one({"id": user.id}, user.user_to_dict())
+                else:
+                    mongodb.update_one({"id": user.id}, {"$set": {"tokens": user.tokens}})
+            # session.update('user', user)
             login_user(user)
             if next_f:
                 return redirect(next_f)
             else:
-                return redirect(url_for('login'))
+                return redirect(url_for('hello'))
         return 'Could not fetch your information.'
 
 
@@ -176,6 +208,7 @@ def hello():
     """Return a friendly HTTP greeting."""
     # t = db.find_one()
     return render_template("holamundo.html")
+
 
 @app.route('/f')
 @login_required
