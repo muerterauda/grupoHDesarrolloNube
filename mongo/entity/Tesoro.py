@@ -4,7 +4,7 @@ from datetime import datetime
 class Tesoro:
 
     def __init__(self, identificador: int, latitud: float, longitud: float, pista_texto=None, pista_imagen=None):
-        self.__id = identificador
+        self.__identificador = identificador
         self.__latitud = latitud
         self.__longitud = longitud
         self.__descubierto = False
@@ -31,8 +31,8 @@ class Tesoro:
             return False
 
     @property
-    def id(self):
-        return self.__id
+    def identificador(self):
+        return self.__identificador
 
     @property
     def latitud(self):
@@ -61,7 +61,14 @@ class Tesoro:
         return self.__imagen_tesoro_encontrado
 
     def get_dict_from_tesoro(self) -> dict:
-        return {"id": self.id, "latitud": self.latitud, "longitud": self.longitud, "descubierto": self.descubierto,
+        return {"id": self.identificador, "latitud": self.latitud, "longitud": self.longitud, "descubierto": self.descubierto,
                 "descubridor": self.descubridor, "fecha_encontrado": self.fecha_encontrado,
                 "pista_texto": self.__pista_texto, "pista_imagen": self.__pista_imagen,
                 "imagen_tesoro_encontrado": self.__imagen_tesoro_encontrado}
+
+
+def generar_tesoros(tesoros: dict) -> dict:
+    tesoros_generados = {}
+    for x in tesoros.values():
+        tesoros_generados[str(x.identificador)] = x.get_dict_from_tesoro()
+    return tesoros_generados

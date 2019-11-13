@@ -19,3 +19,6 @@ class User(UserMixin):
     @property
     def get_admin(self):
         return self.__admin
+
+    def __str__(self):
+        return self.id + ", " + self.name
