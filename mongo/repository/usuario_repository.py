@@ -2,7 +2,7 @@ from mongo.entity.Usuario import User
 from mongo.mongo_manager import usuarios
 
 
-def create_user(user: User):
+def save_user(user: User):
     usuarios.insert_one(user.user_to_dict())
 
 

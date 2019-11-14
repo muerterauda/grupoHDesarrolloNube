@@ -1,9 +1,10 @@
 from mongo.entity.Juego import Juego
 from mongo.entity.Usuario import User
 from mongo.mongo_manager import juegos
+from bson.objectid import ObjectId
 
 
-def create_juego(juego: Juego):
+def save_juego(juego: Juego):
     juegos.insert_one(juego.juego_to_dict())
 
 
@@ -14,23 +15,29 @@ def find_juego_by_id(juego_id) -> Juego:
 
 
 def find_juego_by_creador_and_estado(user: User, estado: bool= None) -> list:
-    res = juegos.find({"creador": user.id})
+    diccionario_busqueda = {"creador": user.id}
+    if estado is not None:
+        diccionario_busqueda['estado'] = estado 
+    res = juegos.find(diccionario_busqueda)
     lista_juegos = __generar_lista_juegos(res)
     return lista_juegos
 
 
 def find_juego_by_participante_and_estado(user: User, estado: bool= None) -> list:
-    res = juegos.find({"creador": user.id})
+    diccionario_busqueda = {"creador": user.id}
+    if estado is not None:
+        diccionario_busqueda['estado'] = estado 
+    res = juegos.find(diccionario_busqueda)
     lista_juegos = __generar_lista_juegos(res)
     return lista_juegos
 
 
-def replace_juego_by_id(juego_id, new_user: User):
-    juegos.replace_one({"id": juego_id}, new_user)
+def replace_juego_by_id(juego_id, new_juego: Juego):
+    juegos.replace_one({"_id": ObjectId(juego_id)}, new_juego)
 
 
-def update_juego_by_id(juego_id, actualizacion_user: dict):
-    juegos.update_one({"id": juego_id}, {"$set": actualizacion_user})
+def update_juego_by_id(juego_id, actualizacion_juego: dict):
+    juegos.update_one({"_id": ObjectId(juego_id)}, {"$set": actualizacion_juego})
 
 
 def __generar_lista_juegos(res: dict) -> list:
