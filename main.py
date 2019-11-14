@@ -2,15 +2,16 @@
 import pymongo
 from flask import Flask, render_template
 app = Flask(__name__)
-client = pymongo.MongoClient("")
-db = client['pruebaNube']['prueba']
+client = pymongo.MongoClient("localhost", 27017)
+db = client['appnube']['juegos']
 
 
 @app.route('/')
 def hello():
     """Return a friendly HTTP greeting."""
     t = db.find_one()
-    return render_template("holamundo.html", prueba=t['nombreAsignatura'], sergio="sergio bbeee")
+    activo = t['activo']
+    return render_template("holamundo.html", prueba=activo, sergio="sergio bbeee")
 
 
 if __name__ == '__main__':
