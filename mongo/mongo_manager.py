@@ -11,7 +11,7 @@ class MongoManager:
         :param collection_name: nombre de la conexion
         """
         if online:
-           self.collection = MongoClient('mongodb+srv://GrupoH:H6keoAzQKEXBg46j@desarrollonubegrupoh-0rfcm.gcp.mongodb.net/test?retryWrites=true&w=majority"')['pruebaNube'][collection_name]
+           self.collection = MongoClient('mongodb+srv://GrupoH:H6keoAzQKEXBg46j@desarrollonubegrupoh-0rfcm.gcp.mongodb.net/test?retryWrites=true&w=majority')['pruebaNube'][collection_name]
         else:
            self.collection = MongoClient('localhost', 27017)['pruebaNube'][collection_name]
 
@@ -35,5 +35,5 @@ class MongoException(Exception):
     Conexiones
 '''
 
-usuarios = MongoManager('usuario',True).collection
-juegos = MongoManager('juego',True).collection
+usuarios = MongoManager('usuario', True).collection
+juegos = MongoManager('juego', True).collection

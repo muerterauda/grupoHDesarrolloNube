@@ -12,7 +12,7 @@ class Juego:
                  juego_last: dict = None):
         if juego_last:
             self.__id = str(juego_last.get('_id'))
-            self.__tesoros = juego_last.get('diccionario_tesoros')
+            self.__tesoros = juego_last.get('tesoros')
             self.__creador = juego_last.get('creador')
             self.__participantes = juego_last.get('participantes')
             self.__estado = juego_last.get('estado')
@@ -25,7 +25,7 @@ class Juego:
             self.__id = ''
             self.__tesoros = diccionario_tesoros
             self.__creador = creador.id
-            self.__participantes = []
+            self.__participantes = {}
             self.__estado = True
             self.__ganador = None
             self.__dimensiones = dimensiones
@@ -37,19 +37,21 @@ class Juego:
         if descubridor.id not in self.participantes:
             raise JuegoException('Usuario no participante en el juego.')
         tesoro = self.__tesoros.get(identificador_tesoro)
+        if not tesoro:
+            raise JuegoException('Tesoro no existente')
         enc = False
-        if tesoro and tesoro.fin:
-            if not tesoro.descubierto:
-                enc = tesoro.encontrar_tesoro(latitud, longitud, descubridor.id, imagen_tesoro)
-                if enc:
-                    self.__tesoros_restantes -= 1
-                    if self.tesoros_restantes == 0:
-                        self.__estado = True
+        if tesoro and descubridor.id not in tesoro.descubridores:
+            enc = tesoro.encontrar_tesoro(latitud, longitud, descubridor.id, imagen_tesoro)
+            if enc:
+                self.participantes[descubridor] = self.__participantes[descubridor] + 1
+                if self.participantes[descubridor] == len(self.tesoros):
+                    self.__estado = False
+
         return enc
 
     def add_participante(self, user: User):
         if user.id not in self.participantes:
-            self.__participantes.append(user.id)
+            self.__participantes[user.id] = 0
 
     @property
     def tesoros_restantes(self):

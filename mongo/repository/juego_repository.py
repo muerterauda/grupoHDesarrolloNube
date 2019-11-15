@@ -11,7 +11,7 @@ def save_juego(juego: Juego):
 def find_juego_by_id(juego_id) -> Juego:
     res = juegos.find_one({"id": juego_id})
     if res is not None:
-        return None
+        return __generar_juego(res)
 
 
 def find_juego_by_creador_and_estado(user: User, estado: bool= None) -> list:

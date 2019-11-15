@@ -7,8 +7,7 @@ class Tesoro:
         self.__identificador = identificador
         self.__latitud = latitud
         self.__longitud = longitud
-        self.__descubierto = False
-        self.__descubridor = None
+        self.__descubridores = []
         self.__imagen_tesoro_encontrado = None
         self.__fecha_encontrado = None
         self.__pista_texto = pista_texto
@@ -21,9 +20,8 @@ class Tesoro:
         self.__pista_imagen = nueva_pista
 
     def encontrar_tesoro(self, latitud, longitud, usuario, imagen_tesoro) -> bool:
-        if latitud == self.latitud and longitud == self.longitud:
-            self.__descubierto = True
-            self.__descubridor = usuario
+        if latitud == self.latitud and longitud == self.longitud and usuario not in self.descubridores:
+            self.__descubridores.append(usuario)
             self.__imagen_tesoro_encontrado = imagen_tesoro
             self.__fecha_encontrado = datetime.now().strftime("%Y-%m%d %H:%M:%S")
             return True
@@ -43,12 +41,8 @@ class Tesoro:
         return self.__longitud
 
     @property
-    def descubierto(self):
-        return self.__descubierto
-
-    @property
-    def descubridor(self):
-        return self.__descubridor
+    def descubridores(self):
+        return self.__descubridores
 
     @property
     def fecha_encontrado(self):
@@ -61,8 +55,8 @@ class Tesoro:
         return self.__imagen_tesoro_encontrado
 
     def get_dict_from_tesoro(self) -> dict:
-        return {"id": self.identificador, "latitud": self.latitud, "longitud": self.longitud, "descubierto": self.descubierto,
-                "descubridor": self.descubridor, "fecha_encontrado": self.fecha_encontrado,
+        return {"id": self.identificador, "latitud": self.latitud, "longitud": self.longitud,
+                "descubridores": self.descubridores, "fecha_encontrado": self.fecha_encontrado,
                 "pista_texto": self.__pista_texto, "pista_imagen": self.__pista_imagen,
                 "imagen_tesoro_encontrado": self.__imagen_tesoro_encontrado}
 
@@ -70,5 +64,5 @@ class Tesoro:
 def generar_tesoros(tesoros: dict) -> dict:
     tesoros_generados = {}
     for x in tesoros.values():
-        tesoros_generados[str(x.identificador)] = x.get_dict_from_tesoro()
+        tesoros_generados[x.identificador] = x.get_dict_from_tesoro()
     return tesoros_generados
