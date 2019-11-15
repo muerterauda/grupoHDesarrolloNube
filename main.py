@@ -204,15 +204,7 @@ def logout():
 def hello():
     """Return a friendly HTTP greeting."""
     # t = db.find_one()
-    return render_template("holamundo.html")
-
-
-@app.route('/f')
-@login_required
-def f():
-    """Return a friendly HTTP greeting."""
-    # t = db.find_one()
-    return render_template("f.html")
+    return render_template("index.html")
 
 
 if __name__ == '__main__':

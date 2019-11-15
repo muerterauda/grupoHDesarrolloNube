@@ -3,9 +3,10 @@
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/css/ol.css"
           type="text/css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <style>
         .map {
-            height: 400px;
+            height: 100%;
             width: 100%;
         }
     </style>
@@ -13,7 +14,9 @@
     <title>OpenLayers example</title>
 </head>
 <body>
-<h2>My Map</h2>
+<div class="text-center text-info text-uppercase">
+    <h1>Caza del tesoro</h1>
+</div>
 <div id="map" class="map"></div>
 <script type="text/javascript">
     var map = new ol.Map({
