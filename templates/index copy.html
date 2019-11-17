@@ -1,0 +1,36 @@
+<html lang="en">
+<head>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/css/ol.css"
+          type="text/css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        .map {
+            height: 20%;
+            width: 20%;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js"></script>
+    <title>OpenLayers example</title>
+</head>
+<body>
+<div class="text-center text-info text-uppercase">
+    <h1>Caza del tesoro</h1>
+</div>
+<div id="map" class="map"></div>
+<script type="text/javascript">
+    var map = new ol.Map({
+        target: 'map',
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            })
+        ],
+        view: new ol.View({
+            center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
+            zoom: 4
+        })
+    });
+</script>
+</body>
+</html>
