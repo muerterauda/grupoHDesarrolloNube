@@ -64,5 +64,5 @@ class Tesoro:
 def generar_tesoros(tesoros: dict) -> dict:
     tesoros_generados = {}
     for x in tesoros.values():
-        tesoros_generados[x.identificador] = x.get_dict_from_tesoro()
+        tesoros_generados[str(x.identificador)] = x.get_dict_from_tesoro()
     return tesoros_generados
