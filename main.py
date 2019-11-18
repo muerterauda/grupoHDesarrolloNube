@@ -16,8 +16,8 @@ from mongo.repository.usuario_repository import find_user_by_id, replace_user_by
 # GOOGLE_LOGIN_CLIENT_ID = "433051237268-etqt25o974bg52mmto23hs4lrg141ihq.apps.googleusercontent.com"
 # GOOGLE_LOGIN_CLIENT_SECRET = "MuH32nfjnOETmzIaNAP9vPoQ"
 
+from mongo.mongo_manager import usuarios
 basedir = os.path.abspath(os.path.dirname(__file__))
-
 
 """App Configuration"""
 
@@ -164,15 +164,7 @@ def logout():
 def hello():
     """Return a friendly HTTP greeting."""
     # t = db.find_one()
-    return render_template("holamundo.html")
-
-
-@app.route('/f')
-@login_required
-def f():
-    """Return a friendly HTTP greeting."""
-    # t = db.find_one()
-    return render_template("f.html")
+    return render_template("index.html")
 
 
 if __name__ == '__main__':
