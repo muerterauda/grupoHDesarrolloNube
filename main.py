@@ -10,7 +10,7 @@ from requests.exceptions import HTTPError
 from requests_oauthlib import OAuth2Session
 
 from mongo.entity.Usuario import User
-from mongo.repository.usuario_repository import find_user_by_id, replace_user_by_id, update_user_by_id, create_user
+from mongo.repository.usuario_repository import find_user_by_id, replace_user_by_id, update_user_by_id, save_user
 
 #
 # GOOGLE_LOGIN_CLIENT_ID = "433051237268-etqt25o974bg52mmto23hs4lrg141ihq.apps.googleusercontent.com"
@@ -129,7 +129,7 @@ def callback():
                 dicccionario_usuario = {'id': email, 'name': user_data['name'], 'tokens': json.dumps(token),
                                         'avatar': user_data['picture']}
                 user = User(dicccionario_usuario)
-                create_user(user)
+                save_user(user)
             else:
                 cambiado = False
                 if user_data['name'] != user.name:
