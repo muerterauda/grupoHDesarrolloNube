@@ -130,6 +130,7 @@ def callback():
                                         'avatar': user_data['picture']}
                 user = User(dicccionario_usuario)
                 save_user(user)
+                user = find_user_by_id(email)
             else:
                 cambiado = False
                 if user_data['name'] != user.name:

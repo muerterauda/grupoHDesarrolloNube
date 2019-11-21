@@ -24,7 +24,7 @@ def find_juego_by_creador_and_estado(user: User, estado: bool= None) -> list:
 
 
 def find_juego_by_participante_and_estado(user: User, estado: bool= None) -> list:
-    diccionario_busqueda = {"creador": user.id}
+    diccionario_busqueda = {"participantes."+user.id_mongo: {"$exists": True}}
     if estado is not None:
         diccionario_busqueda['estado'] = estado 
     res = juegos.find(diccionario_busqueda)

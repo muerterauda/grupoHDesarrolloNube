@@ -51,7 +51,7 @@ class Juego:
 
     def add_participante(self, user: User):
         if user.id not in self.participantes:
-            self.__participantes[user.id] = 0
+            self.__participantes[user.id_mongo] = {"email": user.id, "tesoros": 0}
 
     @property
     def tesoros_restantes(self):
