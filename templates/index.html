@@ -20,11 +20,16 @@
 </div>
 <div id="map" class="map"></div>
 <script type="text/javascript">
+
+    const markerSource = new ol.source.Vector();
     var map = new ol.Map({
         target: 'map',
         layers: [
             new ol.layer.Tile({
                 source: new ol.source.OSM()
+            }),
+            new ol.layer.Vector({
+                source: markerSource
             })
         ],
         view: new ol.View({
@@ -35,7 +40,8 @@
 
 
     map.on('click', function (evt) {
-        console.log(ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326'));
+        var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+        addMarker(pos[0], pos[1]);
     });
 
     function addMarker(lon, lat) {
@@ -53,7 +59,24 @@
         });
 
         markerSource.addFeature(iconFeature);
+        var iconStyle = new ol.style.Style({
+            image: new ol.style.Icon(({
+                anchor: [0.5, 46],
+                anchorXUnits: 'fraction',
+                anchorYUnits: 'pixels',
+                opacity: 0.75,
+                src: '../resources/img/pin.png'
+            }))
+        });
+
+
+        var vectorLayer = new ol.layer.Vector({
+            source: markerSource,
+            style: iconStyle
+        });
     }
+
+
 </script>
 </body>
 </html>
