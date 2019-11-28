@@ -7,4 +7,4 @@ Flask-Login==0.4.1
 requests==2.22.0
 requests-oauthlib==1.2.0
 mysql-connector-python==8.0.18
-
+pyopenssl
