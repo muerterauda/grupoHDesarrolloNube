@@ -1,9 +1,79 @@
 {% extends "base.html" %}
 {% block head %}
+    <title>Inicio</title>
+    <style>
+        .map {
+            height: 200px;
+            padding: 5px 5px;
+        }
+        .fondo {background: #007bff}
+        .fondo1 {background: #ea4335}
+    </style>
 {% endblock %}
 
 {% block content %}
-    <div class="text-center text-info text-uppercase">
-        <h1>Caza del tesoro</h1>
+    <div class="container-fluid">
+        <hr>
+        <div class="container-header text-center"><h2>Bienvenido a Caza del Tesoro</h2></div>
+        <hr>
+
+        <div class="row">
+            <div class="col">
+                <br>
+                <h3>Mis juegos</h3>
+                <br>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-10 col-md-9 fondo">
+                <div class="row">
+                    <!-- DATOS -->
+                    <div class="col-8 fondo1">Datos 1</div>
+
+                    <!-- MAPAS -->
+                    <div class="col-4 map" id="map"></div>
+                </div>
+                <div class="row">
+                    <!-- DATOS -->
+                    <div class="col-8 fondo1">Datos 2</div>
+
+                    <!-- MAPAS -->
+                    <div class="col-4 map" id="map2"></div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-3">
+                <!-- SIDEBAR -->
+                <h3>Opciones</h3>
+                <li id="" class=""><a href="#">Añadir juego</a></li>
+                <li id="" class=""><a href="#">Añadir mapa</a></li>
+            </div>
+        </div>
     </div>
+<div ></div>
+    <script type="text/javascript">
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
+                zoom: 4
+            })
+        });
+        var map = new ol.Map({
+            target: 'map2',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
+                zoom: 4
+            })
+        });
+    </script>
 {% endblock %}
