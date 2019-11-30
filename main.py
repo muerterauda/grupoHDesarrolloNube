@@ -163,6 +163,7 @@ def logout():
 @login_required
 def hello():
     """Return a friendly HTTP greeting."""
+    
     # t = db.find_one()
     return render_template("index.html")
 
