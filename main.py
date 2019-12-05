@@ -174,6 +174,15 @@ def hello():
 
     return render_template("index.html", juegos_activos=juegos_activos, juegos_acabados=juegos_acabados, juegos_creados=juegos_creados, user=user.name)
 
+@app.route('/nuevoJuego')
+@login_required
+def nuevojuego():
+    """Return a friendly HTTP greeting."""
+    # t = db.find_one()
+    user = current_user
+
+    return render_template("nuevojuego.html", user=user.name)
+
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
