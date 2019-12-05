@@ -3,11 +3,31 @@
     <title>Inicio</title>
     <style>
         .map {
-            height: 200px;
+            min-height: 200px;
             padding: 5px 5px;
         }
-        .fondo {background: #007bff}
-        .fondo1 {background: #ea4335}
+        .sidebar{
+            background: #7ebff5;
+            padding: 20px;
+            box-sizing:border-box;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            border: 1px solid #1b98ff;
+            margin: 10px 0px;
+            box-sizing: border-box;
+        }
+        .juego{
+            background: #dbefff;
+            padding: 5px;
+            box-sizing:border-box;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            border: 1px solid #1b98ff;
+            margin: 10px 0px;
+            box-sizing: border-box;
+        }
     </style>
 {% endblock %}
 
@@ -17,7 +37,7 @@
         <div class="container-header text-center"><h2>Bienvenido a Caza del Tesoro</h2></div>
         <hr>
 
-        <div class="row">
+        <div class="row text-center">
             <div class="col">
                 <br>
                 <h3>Mis juegos</h3>
@@ -25,27 +45,149 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-10 col-md-9 fondo">
+            <div class="col-xl-10 col-lg-9">
                 <div class="row">
-                    <!-- DATOS -->
-                    <div class="col-8 fondo1">Datos 1</div>
+                    <!-- JUEGOS ACTIVOS -->
+                    <div class="col">
+                        <h3>Juegos activos</h3>
+                        {% if juegos_activos %}
+                            {% for juego in juegos_activos %}
+                                <div class="row juego">
+                                    <!-- DATOS -->
+                                    <div class="col-sm-9">
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <p>Tesoros total: {{ juego.tesoros.keys() | max }}</p>
+                                                <p>Tesoros restantes: {{juego.tesoros_restantes}}</p>
+                                            </div>
 
-                    <!-- MAPAS -->
-                    <div class="col-4 map" id="map"></div>
+                                            <div class="col-sm-6">
+                                                <p>Participantes:</p>
+                                                {% for participante in juego.participantes %}
+                                                    <li>{{juego.participantes[participante]['email']}}</li>
+                                                {% endfor %}
+                                            </div>
+
+                                            <div class="col-sm-6">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- MAPAS -->
+                                    <div class="col-sm-3 map" id="map"></div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                             <div class="row">
+                                <div class="col">
+                                    <p>No existe ningun juego activo</p>
+                                </div>
+                             </div>
+                        {% endif %}
+                    </div>
                 </div>
+
                 <div class="row">
-                    <!-- DATOS -->
-                    <div class="col-8 fondo1">Datos 2</div>
+                    <!-- JUEGOS ACABADOS -->
+                    <div class="col">
+                        <h3>Juegos acabados</h3>
+                        {% if juegos_acabados %}
+                            {% for juego in juegos_acabados %}
+                                <div class="row juego">
+                                    <!-- DATOS -->
+                                    <div class="col-sm-9">
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <p>Tesoros total: {{ juego.tesoros.keys() | max }}</p>
+                                                <p>Tesoros restantes: {{juego.tesoros_restantes}}</p>
+                                                {% if juego.ganador != "" %}
+                                                    <p>Ganador: {{juego.ganador}}</p>
+                                                {% endif %}
+                                            </div>
 
-                    <!-- MAPAS -->
-                    <div class="col-4 map" id="map2"></div>
+                                            <div class="col-sm-6">
+                                                <p>Participantes:</p>
+                                                {% for participante in juego.participantes %}
+                                                    <li>{{juego.participantes[participante]['email']}}</li>
+                                                {% endfor %}
+                                            </div>
+
+                                            <div class="col-sm-3">
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <!-- MAPAS -->
+                                    <div class="col-sm-3 map" id="map"></div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                             <div class="row">
+                                <div class="col">
+                                    <p>No existe ningun juego acabado</p>
+                                </div>
+                             </div>
+                        {% endif %}
+                    </div>
                 </div>
+
+                <div class="row">
+                    <!-- JUEGOS CREADOS -->
+                    <div class="col">
+                        <h3>Juegos creados</h3>
+                        {% if juegos_creados %}
+                            {% for juego in juegos_creados %}
+                                <div class="row juego">
+                                    <!-- DATOS -->
+                                    <div class="col-sm-9">
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <p>Tesoros total: {{ juego.tesoros.keys() | max }}</p>
+                                                <p>Tesoros restantes: {{juego.tesoros_restantes}}</p>
+                                                {% if juego.ganador != "" %}
+                                                    <p>Ganador: {{juego.ganador}}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <p>Participantes:</p>
+                                                {% for participante in juego.participantes %}
+                                                    <li>{{juego.participantes[participante]['email']}}</li>
+                                                {% endfor %}
+                                            </div>
+
+                                            <div class="col-sm-3">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- MAPAS -->
+                                    <div class="col-sm-3 map" id="map"></div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                             <div class="row">
+                                <div class="col">
+                                    <p>No existe ningun juego creado</p>
+                                </div>
+                             </div>
+                        {% endif %}
+                    </div>
+                </div>
+
             </div>
-            <div class="col-lg-2 col-md-3">
+            <div class="col-xl-2 col-lg-3 ">
+                <br>
                 <!-- SIDEBAR -->
-                <h3>Opciones</h3>
-                <li id="" class=""><a href="#">Añadir juego</a></li>
-                <li id="" class=""><a href="#">Añadir mapa</a></li>
+                <div class="sidebar">
+                    <h3>Opciones</h3>
+                    <p>
+                        <li id="" class=""><a href="#">Crear juego</a></li>
+                        <li id="" class=""><a href="#">Participar</a></li>
+                    </p>
+
+                </div>
             </div>
         </div>
     </div>

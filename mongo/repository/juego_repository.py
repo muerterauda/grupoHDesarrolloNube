@@ -49,3 +49,4 @@ def __generar_lista_juegos(res: dict) -> list:
 
 def __generar_juego(res):
     return Juego(juego_last=res)
+
