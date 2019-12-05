@@ -10,7 +10,7 @@ from requests.exceptions import HTTPError
 from requests_oauthlib import OAuth2Session
 
 from mongo.entity.Usuario import User
-from mongo.repository.juego_repository import find_juego_by_creador_and_estado, find_juego_by_participante_and_estado
+from mongo.repository.juego_repository import find_juego_by_creador_and_estado, find_juego_by_participante_and_estado, find_juego_by_id
 from mongo.repository.usuario_repository import find_user_by_id, replace_user_by_id, update_user_by_id, save_user
 
 #
@@ -183,7 +183,15 @@ def nuevojuego():
     # t = db.find_one()
     user = current_user
 
-    return render_template("nuevojuego.html", user=user.name)
+    return render_template("nuevojuego.html", user=user)
+
+@app.route("/juego/<id>")
+def mostrar_ariculo(id):
+
+    user = current_user
+    juego = find_juego_by_id(id)
+
+    return render_template("juego.html", juego=juego, user=user , id = id)
 
 
 if __name__ == '__main__':
