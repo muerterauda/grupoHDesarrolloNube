@@ -4,7 +4,7 @@ import os
 import flask
 from flask import Flask, url_for, redirect, \
     render_template, session, request
-from flask_login import LoginManager, login_required, current_user, logout_user, login_user
+from flask_login import LoginManager, login_required, current_user, logout_user, login_user, UserMixin
 from mysqlx import Auth
 from requests.exceptions import HTTPError
 from requests_oauthlib import OAuth2Session
@@ -12,11 +12,11 @@ from requests_oauthlib import OAuth2Session
 from mongo.entity.Usuario import User
 from mongo.repository.juego_repository import find_juego_by_creador_and_estado, find_juego_by_participante_and_estado
 from mongo.repository.usuario_repository import find_user_by_id, replace_user_by_id, update_user_by_id, save_user
-
 #
 # GOOGLE_LOGIN_CLIENT_ID = "433051237268-etqt25o974bg52mmto23hs4lrg141ihq.apps.googleusercontent.com"
 # GOOGLE_LOGIN_CLIENT_SECRET = "MuH32nfjnOETmzIaNAP9vPoQ"
 
+from mongo.mongo_manager import usuarios
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 """App Configuration"""
@@ -130,6 +130,7 @@ def callback():
                                         'avatar': user_data['picture']}
                 user = User(dicccionario_usuario)
                 save_user(user)
+                user = find_user_by_id(email)
             else:
                 cambiado = False
                 if user_data['name'] != user.name:

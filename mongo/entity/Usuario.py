@@ -1,9 +1,13 @@
 from flask_login import UserMixin
+from bson import ObjectId
 
 
 class User(UserMixin):
 
     def __init__(self, diccionario):
+        self.__id_mongo = diccionario.get('_id')
+        if self.__id_mongo:
+            self.__id_mongo = str(self.__id_mongo)
         self.id = diccionario.get('id')
         self.name = diccionario.get('name')
         self.avatar = diccionario.get('avatar')
@@ -15,6 +19,10 @@ class User(UserMixin):
     def user_to_dict(self) -> dict:
         return {"id": self.id, "name": self.name, "avatar": self.avatar, "admin": self.__admin,
                 "tokens": self.access_tokens}
+
+    @property
+    def id_mongo(self):
+        return self.__id_mongo
 
     @property
     def get_admin(self):
