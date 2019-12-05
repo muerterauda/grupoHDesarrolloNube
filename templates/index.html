@@ -28,6 +28,14 @@
             margin: 10px 0px;
             box-sizing: border-box;
         }
+        .ganado {
+            background: #6fff2d;
+            border: 1px solid #0f7e00;
+        }
+        .perdido{
+            background: #ff4343;
+            border: 1px solid #7e0000;
+        }
     </style>
 {% endblock %}
 
@@ -93,7 +101,11 @@
                         <h3>Juegos acabados</h3>
                         {% if juegos_acabados %}
                             {% for juego in juegos_acabados %}
-                                <div class="row juego">
+                            {% if user.id == juego.ganador %} <!-- Si el ganador es el usuario se pone en verde -->
+                                <div class="row juego ganado">
+                            {% else %}
+                                <div class="row juego perdido">
+                            {% endif %}
                                     <!-- DATOS -->
                                     <div class="col-sm-9">
                                         <div class="row">
@@ -138,7 +150,15 @@
                         <h3>Juegos creados</h3>
                         {% if juegos_creados %}
                             {% for juego in juegos_creados %}
-                                <div class="row juego">
+                                {% if juego.ganador != "" %}
+                                    {% if user.id == juego.ganador %} <!-- Si el ganador es el usuario se pone en verde -->
+                                        <div class="row juego ganado">
+                                    {% else %}
+                                        <div class="row juego perdido">
+                                    {% endif %}
+                                {% else %}
+                                    <div class="row juego">
+                                {% endif %}
                                     <!-- DATOS -->
                                     <div class="col-sm-9">
                                         <div class="row">

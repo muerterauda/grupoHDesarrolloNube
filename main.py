@@ -163,7 +163,7 @@ def logout():
 @login_required
 def hello():
     """Return a friendly HTTP greeting."""
-    # t = db.find_one()
+
     user = current_user
 
     juegos_activos = find_juego_by_participante_and_estado(user, True)
@@ -172,7 +172,7 @@ def hello():
 
     juegos_creados = find_juego_by_creador_and_estado(user)
 
-    return render_template("index.html", juegos_activos=juegos_activos, juegos_acabados=juegos_acabados, juegos_creados=juegos_creados, user=user.name)
+    return render_template("index.html", juegos_activos=juegos_activos, juegos_acabados=juegos_acabados, juegos_creados=juegos_creados, user=user)
 
 @app.route('/nuevoJuego')
 @login_required
