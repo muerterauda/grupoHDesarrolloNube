@@ -1,4 +1,21 @@
-function transform(extent) {
+ /*
+ var map = new ol.Map({
+        target: 'map',
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            })
+        ],
+        view: new ol.View({
+            center: ol.proj.fromLonLat([long, lat]),
+            zoom: 6
+        })
+    });
+*/
+//    console.log(map.getView().calculateExtent(map.getSize()));
+
+
+ function transform(extent) {
   return ol.proj.transformExtent(extent, 'EPSG:4326', 'EPSG:3857');
 }
 
@@ -13,16 +30,13 @@ var extents = {
 var key = 'pk.eyJ1IjoibWFudXBsLTk3IiwiYSI6ImNrM3Vmd2JvNzBjM3kzZ3Brc253cTl0b3EifQ.06G3hmSOFoDuxGu38AT76w';
 
 var base = new ol.layer.Tile({
-  source: new ol.source.TileJSON({
-    url: 'https://api.tiles.mapbox.com/v4/mapbox.world-light.json?secure&access_token=' + key,
-    crossOrigin: 'anonymous'
-  })
+  source: new ol.source.OSM()
 });
 
 var overlay = new ol.layer.Tile({
   extent: extents.Argentina,
   source: new ol.source.TileJSON({
-    url: 'https://api.tiles.mapbox.com/v4/mapbox.world-black.json?secure&access_token=' + key,
+    url: 'https://api.tiles.mapbox.com/v4/mapbox.world-blue.json?secure&access_token=' + key,
     crossOrigin: 'anonymous'
   })
 });
