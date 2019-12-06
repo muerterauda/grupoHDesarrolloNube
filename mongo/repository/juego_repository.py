@@ -12,7 +12,7 @@ def save_juego(juego: Juego):
 
 
 def find_juego_by_id(juego_id) -> Juego:
-    res = juegos.find_one({"id": juego_id})
+    res = juegos.find_one({"_id": ObjectId(juego_id))
     if res is not None:
         return __generar_juego(res)
 
