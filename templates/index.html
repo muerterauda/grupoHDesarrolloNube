@@ -20,62 +20,52 @@
 </div>
 <div id="map" class="map"></div>
 <script type="text/javascript">
-const markerSource = new ol.source.Vector();
-var map = new ol.Map({
-    target: 'map',
-    layers: [
-        new ol.layer.Tile({
-            source: new ol.source.OSM()
-        }),
-        new ol.layer.Vector({
-            source: markerSource
+    const markerSource = new ol.source.Vector();
+    var map = new ol.Map({
+        target: 'map',
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            }),
+            new ol.layer.Vector({
+                source: markerSource
+            })
+        ],
+        view: new ol.View({
+            center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
+            zoom: 4
         })
-    ],
-    view: new ol.View({
-        center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
-        zoom: 4
-    })
-});
-
-
-map.on('click', function (evt) {
-    var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
-    addMarker(pos[0], pos[1]);
-});
-
-function addMarker(lon, lat) {
-    console.log('lon:', lon);
-    console.log('lat:', lat);
-
-    var iconFeatures = [];
-
-    var iconFeature = new ol.Feature({
-        geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326',
-            'EPSG:3857')),
-        name: 'Null Island',
-        population: 4000,
-        rainfall: 500
-    });
-
-    markerSource.addFeature(iconFeature);
-    var iconStyle = new ol.style.Style({
-        image: new ol.style.Icon(({
-            anchor: [0.5, 46],
-            anchorXUnits: 'fraction',
-            anchorYUnits: 'pixels',
-            opacity: 0.75,
-            size: 500,
-            crossOrigin: 'https://localhost:5000',
-            src: '..img/pin.png'
-        }))
     });
 
 
-    var vectorLayer = new ol.layer.Vector({
-        source: markerSource,
-        style: iconStyle
+    map.on('click', function (evt) {
+        var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+        addMarker(pos[0], pos[1]);
     });
-}
+
+    function addMarker(lon, lat) {
+        console.log('lon:', lon);
+        console.log('lat:', lat);
+
+        var iconFeature = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326',
+                'EPSG:3857')),
+            population: 4000,
+            rainfall: 500
+        });
+
+        var myStyle = new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 7,
+                fill: new ol.style.Fill({color: 'yellow'}),
+                stroke: new ol.style.Stroke({
+                    color: [255, 204, 0], width: 2
+                })
+            })
+        });
+        iconFeature.setStyle(myStyle);
+        markerSource.addFeature(iconFeature);
+    }
 
 </script>
 </body>
