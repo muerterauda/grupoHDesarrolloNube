@@ -12,7 +12,7 @@ class Juego:
                  juego_last: dict = None):
         if juego_last:
             self.__id = str(juego_last.get('_id'))
-            self.__tesoros = juego_last.get('tesoros')
+            self.__tesoros = Tesoro.generar_tesoros_object(juego_last.get('tesoros'))
             self.__creador = juego_last.get('creador')
             self.__participantes = juego_last.get('participantes')
             self.__estado = juego_last.get('estado')
@@ -34,24 +34,27 @@ class Juego:
     def encontrar_tesoro(self, identificador_tesoro, latitud, longitud, imagen_tesoro, descubridor: User) -> bool:
         if not self.estado:
             raise JuegoException('Juego ya finalizado')
-        if descubridor.id not in self.participantes:
+        if descubridor.id_mongo not in self.participantes:
             raise JuegoException('Usuario no participante en el juego.')
-        tesoro = self.__tesoros.get(identificador_tesoro)
+        tesoro = self.__tesoros.get(str(identificador_tesoro))
         if not tesoro:
             raise JuegoException('Tesoro no existente')
         enc = False
-        if tesoro and descubridor.id not in tesoro.descubridores:
-            enc = tesoro.encontrar_tesoro(latitud, longitud, descubridor.id, imagen_tesoro)
+        if tesoro and descubridor.id_mongo not in tesoro.descubridores:
+            enc = tesoro.encontrar_tesoro(descubridor, latitud, longitud, imagen_tesoro)
             if enc:
-                self.participantes[descubridor] = self.__participantes[descubridor] + 1
-                if self.participantes[descubridor] == len(self.tesoros):
+                p = self.participantes[descubridor.id_mongo]
+                p['tesoros'] = p['tesoros'] + 1
+                if p['tesoros'] == len(self.tesoros):
                     self.__estado = False
-
+                    self.__ganador = descubridor.id
+                if len(self.tesoros)-p['tesoros'] < self.tesoros_restantes:
+                    self.__tesoros_restantes = len(self.tesoros)-p['tesoros']
         return enc
 
     def add_participante(self, user: User):
         if user.id not in self.participantes:
-            self.__participantes[user.id] = 0
+            self.__participantes[user.id_mongo] = {"email": user.id, "tesoros": 0}
 
     @property
     def tesoros_restantes(self):

@@ -5,7 +5,10 @@ from bson.objectid import ObjectId
 
 
 def save_juego(juego: Juego):
-    juegos.insert_one(juego.juego_to_dict())
+    if juego.id:
+        update_juego_by_id(juego_id=juego.id, actualizacion_juego=juego.juego_to_dict())
+    else:
+        juegos.insert_one(juego.juego_to_dict())
 
 
 def find_juego_by_id(juego_id) -> Juego:
@@ -14,19 +17,33 @@ def find_juego_by_id(juego_id) -> Juego:
         return __generar_juego(res)
 
 
-def find_juego_by_creador_and_estado(user: User, estado: bool= None) -> list:
-    diccionario_busqueda = {"creador": user.id}
-    if estado is not None:
-        diccionario_busqueda['estado'] = estado 
+def find_juego_by_ganador(ganador: User) -> list:
+    diccionario_busqueda = {'ganador': ganador.id}
     res = juegos.find(diccionario_busqueda)
     lista_juegos = __generar_lista_juegos(res)
     return lista_juegos
 
 
-def find_juego_by_participante_and_estado(user: User, estado: bool= None) -> list:
+def find_juego_by_estado(estado: bool) -> list:
+    diccionario_busqueda = {'estado': estado}
+    res = juegos.find(diccionario_busqueda)
+    lista_juegos = __generar_lista_juegos(res)
+    return lista_juegos
+
+
+def find_juego_by_creador_and_estado(user: User, estado: bool = None) -> list:
     diccionario_busqueda = {"creador": user.id}
     if estado is not None:
-        diccionario_busqueda['estado'] = estado 
+        diccionario_busqueda['estado'] = estado
+    res = juegos.find(diccionario_busqueda)
+    lista_juegos = __generar_lista_juegos(res)
+    return lista_juegos
+
+
+def find_juego_by_participante_and_estado(user: User, estado: bool = None) -> list:
+    diccionario_busqueda = {"participantes." + user.id_mongo: {"$exists": True}}
+    if estado is not None:
+        diccionario_busqueda['estado'] = estado
     res = juegos.find(diccionario_busqueda)
     lista_juegos = __generar_lista_juegos(res)
     return lista_juegos
