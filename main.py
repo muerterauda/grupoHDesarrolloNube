@@ -187,11 +187,10 @@ def nuevojuego():
 def mostrar_ariculo(id):
 
     user = current_user
-    juegos_activos = find_juego_by_participante_and_estado(user, True)
 
-    juego = find_juego_by_id(juegos_activos[0].id)
+    juego = find_juego_by_id(id)
 
-    return render_template("juego.html", juego=juego, user=user , id = id)
+    return render_template("juego.html", juego=juego, user=user)
 
 
 if __name__ == '__main__':

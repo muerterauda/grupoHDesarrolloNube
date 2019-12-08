@@ -17,6 +17,102 @@
             margin: 10px 0px;
             box-sizing: border-box;
         }
+        .pista{
+            background: rgba(255, 252, 82, 0.55);
+            padding: 20px;
+            box-sizing:border-box;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            border: 1px solid #ffd841;
+            margin: 10px 0px;
+            box-sizing: border-box;
+        }
+        li{
+            margin-left: 15px;
+            list-style:none;
+        }
+        /* ---------------------------- */
+        /* 			  POPUP 			*/
+        /* ---------------------------- */
+        .overlay {
+            background: rgba(0, 0, 0, 0.4);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+        }
+
+        .overlay.active {
+            visibility: visible;
+        }
+
+        .popup {
+            background: #F8F8F8;
+            box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3);
+            border-radius: 3px;
+            padding: 20px;
+            text-align: center;
+            max-width: 800px;
+            transition: .3s ease all; /* Agrega una transicion de 0.3 seg para todas las propiedades*/
+            transform: scale(0.5);
+            opacity: 0;
+            width: 98vw;
+            box-sizing: border-box;
+        }
+
+        .popup .btn-cerrar-popup {
+            font-size: 16px;
+            line-height: 16px;
+            display: block;
+            text-align: right;
+            transition: .3s ease all;
+            color: #BBBBBB;
+        }
+
+        .popup .btn-cerrar-popup:hover {
+            color: #000;
+        }
+
+        .popup h3{
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .popup form .btn-submit {
+            padding: 0 20px;
+            height: 40px;
+            line-height: 40px;
+            border: none;
+            color: #fff;
+            background: #5E7DE3;
+            border-radius: 3px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: .3s ease all;
+        }
+
+        .popup form .btn-submit:hover {
+            background: rgba(94,125,227, .7);
+        }
+
+        /* ------------------------- */
+        /* ANIMACIONES */
+        /* ------------------------- */
+        .popup.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        #contenido_principal h4 {
+            font-size: 1.2rem;
+        }
     </style>
 {% endblock %}
 
@@ -40,18 +136,64 @@
                 </div>
             </div>
 
-             <div class="col-lg-3 ">
+             <div class="col-lg-3 ">  <!-- SIDEBAR -->
                 <br>
-                <!-- SIDEBAR -->
+                <div class="sidebar">
+                    <h3>Opciones</h3>
+                    <li id="encontrar-tesoro" class="encontrar-tesoro"><a href="#">Localizar tesoro</a></li>
+                    <li><a href="#pistas">Pistas</a></li>
+                </div>
+                <br>
                 <div class="sidebar">
                     <h3>Detalles</h3>
-                    <p>
-                        <li id="" class=""><a href="/nuevoJuego">Crear juego</a></li>
-                        <li id="" class=""><a href="#">Unirse</a></li>
-                    </p>
+                    <li id="" class="">Tesoros totales: {{ juego.tesoros.keys() | max }}</li>
+
+                    {% for participante in juego.participantes %}
+                        {% if juego.participantes[participante]['email'] == user.id %}
+                            <li id="" class="">Tesoros encontrados:{{juego.participantes[participante]['tesoros']}}</li>
+                            <li id="" class="">Tesoros restantes jugador: {{juego.tesoros.keys() | max | int - juego.participantes[participante]['tesoros']}}</li>
+                        {% endif %}
+                    {% endfor %}
+                    <li id="" class="">Tesoros restantes juego: {{juego.tesoros_restantes}}</li>
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col">
+                <A name="pistas"><h3 style="margin-top: 30px;">Pistas</h3></A>
+                <div class="row">
+                    <div class="col">
+                        {% for tesoro in juego.tesoros %}
+                            <div class="row pista">
+                                <div class="col">
+                                    <h3>Pista {{ juego.tesoros[tesoro].identificador }}</h3>
+
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <img src="data:image/gif;base64,{{ juego.tesoros[tesoro].descubridores.pista_imagen }}"/>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            Texto: {{ juego.tesoros[tesoro].descubridores.pista_texto }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="overlay" id="overlay">
+        <div class="popup" id="popup">
+            <a id="btn-cerrar-popup" class="btn-cerrar-popup"><i class="fas fa-times"></i></a>
+            <h3>Añadir nuevo tesoro</h3>
+            <form id="insertar-tesoro">
+                <div class="map" id="map_popup" style="height: 500px;"></div>  <!-- Cambiar por mapa de encontrar tesoro -->
+                <input type="submit" class="btn-submit" id="btn-submit" name="submitted" value="Añadir" style="margin-top: 30px;" />
+            </form>
+        </div>
+    </div>
     </div>
     <script type="text/javascript">
         var map = new ol.Map({
@@ -65,6 +207,28 @@
                 center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
                 zoom: 4
             })
+        });
+
+        var map = new ol.Map({
+            target: 'map_popup',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
+                zoom: 4
+            })
+        });
+
+        $('#encontrar-tesoro').click(function(){
+            $("#overlay").addClass("active");
+            $("#popup").addClass("active");
+        });
+        $('#btn-cerrar-popup').click(function(){
+            $("#overlay").removeClass("active");
+            $("#popup").removeClass("active");
         });
     </script>
 {% endblock %}
