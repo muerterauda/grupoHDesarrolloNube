@@ -1,1 +1,92 @@
-<a href="{{auth_url}}" class="btn btn-primary btn-block" style="padding: 15px 0;">Login with Google</a>
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar sesión</title>  
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
+    <style>
+        :root {
+            --input-padding-x: 1.5rem;
+            --input-padding-y: 0.75rem;
+        }
+
+        body {
+            background-image: url("https://iddocente.com/wp-content/uploads/2018/05/idd_caza_tesoro.jpg");
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            background-color: #007bff;
+        }
+
+        .card-signin {
+            border: 0;
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .card-signin .card-title {
+            margin-bottom: 2rem;
+            font-weight: 300;
+            font-size: 1.5rem;
+        }
+
+        .card-signin .card-body {
+            padding: 2rem;
+        }
+
+        .form-signin {
+            width: 100%;
+        }
+
+        .form-signin .btn {
+            font-size: 80%;
+            border-radius: 5rem;
+            letter-spacing: .1rem;
+            font-weight: bold;
+            padding: 1rem;
+            transition: all 0.2s;
+        }
+        .btn-google {
+            color: white;
+            background-color: #ea4335;
+        }
+        .footer {
+            width: 100%;
+            color: white;
+            margin-top: 15px;
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand text-info text-uppercase" href="#"><h1>Caza del tesoro</h1></a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card card-signin my-5">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Iniciar sesión</h5>
+                        <form class="form-signin">
+                            <hr class="my-4">
+                            <a href="{{auth_url}}" class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i> Iniciar sesión con Google</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer page-footer font-small bg-dark">
+      <div class="footer-copyright text-center py-3">GRUPO H - DESARROLLO DE APLICACIONES EN LA NUBE</div>
+    </footer>
+</body>

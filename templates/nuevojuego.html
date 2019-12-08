@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block head %}
+    <title>Inicio</title>
+    <style>
+        .map {
+            min-height: 200px;
+            padding: 5px 5px;
+        }
+        .sidebar{
+            background: #7ebff5;
+            padding: 20px;
+            box-sizing:border-box;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            border: 1px solid #1b98ff;
+            margin: 10px 0px;
+            box-sizing: border-box;
+        }
+        .juego{
+            background: #dbefff;
+            padding: 5px;
+            box-sizing:border-box;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            border: 1px solid #1b98ff;
+            margin: 10px 0px;
+            box-sizing: border-box;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+    <hr>
+        <div class="container-header text-center"><h2>Crear nuevo Juego</h2></div>
+        <hr>
+        <form action="/mongo/entity/nuevoJuego.py/" method="post">
+            <div class="row">
+                <div class="col-5"><h2>Introduzca el numero de tesoros</h2></div>
+                    <div class="col-1">
+                        <p><input type="number" name="numeroTesoros" /></p>
+                    </div>
+            </div>
+            <div class="row"></div>
+            <div class="row">
+                <div class="col-5"><h2>Introduzca el limite de coordenadas</h2></div>
+                    <div class="col-1">
+                        <p>Latitud Maxima: <input type="number" name="LatitudMax"/></p>
+                        <p>Latitud Minima: <input type="number" name="LatitudMin"/></p>
+                        <p>Longitud Maxima: <input type="number" name="LongitudMax"/></p>
+                        <p>Longitud Minima: <input type="number" name="LongitudMin"/></p>
+                    </div>
+            </div>
+            <div class="row">
+                <a href="index.html"> <input type="submit" value="Submit"></a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

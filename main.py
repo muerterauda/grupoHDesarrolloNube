@@ -4,12 +4,13 @@ import os
 import flask
 from flask import Flask, url_for, redirect, \
     render_template, session, request
-from flask_login import LoginManager, login_required, current_user, logout_user, login_user
+from flask_login import LoginManager, login_required, current_user, logout_user, login_user, UserMixin
 from mysqlx import Auth
 from requests.exceptions import HTTPError
 from requests_oauthlib import OAuth2Session
 
 from mongo.entity.Usuario import User
+from mongo.repository.juego_repository import find_juego_by_creador_and_estado, find_juego_by_participante_and_estado, find_juego_by_id
 from mongo.repository.usuario_repository import find_user_by_id, replace_user_by_id, update_user_by_id, save_user
 
 #
@@ -165,7 +166,32 @@ def logout():
 def hello():
     """Return a friendly HTTP greeting."""
     # t = db.find_one()
-    return render_template("index.html")
+    user = current_user
+
+    juegos_activos = find_juego_by_participante_and_estado(user, True)
+    juegos_acabados =  find_juego_by_participante_and_estado(user, False)
+    juegos_creados = find_juego_by_creador_and_estado(user)
+
+    return render_template("index.html", juegos_activos=juegos_activos, juegos_acabados=juegos_acabados, juegos_creados=juegos_creados, user=user)
+
+@app.route('/nuevoJuego')
+@login_required
+def nuevojuego():
+    """Return a friendly HTTP greeting."""
+    # t = db.find_one()
+    user = current_user
+
+    return render_template("nuevojuego.html", user=user)
+
+@app.route("/juego/<id>")
+def mostrar_ariculo(id):
+
+    user = current_user
+    juegos_activos = find_juego_by_participante_and_estado(user, True)
+
+    juego = find_juego_by_id(juegos_activos[0].id)
+
+    return render_template("juego.html", juego=juego, user=user , id = id)
 
 
 if __name__ == '__main__':
