@@ -1,7 +1,8 @@
 <html lang="es">
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/css/ol.css" type="text/css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
@@ -13,6 +14,99 @@
             margin-top: 15px;
             /*position: fixed;
             bottom: 0;*/
+        }
+        /* ---------------------------- */
+        /* 			  POPUP 			*/
+        /* ---------------------------- */
+        .overlay {
+            background: rgba(0, 0, 0, 0.4);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+        }
+
+        .overlay.active {
+            visibility: visible;
+        }
+
+        .popup {
+            background: #F8F8F8;
+            box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3);
+            border-radius: 3px;
+            padding: 20px;
+            text-align: center;
+            max-width: 800px;
+            transition: .3s ease all; /* Agrega una transicion de 0.3 seg para todas las propiedades*/
+            transform: scale(0.5);
+            opacity: 0;
+            width: 98vw;
+            box-sizing: border-box;
+        }
+
+        .popup .btn-cerrar-popup {
+            font-size: 16px;
+            line-height: 16px;
+            display: block;
+            text-align: right;
+            transition: .3s ease all;
+            color: #BBBBBB;
+        }
+
+        .popup .btn-cerrar-popup:hover {
+            color: #000;
+        }
+
+        .popup h3{
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .popup h4 {
+            font-size: 22px;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .popup form .contenedor-inputs input{
+            width: 100%;
+            margin-bottom: 20px;
+            height: 40px;
+            font-size: 18px;
+            line-height: 52px;
+            text-align: center;
+            border: 1px solid #BBBBBB;
+        }
+
+        .popup form .btn-submit {
+            padding: 0 20px;
+            height: 40px;
+            line-height: 40px;
+            border: none;
+            color: #fff;
+            background: #5E7DE3;
+            border-radius: 3px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: .3s ease all;
+        }
+
+        .popup form .btn-submit:hover {
+            background: rgba(94,125,227, .7);
+        }
+
+        /* ------------------------- */
+        /* ANIMACIONES */
+        /* ------------------------- */
+        .popup.active {
+            transform: scale(1);
+            opacity: 1;
         }
     </style>
 

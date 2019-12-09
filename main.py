@@ -10,8 +10,9 @@ from requests.exceptions import HTTPError
 from requests_oauthlib import OAuth2Session
 
 from mongo.entity.Usuario import User
-from mongo.repository.juego_repository import find_juego_by_creador_and_estado, find_juego_by_participante_and_estado
+from mongo.repository.juego_repository import find_juego_by_creador_and_estado, find_juego_by_participante_and_estado, find_juego_by_id
 from mongo.repository.usuario_repository import find_user_by_id, replace_user_by_id, update_user_by_id, save_user
+
 #
 # GOOGLE_LOGIN_CLIENT_ID = "433051237268-etqt25o974bg52mmto23hs4lrg141ihq.apps.googleusercontent.com"
 # GOOGLE_LOGIN_CLIENT_SECRET = "MuH32nfjnOETmzIaNAP9vPoQ"
@@ -164,13 +165,11 @@ def logout():
 @login_required
 def hello():
     """Return a friendly HTTP greeting."""
-
+    # t = db.find_one()
     user = current_user
 
     juegos_activos = find_juego_by_participante_and_estado(user, True)
-
     juegos_acabados =  find_juego_by_participante_and_estado(user, False)
-
     juegos_creados = find_juego_by_creador_and_estado(user)
 
     return render_template("index.html", juegos_activos=juegos_activos, juegos_acabados=juegos_acabados, juegos_creados=juegos_creados, user=user)
@@ -182,8 +181,26 @@ def nuevojuego():
     # t = db.find_one()
     user = current_user
 
-    return render_template("nuevojuego.html", user=user.name)
+    return render_template("nuevojuego.html", user=user)
 
+@app.route("/juego/<id>")
+def mostrar_articulo(id):
+
+    user = current_user
+
+    juego = find_juego_by_id(id)
+
+    return render_template("juego.html", juego=juego, user=user)
+
+    """Funcion para añadir un nuevo jugador a un juego, donde el id del jugador
+    esta en request.form['id_juego'] y el usuario esta en current_user"""
+@app.route("/añadirJuego", methods=['GET', 'POST'])
+def añadir_juego():
+
+    user = current_user
+    id_juego = request.form['id_juego']
+
+    return redirect(url_for('/'))
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

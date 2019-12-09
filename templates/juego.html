@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% block head %}
+    <title>Jugar</title>
+    <style>
+        .map {
+            padding: 5px 5px;
+            height: 80vh;
+        }
+        .sidebar{
+            background: #7ebff5;
+            padding: 20px;
+            box-sizing:border-box;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            border: 1px solid #1b98ff;
+            margin: 10px 0px;
+            box-sizing: border-box;
+        }
+        .pista{
+            background: rgba(255, 252, 82, 0.55);
+            padding: 20px;
+            box-sizing:border-box;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            border: 1px solid #ffd841;
+            margin: 10px 0px;
+            box-sizing: border-box;
+        }
+        li{
+            margin-left: 15px;
+            list-style:none;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <hr>
+        <div class="container-header text-center"><h2>Juego {{ juego.id }}</h2></div>
+        <hr>
+
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="row">
+                    <div class="col text-center">
+                        <h3>Mapa</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="map" id="map"></div>
+                    </div>
+                </div>
+            </div>
+
+             <div class="col-lg-3 ">  <!-- SIDEBAR -->
+                <br>
+                <div class="sidebar">
+                    <h3>Opciones</h3>
+                    <li id="encontrar-tesoro" class="encontrar-tesoro"><a href="#">Localizar tesoro</a></li>
+                    <li><a href="#pistas">Pistas</a></li>
+                </div>
+                <br>
+                <div class="sidebar">
+                    <h3>Detalles</h3>
+                    <li id="" class="">Tesoros totales: {{ juego.tesoros.keys() | max }}</li>
+
+                    {% for participante in juego.participantes %}
+                        {% if juego.participantes[participante]['email'] == user.id %}
+                            <li id="" class="">Tesoros encontrados:{{juego.participantes[participante]['tesoros']}}</li>
+                            <li id="" class="">Tesoros restantes jugador: {{juego.tesoros.keys() | max | int - juego.participantes[participante]['tesoros']}}</li>
+                        {% endif %}
+                    {% endfor %}
+                    <li id="" class="">Tesoros restantes juego: {{juego.tesoros_restantes}}</li>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <A name="pistas"><h3 style="margin-top: 30px;">Pistas</h3></A>
+                <div class="row">
+                    <div class="col">
+                        {% for tesoro in juego.tesoros %}
+                            <div class="row pista">
+                                <div class="col">
+                                    <h3>Pista {{ juego.tesoros[tesoro].identificador }}</h3>
+
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <img src="data:image/gif;base64,{{ juego.tesoros[tesoro].descubridores.pista_imagen }}"/>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            Texto: {{ juego.tesoros[tesoro].descubridores.pista_texto }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="overlay" id="overlay">
+        <div class="popup" id="popup">
+            <a id="btn-cerrar-popup" class="btn-cerrar-popup"><i class="fas fa-times"></i></a>
+            <h3>Añadir nuevo tesoro</h3>
+            <form id="insertar-tesoro">
+                <div class="map" id="map_popup" style="height: 500px;"></div>  <!-- Cambiar por mapa de encontrar tesoro -->
+                <input type="submit" class="btn-submit" id="btn-submit" name="submitted" value="Añadir" style="margin-top: 30px;" />
+            </form>
+        </div>
+    </div>
+    </div>
+    <script type="text/javascript">
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
+                zoom: 4
+            })
+        });
+
+        var map = new ol.Map({
+            target: 'map_popup',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
+                zoom: 4
+            })
+        });
+
+        $('#encontrar-tesoro').click(function(){
+            $("#overlay").addClass("active");
+            $("#popup").addClass("active");
+        });
+
+        $('#btn-cerrar-popup').click(function(){
+            $("#overlay").removeClass("active");
+            $("#popup").removeClass("active");
+        });
+    </script>
+{% endblock %}
