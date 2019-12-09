@@ -74,6 +74,7 @@
                                     <div class="col-sm-9">
                                         <div class="row">
                                             <div class="col-sm-3">
+                                                <p><strong>ID:</strong>  {{ juego.id }}</p>
                                                 <p>Tesoros total: {{ juego.tesoros.keys() | max }}</p>
                                                 <p>Tesoros restantes: {{juego.tesoros_restantes}}</p>
                                             </div>
@@ -123,6 +124,7 @@
                                     <div class="col-sm-9">
                                         <div class="row">
                                             <div class="col-sm-3">
+                                                <p><strong>ID:</strong> {{ juego.id }}</p>
                                                 <p>Tesoros total: {{ juego.tesoros.keys() | max }}</p>
                                                 <p>Tesoros restantes: {{juego.tesoros_restantes}}</p>
                                                 {% if juego.ganador != "" %}
@@ -177,7 +179,9 @@
                                     <!-- DATOS -->
                                     <div class="col-sm-9">
                                         <div class="row">
+                                        <p><strong>ID:</strong> {{ juego.id }}</p>
                                             <div class="col-sm-3">
+
                                                 <p>Tesoros total: {{ juego.tesoros.keys() | max }}</p>
                                                 <p>Tesoros restantes: {{juego.tesoros_restantes}}</p>
                                                 {% if juego.ganador != "" %}
@@ -222,11 +226,25 @@
                 <div class="sidebar">
                     <h3>Opciones</h3>
                     <p>
-                        <li id="" class=""><a href="/nuevoJuego">Crear juego</a></li>
-                        <li id="" class=""><a href="#">Unirse</a></li>
+                        <li><a href="/nuevoJuego">Crear juego</a></li>
+                        <li id="unirse-juego" class="unirse-juego"><a href="#">Unirse</a></li>
                     </p>
 
                 </div>
+            </div>
+        </div>
+        <div class="overlay" id="overlay">
+            <div class="popup" id="popup" style="max-width: 400px;">
+                <a id="btn-cerrar-popup" class="btn-cerrar-popup"><i class="fas fa-times"></i></a>
+                <h3>Añadir juego</h3>
+                <br>
+                <h4>ID del juego: </h4>
+                <form id="insertar-tesoro" action="/añadirJuego" method="post">
+                    <div class="contenedor-inputs">
+                        <input type="text" name="id_juego" id="id_juego" maxlength="24"/>
+                    </div>
+                    <input type="submit" class="btn-submit" id="btn-submit" name="submitted" value="Añadir" style="margin-top: 30px;" />
+                </form>
             </div>
         </div>
     </div>
@@ -244,5 +262,16 @@
                 zoom: 4
             })
         });
+
+        $('#unirse-juego').click(function(){
+            $("#overlay").addClass("active");
+            $("#popup").addClass("active");
+        });
+
+        $('#btn-cerrar-popup').click(function(){
+            $("#overlay").removeClass("active");
+            $("#popup").removeClass("active");
+        });
+
     </script>
 {% endblock %}

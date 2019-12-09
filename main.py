@@ -184,7 +184,7 @@ def nuevojuego():
     return render_template("nuevojuego.html", user=user)
 
 @app.route("/juego/<id>")
-def mostrar_ariculo(id):
+def mostrar_articulo(id):
 
     user = current_user
 
@@ -192,6 +192,15 @@ def mostrar_ariculo(id):
 
     return render_template("juego.html", juego=juego, user=user)
 
+    """Funcion para añadir un nuevo jugador a un juego, donde el id del jugador
+    esta en request.form['id_juego'] y el usuario esta en current_user"""
+@app.route("/añadirJuego", methods=['GET', 'POST'])
+def añadir_juego():
+
+    user = current_user
+    id_juego = request.form['id_juego']
+
+    return redirect(url_for('/'))
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
