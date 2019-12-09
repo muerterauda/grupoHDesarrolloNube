@@ -1,26 +1,64 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Flask Template Example</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <style type="text/css">
-      .container {
-        max-width: 500px;
-        padding-top: 100px;
-      }
+{% extends "base.html" %}
+{% block head %}
+    <title>Inicio</title>
+    <style>
+        .map {
+            min-height: 200px;
+            padding: 5px 5px;
+        }
+        .sidebar{
+            background: #7ebff5;
+            padding: 20px;
+            box-sizing:border-box;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            border: 1px solid #1b98ff;
+            margin: 10px 0px;
+            box-sizing: border-box;
+        }
+        .juego{
+            background: #dbefff;
+            padding: 5px;
+            box-sizing:border-box;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            border: 1px solid #1b98ff;
+            margin: 10px 0px;
+            box-sizing: border-box;
+        }
     </style>
-  </head>
-  <body>
-    <div class="container">
-      <p>My string: {{my_string}}</p>
-      <p>Value from the list: {{my_list[3]}}</p>
-      <p>Loop through the list:</p>
-      <ul>
-        {% for n in my_list %}
-        <li>{{n}}</li>
-        {% endfor %}
-      </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+    <hr>
+        <div class="container-header text-center"><h2>Crear nuevo Juego</h2></div>
+        <hr>
+        <form action="/mongo/entity/nuevoJuego.py/" method="post">
+            <div class="row">
+                <div class="col-5"></div>
+                    <div class="col-2">
+                        <p>Introduzca el numero de tesoros: <input type="number" name="numeroTesoros" /></p>
+                    </div>
+            </div>
+            <div class="row"></div>
+            <div class="row">
+                <div class="col-5"></div>
+                    <div class="col-2">
+                        <p>Latitud Maxima: <input type="number" name="LatitudMax"/></p>
+                        <p>Latitud Minima: <input type="number" name="LatitudMin"/></p>
+                        <p>Longitud Maxima: <input type="number" name="LongitudMax"/></p>
+                        <p>Longitud Minima: <input type="number" name="LongitudMin"/></p>
+                    </div>
+            </div>
+            <div class="row">
+                <div class="col-5"></div>
+                    <div class="col-2">
+                        <input type="submit" value="Submit"></a>
+                    </div>
+            </div>
+        </form>
     </div>
-    </body>
-</html>
+{% endblock %}
