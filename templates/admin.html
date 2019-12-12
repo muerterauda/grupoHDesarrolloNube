@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block head %}
+    <title>Inicio</title>
+    <style>
+        .map {
+            min-height: 30vh;
+            padding: 5px 5px;
+        }
+        .sidebar{
+            background: #7ebff5;
+            padding: 20px;
+            box-sizing:border-box;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            border: 1px solid #1b98ff;
+            margin: 10px 0px;
+            box-sizing: border-box;
+        }
+        li{
+            margin-left: 15px;
+            list-style:none;
+        }
+        .juego{
+            background: #dbefff;
+            padding: 5px;
+            box-sizing:border-box;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            border: 1px solid #1b98ff;
+            margin: 10px 0px;
+            text-decoration: none;
+            box-sizing: border-box;
+        }
+        .juego:hover{
+            border: 1px solid #717171;
+            background: #cbcfd1;
+        }
+        .ganado {
+            background: #6fff2d;
+            border: 1px solid #0f7e00;
+        }
+        .perdido{
+            background: #ff4343;
+            border: 1px solid #7e0000;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <hr>
+        <div class="container-header text-center"><h2>Bienvenido a Caza del Tesoro</h2></div>
+        <hr>
+
+        <div class="row text-center">
+            <div class="col">
+                <br>
+                <h3>ADMIN - Todos los juegos</h3>
+                <br>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        {% if lista_juegos %}
+                            {% for juego in lista_juegos %}
+                                {% if juego.ganador != "" %}
+                                    {% if user.id == juego.ganador %} <!-- Si el ganador es el usuario se pone en verde -->
+                                        <div class="row juego ganado">
+                                    {% else %}
+                                        <div class="row juego perdido">
+                                    {% endif %}
+                                {% else %}
+                                    <div class="row juego">
+                                {% endif %}
+                                    <!-- DATOS -->
+                                    <div class="col-md-9">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <p><strong>ID:</strong> {{ juego.id }}</p>
+                                                <p>Tesoros total: {{ juego.tesoros | length }}</p>
+                                                <p>Tesoros restantes: {{juego.tesoros_restantes}}</p>
+                                                {% if juego.ganador != "" %}
+                                                    <p>Ganador: {{juego.ganador}}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <p>Participantes:</p>
+                                                {% for participante in juego.participantes %}
+                                                    <li>{{juego.participantes[participante]['email']}}</li>
+                                                {% endfor %}
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <p>Acciones:</p>
+
+                                                <li><a href="/verJuego/{{ juego.id }}">Visualizar juego</a></li>
+                                                <li><a href="/reiniciarJuego/{{ juego.id }}">Reiniciar juego</a></li>
+                                                <li><a href="/eliminarJuego/{{ juego.id }}">Eliminar juego</a></li>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- MAPAS -->
+                                    <div class="col-md-3 map" id="map"></div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                             <div class="row">
+                                <div class="col">
+                                    <p>No existe ningun juego en la aplicación</p>
+                                </div>
+                             </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
+                zoom: 4
+            })
+        });
+    </script>
+{% endblock %}
