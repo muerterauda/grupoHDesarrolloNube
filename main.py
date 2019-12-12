@@ -202,6 +202,24 @@ def añadir_juego():
 
     return redirect(url_for('/'))
 
+@app.route("/recogerdatos", methods=['GET', 'POST'])
+def recogerdatos():
+
+    print(request.args)
+    juego =request.args.copy()
+    """Almacena el todos los tesoros en la variable juego"""
+
+    return render_template("pruebajinja1.html", iden=juego)
+
+@app.route('/editarJuego/<id>')
+@login_required
+def editarJuego(id):
+    user = current_user
+
+    juego = find_juego_by_id(id)
+
+    return render_template("editarjuego.html", juego=juego, user=user)
+
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
     # Engine, a webserver process such as Gunicorn will serve the app. This

@@ -23,30 +23,47 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col text-center">
-            <br>
-            <input type="button" id="add_field" value="Añadir pista">
-        </div>
-    </div>
-    <div class="container-fluid">
-            <form action="/recogerdatos" method="get">
-                <div id="listas">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col align-center">
-                                <div class="map" id="map"/>
+     <div class="container-fluid">
+        <hr>
+        <div class="container-header text-center"><h2>Juego {{ juego.id }}</h2></div>
+        <hr>
+
+         <div class="container">
+            <div class="row">
+                <div class="col align-center">
+                    <div class="map" id="map"/>
+                </div>
+            </div>
+         </div>
+     <p>{{ juego.tesoros | length }}</p>
+            {% for tesoro in juego.tesoros %}
+                 <div class="row juego">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <br>
+                                <p> ID tesoro: {{ juego.tesoros[tesoro]['identificador'] }}</p>
+                            </div>
+                            <div class="col">
+                                <br>
+                                <p>Descubridores: </p>
+                                {%  for descubridor in juego.tesoros[tesoro]['descubridores'] %}
+                                <p>{{ juego.tesoros[tesoro]['descubridores'][descubridor]['email'] }}</p>
+                            {% endfor %}
+                            </div>
+                            <div class="col">
+                              <br>
+                                <p>Pista Imagen: <input type="file" name="{{ juego.tesoros[tesoro]['identificador'] }}" value=" {{juego.tesoros[tesoro]['identificador']  }}"></p>
                             </div>
                         </div>
-                    </div>
-                </div>
+                  </div>
+             {% endfor %}
              <div class="col text-center">
                 <br>
                 <input type="submit" value="OK">
             </div>
-            </form>
      </div>
-    <script type="text/javascript">
+
+        <script type="text/javascript">
         var x = 1;
          var map = new ol.Map({
             target: 'map',
