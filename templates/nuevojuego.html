@@ -3,20 +3,10 @@
     <title>Inicio</title>
     <style>
         .map {
-            min-height: 200px;
+            min-height: 300px;
             padding: 5px 5px;
         }
-        .sidebar{
-            background: #7ebff5;
-            padding: 20px;
-            box-sizing:border-box;
-            -moz-border-radius: 10px;
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-            border: 1px solid #1b98ff;
-            margin: 10px 0px;
-            box-sizing: border-box;
-        }
+
         .juego{
             background: #dbefff;
             padding: 5px;
@@ -26,36 +16,84 @@
             border-radius: 10px;
             border: 1px solid #1b98ff;
             margin: 10px 0px;
+            text-decoration: none;
             box-sizing: border-box;
         }
     </style>
 {% endblock %}
 
 {% block content %}
-    <div class="container-fluid">
-    <hr>
-        <div class="container-header text-center"><h2>Crear nuevo Juego</h2></div>
-        <hr>
-        <form action="/mongo/entity/nuevoJuego.py/" method="post">
-            <div class="row">
-                <div class="col-5"><h2>Introduzca el numero de tesoros</h2></div>
-                    <div class="col-1">
-                        <p><input type="number" name="numeroTesoros" /></p>
-                    </div>
-            </div>
-            <div class="row"></div>
-            <div class="row">
-                <div class="col-5"><h2>Introduzca el limite de coordenadas</h2></div>
-                    <div class="col-1">
-                        <p>Latitud Maxima: <input type="number" name="LatitudMax"/></p>
-                        <p>Latitud Minima: <input type="number" name="LatitudMin"/></p>
-                        <p>Longitud Maxima: <input type="number" name="LongitudMax"/></p>
-                        <p>Longitud Minima: <input type="number" name="LongitudMin"/></p>
-                    </div>
-            </div>
-            <div class="row">
-                <a href="index.html"> <input type="submit" value="Submit"></a>
-            </div>
-        </form>
+    <div class="row">
+        <div class="col text-center">
+            <br>
+            <input type="button" id="add_field" value="Añadir pista">
+        </div>
     </div>
+    <div class="container-fluid">
+            <form action="/recogerdatos" method="get">
+                <div id="listas">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col align-center">
+                                <div class="map" id="map"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             <div class="col text-center">
+                <br>
+                <input type="submit" value="OK">
+            </div>
+            </form>
+     </div>
+    <script type="text/javascript">
+        var x = 1;
+         var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
+                zoom: 4
+            })
+        });
+
+
+        $('#add_field').click(function () {
+            $('#listas').append('<div class="row juego">\
+                        <div class="row align-items-center">\
+                            <div class="col">\
+                                <br>\
+                                <p> ID tesoro: '+x+'</p>\
+                                <input type="hidden" name="ID_'+x+'" value='+x+'>\
+                            </div>\
+                            <div class="col">\
+                                <br>\
+                                <p>Pista Texto: <input type="text" name="pista_texto_'+x+'"></p>\
+                            </div>\
+                            \<div class="col">\
+                              <br>\
+                                <p>Pista Imagen: <input type="file" name="pista_imagen_'+x+'"></p>\
+                            </div>\
+                        </div>\
+                        </div>');
+            x++;
+        });
+
+        var map2 = new ol.Map({
+            target: 'map2',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
+                zoom: 4
+            })
+        });
+    </script>
 {% endblock %}
