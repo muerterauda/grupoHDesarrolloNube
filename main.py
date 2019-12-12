@@ -160,19 +160,28 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-
 @app.route('/')
 @login_required
 def hello():
     """Return a friendly HTTP greeting."""
     # t = db.find_one()
     user = current_user
-
     juegos_activos = find_juego_by_participante_and_estado(user, True)
-    juegos_acabados =  find_juego_by_participante_and_estado(user, False)
+    juegos_acabados = find_juego_by_participante_and_estado(user, False)
     juegos_creados = find_juego_by_creador_and_estado(user)
+    return render_template("index.html", juegos_activos=juegos_activos, juegos_acabados=juegos_acabados,
+                           juegos_creados=juegos_creados, user=user)
+    """Completar"""
+    """if user.get_admin():
+        lista_juegos = find_juego_by_creador_and_estado(user)
+        return render_template("admin.html", lista_juegos=lista_juegos, user=user)
 
-    return render_template("index.html", juegos_activos=juegos_activos, juegos_acabados=juegos_acabados, juegos_creados=juegos_creados, user=user)
+    else:
+        juegos_activos = find_juego_by_participante_and_estado(user, True)
+        juegos_acabados = find_juego_by_participante_and_estado(user, False)
+        juegos_creados = find_juego_by_creador_and_estado(user)
+        return render_template("index.html", juegos_activos=juegos_activos, juegos_acabados=juegos_acabados,
+                           juegos_creados=juegos_creados, user=user)"""
 
 @app.route('/nuevoJuego')
 @login_required
@@ -180,27 +189,59 @@ def nuevojuego():
     """Return a friendly HTTP greeting."""
     # t = db.find_one()
     user = current_user
-
     return render_template("nuevojuego.html", user=user)
 
 @app.route("/juego/<id>")
 def mostrar_articulo(id):
-
     user = current_user
-
     juego = find_juego_by_id(id)
-
     return render_template("juego.html", juego=juego, user=user)
 
-    """Funcion para añadir un nuevo jugador a un juego, donde el id del jugador
-    esta en request.form['id_juego'] y el usuario esta en current_user"""
+    """Funcion para añadir un nuevo jugador a un juegor"""
 @app.route("/añadirJuego", methods=['GET', 'POST'])
 def añadir_juego():
-
     user = current_user
-    id_juego = request.form['id_juego']
+    juego = find_juego_by_id(request.form['id_juego'])
 
-    return redirect(url_for('/'))
+    """Completar"""
+
+    return redirect(url_for('hello'))
+
+@app.route("/verJuego/<id>")
+def ver_juego(id):
+    user = current_user
+    juego = find_juego_by_id(id)
+    return render_template("visualizar.html", juego=juego, user=user)
+
+    """Funcion para eliminar un participante del juego"""
+@app.route("/abandonarJuego/<id>")
+def abandonar_juego(id):
+    user = current_user
+    juego = find_juego_by_id(id)
+
+    """Completar"""
+
+    return redirect(url_for('hello'))
+
+    """Funcion para reiniciar la partida"""
+@app.route("/reiniciarJuego/<id>")
+def reiniciar_juego(id):
+    user = current_user
+    juego = find_juego_by_id(id)
+
+    """Completar"""
+
+    return redirect(url_for('hello'))
+
+    """Funcion para eliminar la partida"""
+@app.route("/eliminarJuego/<id>")
+def eliminar_juego(id):
+    user = current_user
+    juego = find_juego_by_id(id)
+
+    """Completar"""
+
+    return redirect(url_for('hello'))
 
 @app.route("/recogerdatos", methods=['GET', 'POST'])
 def recogerdatos():

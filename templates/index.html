@@ -3,7 +3,7 @@
     <title>Inicio</title>
     <style>
         .map {
-            min-height: 200px;
+            min-height: 30vh;
             padding: 5px 5px;
         }
         .sidebar{
@@ -71,32 +71,32 @@
                             {% for juego in juegos_activos %}
                                 <div class="row juego">
                                     <!-- DATOS -->
-                                    <div class="col-sm-9">
+                                    <div class="col-md-9">
                                         <div class="row">
-                                            <div class="col-sm-3">
+                                            <div class="col-md-4">
                                                 <p><strong>ID:</strong>  {{ juego.id }}</p>
                                                 <p>Tesoros total: {{ juego.tesoros.keys() | max }}</p>
                                                 <p>Tesoros restantes: {{juego.tesoros_restantes}}</p>
                                             </div>
 
-                                            <div class="col-sm-6">
+                                            <div class="col-md-4">
                                                 <p>Participantes:</p>
                                                 {% for participante in juego.participantes %}
                                                     <li>{{juego.participantes[participante]['email']}}</li>
                                                 {% endfor %}
                                             </div>
 
-                                            <div class="col-sm-3">
+                                            <div class="col-md-4">
                                                 <p>Acciones:</p>
 
                                                 <li><a href="/juego/{{ juego.id }}">Entrar al juego</a></li>
-                                                <li><a href="#">Abandonar juego</a></li>
+                                                <li><a href="/abandonarJuego/{{ juego.id }}">Abandonar juego</a></li>
 
                                             </div>
                                         </div>
                                     </div>
                                     <!-- MAPAS -->
-                                    <div class="col-sm-3 map" id="map"></div>
+                                    <div class="col-md-3 map" id="map"></div>
                                 </div>
                             {% endfor %}
                         {% else %}
@@ -121,9 +121,9 @@
                                 <div class="row juego perdido">
                             {% endif %}
                                     <!-- DATOS -->
-                                    <div class="col-sm-9">
+                                    <div class="col-md-9">
                                         <div class="row">
-                                            <div class="col-sm-3">
+                                            <div class="col-md-4">
                                                 <p><strong>ID:</strong> {{ juego.id }}</p>
                                                 <p>Tesoros total: {{ juego.tesoros.keys() | max }}</p>
                                                 <p>Tesoros restantes: {{juego.tesoros_restantes}}</p>
@@ -132,23 +132,23 @@
                                                 {% endif %}
                                             </div>
 
-                                            <div class="col-sm-6">
+                                            <div class="col-md-4">
                                                 <p>Participantes:</p>
                                                 {% for participante in juego.participantes %}
                                                     <li>{{juego.participantes[participante]['email']}}</li>
                                                 {% endfor %}
                                             </div>
 
-                                            <div class="col-sm-3">
+                                            <div class="col-md-4">
                                                 <p>Acciones:</p>
 
-                                                <li><a href="#">Eliminar juego</a></li>
+                                                <li><a href="/abandonarJuego/{{ juego.id }}">Abandonar juego</a></li>
                                             </div>
 
                                         </div>
                                     </div>
                                     <!-- MAPAS -->
-                                    <div class="col-sm-3 map" id="map"></div>
+                                    <div class="col-md-3 map" id="map"></div>
                                 </div>
                             {% endfor %}
                         {% else %}
@@ -177,11 +177,10 @@
                                     <div class="row juego">
                                 {% endif %}
                                     <!-- DATOS -->
-                                    <div class="col-sm-9">
+                                    <div class="col-md-9">
                                         <div class="row">
-                                        <p><strong>ID:</strong> {{ juego.id }}</p>
-                                            <div class="col-sm-3">
-
+                                            <div class="col-md-4">
+                                                <p><strong>ID:</strong> {{ juego.id }}</p>
                                                 <p>Tesoros total: {{ juego.tesoros.keys() | max }}</p>
                                                 <p>Tesoros restantes: {{juego.tesoros_restantes}}</p>
                                                 {% if juego.ganador != "" %}
@@ -189,24 +188,24 @@
                                                 {% endif %}
                                             </div>
 
-                                            <div class="col-sm-6">
+                                            <div class="col-md-4">
                                                 <p>Participantes:</p>
                                                 {% for participante in juego.participantes %}
                                                     <li>{{juego.participantes[participante]['email']}}</li>
                                                 {% endfor %}
                                             </div>
 
-                                            <div class="col-sm-3">
+                                            <div class="col-md-4">
                                                 <p>Acciones:</p>
 
-                                                <li><a href="/editarJuego/{{ juego.id }}">Visualizar juego</a></li>
-                                                <li><a href="#">Reiniciar juego</a></li>
-                                                <li><a href="#">Eliminar juego</a></li>
+                                                <li><a href="/verJuego/{{ juego.id }}">Visualizar juego</a></li>
+                                                <li><a href="/reiniciarJuego/{{ juego.id }}">Reiniciar juego</a></li>
+                                                <li><a href="/eliminarJuego/{{ juego.id }}">Eliminar juego</a></li>
                                             </div>
                                         </div>
                                     </div>
                                     <!-- MAPAS -->
-                                    <div class="col-sm-3 map" id="map"></div>
+                                    <div class="col-md-3 map" id="map"></div>
                                 </div>
                             {% endfor %}
                         {% else %}
