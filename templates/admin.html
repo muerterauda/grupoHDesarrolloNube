@@ -81,7 +81,7 @@
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <p><strong>ID:</strong> {{ juego.id }}</p>
-                                                <p>Tesoros total: {{ juego.tesoros.keys() | max }}</p>
+                                                <p>Tesoros total: {{ juego.tesoros | length }}</p>
                                                 <p>Tesoros restantes: {{juego.tesoros_restantes}}</p>
                                                 {% if juego.ganador != "" %}
                                                     <p>Ganador: {{juego.ganador}}</p>

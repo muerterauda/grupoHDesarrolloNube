@@ -65,7 +65,7 @@
                 <br>
                 <div class="sidebar">
                     <h3>Detalles</h3>
-                    <li>Tesoros totales: {{ juego.tesoros.keys() | max }}</li>
+                    <li>Tesoros totales: {{ juego.tesoros | length }}</li>
 
                     {% for participante in juego.participantes %}
                         {% if juego.participantes[participante]['email'] == user.id %}
@@ -89,10 +89,10 @@
 
                                     <div class="row">
                                         <div class="col-lg-4">
-                                            <img src="data:image/gif;base64,{{ juego.tesoros[tesoro].descubridores.pista_imagen }}"/>
+                                            <img src="data:image/gif;base64,{{ juego.tesoros[tesoro].get_pistas()[1] }}"/>
                                         </div>
                                         <div class="col-lg-8">
-                                            Texto: {{ juego.tesoros[tesoro].descubridores.pista_texto }}
+                                            Texto: {{ juego.tesoros[tesoro].get_pistas()[0]}}
                                         </div>
                                     </div>
                                 </div>
