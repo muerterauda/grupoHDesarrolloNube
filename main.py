@@ -250,7 +250,9 @@ def recogerdatos():
     juego =request.args.copy()
     """Almacena el todos los tesoros en la variable juego"""
 
-    return render_template("pruebajinja1.html", iden=juego)
+    """Completar"""
+
+    return redirect(url_for('hello'))
 
 @app.route('/editarJuego/<id>')
 @login_required
@@ -260,6 +262,17 @@ def editarJuego(id):
     juego = find_juego_by_id(id)
 
     return render_template("editarjuego.html", juego=juego, user=user)
+
+@app.route("/tesorosmod", methods=['GET', 'POST'])
+def tesorosmodificados():
+
+    print(request.args)
+    juego =request.args.copy()
+    """Devuelve todos los tesoros en la variable juego"""
+    """ si no se ha modificado el campo pista_imagen almacenar el existente en la BD"""
+    """Completar"""
+
+    return redirect(url_for('hello'))
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
