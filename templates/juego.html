@@ -65,15 +65,15 @@
                 <br>
                 <div class="sidebar">
                     <h3>Detalles</h3>
-                    <li id="" class="">Tesoros totales: {{ juego.tesoros.keys() | max }}</li>
+                    <li>Tesoros totales: {{ juego.tesoros.keys() | max }}</li>
 
                     {% for participante in juego.participantes %}
                         {% if juego.participantes[participante]['email'] == user.id %}
-                            <li id="" class="">Tesoros encontrados:{{juego.participantes[participante]['tesoros']}}</li>
-                            <li id="" class="">Tesoros restantes jugador: {{juego.tesoros.keys() | max | int - juego.participantes[participante]['tesoros']}}</li>
+                            <li>Tesoros encontrados:{{juego.participantes[participante]['tesoros']}}</li>
+                            <li>Tesoros restantes jugador: {{juego.tesoros.keys() | max | int - juego.participantes[participante]['tesoros']}}</li>
                         {% endif %}
                     {% endfor %}
-                    <li id="" class="">Tesoros restantes juego: {{juego.tesoros_restantes}}</li>
+                    <li>Tesoros restantes juego: {{juego.tesoros_restantes}}</li>
                 </div>
             </div>
         </div>
