@@ -48,8 +48,8 @@ class Juego:
                 if p['tesoros'] == len(self.tesoros):
                     self.__estado = False
                     self.__ganador = descubridor.id
-                if len(self.tesoros)-p['tesoros'] < self.tesoros_restantes:
-                    self.__tesoros_restantes = len(self.tesoros)-p['tesoros']
+                if len(self.tesoros) - p['tesoros'] < self.tesoros_restantes:
+                    self.__tesoros_restantes = len(self.tesoros) - p['tesoros']
         return enc
 
     def add_participante(self, user: User):
@@ -74,6 +74,13 @@ class Juego:
             return True
         else:
             return False
+
+    def reset_game(self):
+        self.__participantes = {}
+        self.__estado = True
+        self.__ganador = None
+        for tesoro in self.tesoros.values():
+            tesoro.reset()
 
 
     @property
@@ -117,5 +124,6 @@ class Juego:
         return dic
 
     def __str__(self):
-        return self.id + '('+self.creador+'): ' + (
-            'Activo' if self.estado else 'Terminado') + ', numero de tesoros restantes: ' + str(self.tesoros_restantes)+('. Ganador: '+self.ganador if self.ganador else '')
+        return self.id + '(' + self.creador + '): ' + (
+            'Activo' if self.estado else 'Terminado') + ', numero de tesoros restantes: ' + str(
+            self.tesoros_restantes) + ('. Ganador: ' + self.ganador if self.ganador else '')

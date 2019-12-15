@@ -39,6 +39,9 @@ class Tesoro:
         else:
             return False
 
+    def reset(self):
+        self.__descubridores = {}
+
     @property
     def identificador(self):
         return self.__identificador

@@ -14,7 +14,7 @@ from mongo.entity.Juego import Juego
 from mongo.entity.Tesoro import Tesoro
 from mongo.entity.Usuario import User
 from mongo.repository.juego_repository import find_juego_by_creador_and_estado, find_juego_by_participante_and_estado, \
-    find_juego_by_id, save_juego
+    find_juego_by_id, save_juego, delete_juego_by_id, find_juego_by_estado
 from mongo.repository.usuario_repository import find_user_by_id, replace_user_by_id, update_user_by_id, save_user
 
 #
@@ -170,10 +170,13 @@ def hello():
     """Return a friendly HTTP greeting."""
     # t = db.find_one()
     user = current_user
-    juegos_activos = find_juego_by_participante_and_estado(user, True)
+    mis_juegos_activos = find_juego_by_participante_and_estado(user, True)
+    mis_juegos_acabados = find_juego_by_participante_and_estado(user, False)
+    juegos_activos = find_juego_by_estado(True)
     juegos_acabados = find_juego_by_participante_and_estado(user, False)
     juegos_creados = find_juego_by_creador_and_estado(user)
-    return render_template("index.html", juegos_activos=juegos_activos, juegos_acabados=juegos_acabados,
+    return render_template("index.html", mis_juegos_activos=mis_juegos_activos, mis_juegos_acabados=mis_juegos_acabados,
+                           juegos_activos=juegos_activos, juegos_acabados=juegos_acabados,
                            juegos_creados=juegos_creados, user=user)
     """Completar"""
     """if user.get_admin():
@@ -240,20 +243,19 @@ def abandonar_juego(id):
 def reiniciar_juego(id):
     user = current_user
     juego = find_juego_by_id(id)
-
-    """Completar"""
+    if user.id == juego.creador or user.get_admin():
+        juego.reset_game()
+        save_juego(juego)
 
     return redirect(url_for('hello'))
-
-    """Funcion para eliminar la partida"""
 
 
 @app.route("/eliminarJuego/<id>")
 def eliminar_juego(id):
     user = current_user
     juego = find_juego_by_id(id)
-
-    """Completar"""
+    if user.id == juego.creador or user.get_admin():
+        delete_juego_by_id(id)
 
     return redirect(url_for('hello'))
 

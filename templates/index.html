@@ -70,9 +70,99 @@
         <div class="row">
             <div class="col-xl-10 col-lg-9">
                 <div class="row">
+                    <!-- MIS JUEGOS ACTIVOS -->
+                    <div class="col">
+                        <h3>Mis Juegos Activos</h3>
+                        {% if mis_juegos_activos %}
+                            {% for juego in mis_juegos_activos %}
+                                <div class="row juego">
+                                    <!-- DATOS -->
+                                    <div class="col-md-9">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <p><strong>ID:</strong> {{ juego.id }}</p>
+                                                <p>Tesoros total: {{ juego.tesoros | length }}</p>
+                                                <p>Tesoros restantes: {{ juego.tesoros_restantes }}</p>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <p>Participantes:</p>
+                                                {% for participante in juego.participantes %}
+                                                    <li>{{ juego.participantes[participante]['email'] }}</li>
+                                                {% endfor %}
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <p>Acciones:</p>
+
+                                                <li><a href="/juego/{{ juego.id }}">Entrar al juego</a></li>
+                                                <li><a href="/abandonarJuego/{{ juego.id }}">Abandonar juego</a></li>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- MAPAS -->
+                                    <div class="col-md-3 map" id="map"></div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="row">
+                                <div class="col">
+                                    <p>No existe ningun juego activo</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- MIS JUEGOS ACABADOS -->
+                    <div class="col">
+                        <h3>Mis Juegos Acabados</h3>
+                        {% if mis_juegos_acabados %}
+                            {% for juego in mis_juegos_acabados %}
+                                <div class="row juego">
+                                    <!-- DATOS -->
+                                    <div class="col-md-9">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <p><strong>ID:</strong> {{ juego.id }}</p>
+                                                <p>Tesoros total: {{ juego.tesoros | length }}</p>
+                                                <p>Tesoros restantes: {{ juego.tesoros_restantes }}</p>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <p>Participantes:</p>
+                                                {% for participante in juego.participantes %}
+                                                    <li>{{ juego.participantes[participante]['email'] }}</li>
+                                                {% endfor %}
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <p>Acciones:</p>
+
+                                                <li><a href="/juego/{{ juego.id }}">Entrar al juego</a></li>
+                                                <li><a href="/abandonarJuego/{{ juego.id }}">Abandonar juego</a></li>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- MAPAS -->
+                                    <div class="col-md-3 map" id="map"></div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="row">
+                                <div class="col">
+                                    <p>No existe ningun juego activo</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row">
                     <!-- JUEGOS ACTIVOS -->
                     <div class="col">
-                        <h3>Juegos activos</h3>
+                        <h3>Todos los Juegos Activos</h3>
                         {% if juegos_activos %}
                             {% for juego in juegos_activos %}
                                 <div class="row juego">
@@ -118,7 +208,7 @@
                 <div class="row">
                     <!-- JUEGOS ACABADOS -->
                     <div class="col">
-                        <h3>Juegos acabados</h3>
+                        <h3>Todos los Juegos Acabados</h3>
                         {% if juegos_acabados %}
                             {% for juego in juegos_acabados %}
                                 {% if user.id == juego.ganador %} <!-- Si el ganador es el usuario se pone en verde -->
