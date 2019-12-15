@@ -56,20 +56,18 @@ class Juego:
         if user.id not in self.participantes:
             self.__participantes[user.id_mongo] = {"email": user.id, "tesoros": 0}
 
-    def remove_tesoro(self, id_tesoro)->bool:
+    def remove_tesoro(self, id_tesoro) -> bool:
         tesoro = self.__tesoros.get(id_tesoro)
         if tesoro:
             descubridores = tesoro.descubridores
             if len(descubridores.keys()) == 0:
                 self.__tesoros_restantes = self.__tesoros_restantes - 1
             else:
-                lista_auxiliar_participantes = []
-                for user in self.__participantes:
-                    dicc = self.__participantes.get(user)
-                    if len(self.tesoros) - dicc.get('tesoros') == self.__tesoros_restantes:
-                        lista_auxiliar_participantes.append(user)
-                for user in descubridores:
-                    if user not in lista_auxiliar_participantes:
+                for usuario in self.__participantes:
+                    if usuario in descubridores:
+                        self.__participantes.get(usuario)['tesoros'] -= 1
+                for usuario in self.__participantes:
+                    if (len(self.tesoros) - 1) - self.__participantes.get(usuario)['tesoros'] < self.tesoros_restantes:
                         self.__tesoros_restantes = self.__tesoros_restantes - 1
                         break
             self.__tesoros.pop(id_tesoro)
