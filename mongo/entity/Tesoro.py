@@ -52,7 +52,7 @@ class Tesoro:
         return self.__longitud
 
     @property
-    def descubridores(self):
+    def descubridores(self) -> dict:
         return self.__descubridores
 
     def get_pistas(self) -> list:
@@ -76,4 +76,3 @@ def generar_tesoros_object(tesoros: dict) -> dict:
     for t in tesoros:
         diccionario[t] = Tesoro(diccionario_mongo=tesoros.get(t))
     return diccionario
-
