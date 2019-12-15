@@ -4,21 +4,21 @@ import os
 import flask
 from flask import Flask, url_for, redirect, \
     render_template, session, request
-from flask_login import LoginManager, login_required, current_user, logout_user, login_user, UserMixin
+from flask_login import LoginManager, login_required, current_user, logout_user, login_user
 from mysqlx import Auth
 from requests.exceptions import HTTPError
 from requests_oauthlib import OAuth2Session
 
+from mongo.entity.Juego import Juego
+from mongo.entity.Tesoro import Tesoro
 from mongo.entity.Usuario import User
 from mongo.repository.juego_repository import find_juego_by_creador_and_estado, find_juego_by_participante_and_estado, \
-    find_juego_by_id
+    find_juego_by_id, save_juego
 from mongo.repository.usuario_repository import find_user_by_id, replace_user_by_id, update_user_by_id, save_user
 
 #
 # GOOGLE_LOGIN_CLIENT_ID = "433051237268-etqt25o974bg52mmto23hs4lrg141ihq.apps.googleusercontent.com"
 # GOOGLE_LOGIN_CLIENT_SECRET = "MuH32nfjnOETmzIaNAP9vPoQ"
-
-from mongo.mongo_manager import usuarios
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -162,6 +162,7 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+
 @app.route('/')
 @login_required
 def hello():
@@ -185,6 +186,7 @@ def hello():
         return render_template("index.html", juegos_activos=juegos_activos, juegos_acabados=juegos_acabados,
                            juegos_creados=juegos_creados, user=user)"""
 
+
 @app.route('/nuevoJuego')
 @login_required
 def nuevo_juego():
@@ -200,6 +202,8 @@ def mostrar_articulo(id):
     return render_template("juego.html", juego=juego, user=user)
 
     """Funcion para añadir un nuevo jugador a un juegor"""
+
+
 @app.route("/añadirJuego", methods=['GET', 'POST'])
 def añadir_juego():
     user = current_user
@@ -209,6 +213,7 @@ def añadir_juego():
 
     return redirect(url_for('hello'))
 
+
 @app.route("/verJuego/<id>")
 def ver_juego(id):
     user = current_user
@@ -216,6 +221,8 @@ def ver_juego(id):
     return render_template("visualizar.html", juego=juego, user=user)
 
     """Funcion para eliminar un participante del juego"""
+
+
 @app.route("/abandonarJuego/<id>")
 def abandonar_juego(id):
     user = current_user
@@ -226,6 +233,8 @@ def abandonar_juego(id):
     return redirect(url_for('hello'))
 
     """Funcion para reiniciar la partida"""
+
+
 @app.route("/reiniciarJuego/<id>")
 def reiniciar_juego(id):
     user = current_user
@@ -236,6 +245,8 @@ def reiniciar_juego(id):
     return redirect(url_for('hello'))
 
     """Funcion para eliminar la partida"""
+
+
 @app.route("/eliminarJuego/<id>")
 def eliminar_juego(id):
     user = current_user
@@ -245,16 +256,21 @@ def eliminar_juego(id):
 
     return redirect(url_for('hello'))
 
+
 @app.route("/recogerdatos", methods=['GET', 'POST'])
 def recogerdatos():
-
     print(request.args)
-    juego =request.args.copy()
     """Almacena el todos los tesoros en la variable juego"""
-
-    """Completar"""
-
+    tesoros = {}
+    for i in range(1, int(request.values.get("nTesoros"))):
+        coordenadas = request.values.get("coordenadas_" + str(i)).split(",")
+        tesoro = Tesoro(i, coordenadas[0], coordenadas[1], pista_texto=request.values.get("pista_texto_" + str(i)),
+                        pista_imagen=request.values.get("pista_imagen_" + str(i)))
+        tesoros[i] = tesoro
+    juego = Juego(diccionario_tesoros=tesoros, creador=current_user, dimensiones=[(0, 0), (0, 1), (1, 0), (1, 1)])
+    save_juego(juego)
     return redirect(url_for('hello'))
+
 
 @app.route('/editarJuego/<id>')
 @login_required
@@ -265,16 +281,17 @@ def editarJuego(id):
 
     return render_template("editarjuego.html", juego=juego, user=user)
 
+
 @app.route("/tesorosmod", methods=['GET', 'POST'])
 def tesorosmodificados():
-
     print(request.args)
-    juego =request.args.copy()
+    juego = request.args.copy()
     """Devuelve todos los tesoros en la variable juego"""
     """ si no se ha modificado el campo pista_imagen almacenar el existente en la BD"""
     """Completar"""
 
     return redirect(url_for('hello'))
+
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

@@ -7,10 +7,10 @@
             padding: 5px 5px;
         }
 
-        .juego{
+        .juego {
             background: #dbefff;
             padding: 5px;
-            box-sizing:border-box;
+            box-sizing: border-box;
             -moz-border-radius: 10px;
             -webkit-border-radius: 10px;
             border-radius: 10px;
@@ -26,74 +26,140 @@
     <div class="row">
         <div class="col text-center">
             <br>
-            <input type="button" id="add_field" value="Añadir pista">
+            {#            <input type="button" id="add_field" value="Añadir pista">#}
         </div>
     </div>
     <div class="container-fluid">
-            <form action="/recogerdatos" method="get">
-                <div id="listas">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col align-center">
-                                <div class="map" id="map"/>
-                            </div>
+        <form action="/recogerdatos" method="get" id="myForm">
+            <input hidden type="text" value="0" id="nTesoros" name="nTesoros">
+            <div id="listas">
+                <div class="container">
+                    <div class="row">
+                        <div class="col align-center">
+                            <div class="map" id="map"></div>
                         </div>
                     </div>
                 </div>
-             <div class="col text-center">
+            </div>
+            <div class="col text-center">
                 <br>
                 <input type="submit" value="OK">
             </div>
-            </form>
-     </div>
+        </form>
+    </div>
     <script type="text/javascript">
         var x = 1;
-         var map = new ol.Map({
+
+        var bounds = [
+            [-11.438829, 35.210037], // Southwest coordinates
+            [5.718196, 44.680023]  // Northeast coordinates
+        ];
+
+
+        const markerSource = new ol.source.Vector();
+        var map = new ol.Map({
+            maxBounds: bounds, // Sets bounds as max
             target: 'map',
             layers: [
                 new ol.layer.Tile({
                     source: new ol.source.OSM()
+                }),
+                new ol.layer.Vector({
+                    source: markerSource
                 })
             ],
             view: new ol.View({
                 center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
-                zoom: 4
+                zoom: 14
             })
         });
 
+        var puntosPuestos = new Map();
 
-        $('#add_field').click(function () {
-            $('#listas').append('<div class="row juego">\
+        map.on('click', function (evt) {
+            var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+            var x = map.getFeaturesAtPixel(evt.pixel);
+            var iyo = evt.pixel;
+            console.log(typeof (iyo));
+            if (x.length > 0) {
+                alert("Ya existe un tesoro en esta posicion o en una muy cercana. Elminelo antes de crear otro en sus proximidades.")
+            } else {
+                addMarker(pos[0], pos[1], evt);
+            }
+        });
+
+        function addMarker(lon, lat, evt) {
+            console.log('lon:', lon);
+            console.log('lat:', lat);
+            /* for (var icono of puntosPuestos.values()) {
+                 markerSource.removeFeature(icono);
+             }*/
+            var iconFeature = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326',
+                    'EPSG:3857')),
+                population: 4000,
+                rainfall: 500
+            });
+
+            var myStyle = new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: 7,
+                    fill: new ol.style.Fill({color: 'yellow'}),
+                    stroke: new ol.style.Stroke({
+                        color: [255, 204, 0], width: 2
+                    })
+                })
+            });
+            iconFeature.setStyle(myStyle);
+            markerSource.addFeature(iconFeature);
+            puntosPuestos.set(lon + lat, iconFeature);
+
+            $('#listas').append('<div class="row tesoro" id="tesoro' + x + '">\
                         <div class="row align-items-center">\
                             <div class="col">\
                                 <br>\
-                                <p> ID tesoro: '+x+'</p>\
-                                <input type="hidden" name="ID_'+x+'" value='+x+'>\
+                                <p> ID tesoro: ' + x + '</p>\
+                                <input hidden type="text" name="coordenadas_' + x + '" value="' + lon + ', ' + lat + '"/>\
                             </div>\
                             <div class="col">\
                                 <br>\
-                                <p>Pista Texto: <input type="text" name="pista_texto_'+x+'"></p>\
+                                <p>Pista Texto: <input type="text" required name="pista_texto_' + x + '"></p>\
                             </div>\
                             \<div class="col">\
                               <br>\
-                                <p>Pista Imagen: <input type="file" name="pista_imagen_'+x+'"></p>\
+                                <p>Pista Imagen: <input type="file" required name="pista_imagen_' + x + '"></p>\
+                            </div>\
+                            <div class="col">\
+                              <br>\
+                                <button class="btn btn-danger eliminarTesoro" onclick="eliminarTesoro(this.id)" type="button" id="eliminar' + evt.pixel + 'eliminar' + x + '">Eliminar pista</button>\
                             </div>\
                         </div>\
                         </div>');
             x++;
+            document.getElementById("nTesoros").value = x;
+        }
+
+        $('#myForm').submit(function (evt) {
+            if (document.getElementsByClassName("tesoro").length === 0) {
+                alert("Debes crear al menos un tesoro para poder crear un juego");
+                evt.preventDefault();
+            }
         });
 
-        var map2 = new ol.Map({
-            target: 'map2',
-            layers: [
-                new ol.layer.Tile({
-                    source: new ol.source.OSM()
-                })
-            ],
-            view: new ol.View({
-                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
-                zoom: 4
-            })
-        });
+        function eliminarTesoro(id) {
+            let info = id.toString().split('eliminar');
+            var pixeles = info[1].split(",");
+            var x = map.getFeaturesAtPixel(pixeles);
+            if (x.length > 0) {
+                for (var y of x) {
+                    markerSource.removeFeature(y);
+                }
+            } else {
+                alert("Error al borrar tesoro");
+            }
+            document.getElementById("listas").removeChild(document.getElementById("tesoro" + info[2].toString()))
+        }
+
+
     </script>
 {% endblock %}
