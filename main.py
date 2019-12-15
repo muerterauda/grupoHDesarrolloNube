@@ -1,3 +1,4 @@
+import base64
 import json
 import os
 
@@ -257,15 +258,16 @@ def eliminar_juego(id):
     return redirect(url_for('hello'))
 
 
-@app.route("/recogerdatos", methods=['GET', 'POST'])
+@app.route("/recogerdatos", methods=['POST'])
 def recogerdatos():
     print(request.args)
     """Almacena el todos los tesoros en la variable juego"""
     tesoros = {}
     for i in range(1, int(request.values.get("nTesoros"))):
         coordenadas = request.values.get("coordenadas_" + str(i)).split(",")
+        pista_imagen = base64.b64encode(request.files.get("pista_imagen_" + str(i)).read()).decode('utf-8')
         tesoro = Tesoro(i, coordenadas[0], coordenadas[1], pista_texto=request.values.get("pista_texto_" + str(i)),
-                        pista_imagen=request.values.get("pista_imagen_" + str(i)))
+                        pista_imagen=pista_imagen)
         tesoros[i] = tesoro
     juego = Juego(diccionario_tesoros=tesoros, creador=current_user, dimensiones=[(0, 0), (0, 1), (1, 0), (1, 1)])
     save_juego(juego)

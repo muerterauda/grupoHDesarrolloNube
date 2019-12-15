@@ -30,7 +30,7 @@
         </div>
     </div>
     <div class="container-fluid">
-        <form action="/recogerdatos" method="get" id="myForm" enctype="multipart/form-data">
+        <form action="/recogerdatos" method="POST" id="myForm" enctype="multipart/form-data">
             <input hidden type="text" value="0" id="nTesoros" name="nTesoros">
             <div id="listas">
                 <div class="container">
@@ -43,7 +43,7 @@
             </div>
             <div class="col text-center">
                 <br>
-                <input type="submit" value="OK">
+                <button type="submit" class="btn btn-success">Crear juego</button>
             </div>
         </form>
     </div>
