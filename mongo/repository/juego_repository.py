@@ -16,6 +16,13 @@ def find_juego_by_id(juego_id) -> Juego:
     if res is not None:
         return __generar_juego(res)
 
+    
+def find_all_juegos() -> list:
+    diccionario_busqueda = {}
+    res = juegos.find(diccionario_busqueda)
+    lista_juegos = __generar_lista_juegos(res)
+    return lista_juegos
+
 
 def find_juego_by_ganador(ganador: User) -> list:
     diccionario_busqueda = {'ganador': ganador.id}
