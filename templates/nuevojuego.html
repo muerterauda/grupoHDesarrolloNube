@@ -30,7 +30,7 @@
         </div>
     </div>
     <div class="container-fluid">
-        <form action="/recogerdatos" method="get" id="myForm">
+        <form action="/recogerdatos" method="get" id="myForm" enctype="multipart/form-data">
             <input hidden type="text" value="0" id="nTesoros" name="nTesoros">
             <div id="listas">
                 <div class="container">
@@ -127,7 +127,7 @@
                             </div>\
                             \<div class="col">\
                               <br>\
-                                <p>Pista Imagen: <input type="file" required name="pista_imagen_' + x + '"></p>\
+                                <p>Pista Imagen: <input type="file"  accept="image/*" required name="pista_imagen_' + x + '"></p>\
                             </div>\
                             <div class="col">\
                               <br>\
