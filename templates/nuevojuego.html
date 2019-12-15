@@ -47,20 +47,61 @@
             </form>
      </div>
     <script type="text/javascript">
+
+        var OSM_id=340746;
+
         var x = 1;
-         var map = new ol.Map({
+        var geo;
+        var url = 'https://nominatim.openstreetmap.org/reverse?format=json&osm_id=' + OSM_id + '&osm_type=R&polygon_geojson=1';
+        var bounds = [
+            [-11.438829, 35.210037], // Southwest coordinates
+            [5.718196, 44.680023]  // Northeast coordinates
+        ];
+
+
+
+        mapboxgl.accessToken = 'pk.eyJ1IjoibWFudXBsLTk3IiwiYSI6ImNrM3Vmd2JvNzBjM3kzZ3Brc253cTl0b3EifQ.06G3hmSOFoDuxGu38AT76w';
+
+        var map = new mapboxgl.Map({
+            style: 'mapbox://styles/mapbox/streets-v11',
+            maxBounds: bounds, // Sets bounds as max
+            container: 'map',
             target: 'map',
-            layers: [
-                new ol.layer.Tile({
-                    source: new ol.source.OSM()
-                })
-            ],
-            view: new ol.View({
-                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
-                zoom: 4
-            })
+            center: [-4.42437579073269, 36.719449160631086],
+            zoom: 8
         });
 
+
+
+        $.getJSON(url, function(data) {
+
+            //console.log(data);
+            geo = data;
+
+        });
+
+
+
+        map.on('load', function () {
+
+            map.addLayer({
+                'id' : geo.address.city,
+                'type': 'fill',
+                'source': {
+                    'type': 'geojson',
+                    'data': {
+                        'type': 'Feature',
+                        'geometry': geo.geojson
+                    }
+                },
+
+                'layout': {},
+                'paint': {
+                    'fill-color': '#088',
+                    'fill-opacity': 0.2
+                }
+            });
+        });
 
         $('#add_field').click(function () {
             $('#listas').append('<div class="row juego">\
@@ -83,17 +124,5 @@
             x++;
         });
 
-        var map2 = new ol.Map({
-            target: 'map2',
-            layers: [
-                new ol.layer.Tile({
-                    source: new ol.source.OSM()
-                })
-            ],
-            view: new ol.View({
-                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
-                zoom: 4
-            })
-        });
     </script>
 {% endblock %}
