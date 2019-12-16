@@ -114,10 +114,40 @@
                 </div>
             </div>
         </div>
-        <div class="overlay" id="overlay">
-            <div class="popup" id="popup">
+        <div class="overlay" id="overlay" style="overflow-y: scroll;">
+            <div class="popup" id="popup" style="overflow-y: scroll; max-height: 95%; min-width: 80%">
                 <a id="btn-cerrar-popup" class="btn-cerrar-popup"><i class="fas fa-times"></i></a>
-                <h3>Añadir nuevo tesoro</h3>
+                <h1 class="display-4">Encontrar tesoros</h1><br/>
+                <div class="card border-info mb-3">
+                    <div class="card-header">Ayuda</div>
+                    <div class="card-body text-info">
+                        <ul>
+                            <li style="list-style-type: circle"><b>Marcar tesoro:</b> para marcar la posici&oacute;n de
+                                un posible tesoro, pinche la
+                                posici&oacute;n
+                                que crea en el mapa e introduzca el identificador <b>(ID)</b> del tesoro que intenta
+                                encontrar.<br/>
+
+                                Los n&uacute;meros representados en el mapa junto a los puntos son <b>meramente
+                                    identificativos</b>, y no pretenden representar, en nin&uacute;n caso, el ID del
+                                tesoro que debi&eacute;sen representar.
+                            </li>
+                            <li style="list-style-type: circle"><b>Para eliminar:</b> para eliminar una posici&oacute;n
+                                marcada, pinche de nuevo en el
+                                punto y se eliminar&aacute; autom&aacute;ticamente.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card border-warning mb-3">
+                    <div class="card-header">Leyenda</div>
+                    <div class="card-body text-warning">
+                        <ul>
+                            <li style="list-style-type: circle"><b>Amarillo:</b> tesoros ya encontrados.</li>
+                            <li style="list-style-type: circle"><b>Azul:</b> supuesta posici&oacute;n de un tesoro.</li>
+                        </ul>
+                    </div>
+                </div>
                 <form id="insertar-tesoro" method="post" action="/verAciertos/{{ juego.id }}"
                       enctype="application/x-www-form-urlencoded">
                     <div class="map" id="map_popup" style="height: 500px;"></div>
@@ -175,7 +205,6 @@
             var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
             var x_pop = map_pop.getFeaturesAtPixel(evt.pixel);
             if (x_pop.length > 0) {
-                alert("Cada vez que pinche sobre un punto ya posicionado, este se eliminará.");
                 for (var y of x_pop) {
                     markerSource_pop.removeFeature(y);
                 }
@@ -226,6 +255,9 @@
                         stroke: new ol.style.Stroke({
                             color: [0, 153, 255], width: 2
                         })
+                    }),
+                    text: new ol.style.Text({
+                        text: cont.toString(),
                     })
                 });
             iconFeature.setStyle(myStyle);
@@ -246,13 +278,13 @@
                 let labelInput2 = document.createElement("LABEL");
                 labelInput2.id = "labelMarcado_" + cont.toString();
                 labelInput2.setAttribute("for", "tesoroMarcado_" + cont.toString());
-                labelInput2.innerHTML = "<b>¿Qué tesoro es este? </b>&nbsp;";
+                labelInput2.innerHTML = "<b>" + cont.toString() + ". Identificación del tesoro posicionado en dicho punto: </b>&nbsp;";
                 myDiv.appendChild(labelInput2);
 
                 let newInput2 = document.createElement("input");
                 newInput2.id = "tesoroMarcado_" + cont.toString();
                 newInput2.setAttribute("name", "tesoroMarcado");
-                newInput2.setAttribute("type", "text");
+                newInput2.setAttribute("type", "number");
                 newInput2.setAttribute("required", "required");
                 myDiv.appendChild(newInput2);
 
