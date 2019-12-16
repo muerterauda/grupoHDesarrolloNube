@@ -209,8 +209,6 @@ def mostrar_articulo(id):
         jugando = False
     return render_template("juego.html", juego=juego, user=user, jugando=jugando)
 
-    """Funcion para añadir un nuevo jugador a un juegor"""
-
 
 @app.route("/anadirJuego/<id>", methods=['GET'])
 def anadir_juego(id):
