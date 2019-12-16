@@ -203,19 +203,26 @@ def nuevo_juego():
 def mostrar_articulo(id):
     user = current_user
     juego = find_juego_by_id(id)
-    return render_template("juego.html", juego=juego, user=user)
+    if user.id_mongo in juego.participantes:
+        jugando = True
+    else:
+        jugando = False
+    return render_template("juego.html", juego=juego, user=user, jugando=jugando)
 
     """Funcion para añadir un nuevo jugador a un juegor"""
 
 
-@app.route("/añadirJuego", methods=['GET', 'POST'])
-def añadir_juego():
+@app.route("/anadirJuego/<id>", methods=['GET'])
+def anadir_juego(id):
     user = current_user
-    juego = find_juego_by_id(request.form['id_juego'])
-
-    """Completar"""
-
-    return redirect(url_for('hello'))
+    juego = find_juego_by_id(id)
+    juego.add_participante(user)
+    save_juego(juego)
+    if user.id_mongo in juego.participantes:
+        jugando = True
+    else:
+        jugando = False
+    return render_template("juego.html", juego=juego, user=user, jugando=jugando)
 
 
 @app.route("/verJuego/<id>")
@@ -231,7 +238,6 @@ def ver_juego(id):
 def abandonar_juego(id):
     user = current_user
     juego = find_juego_by_id(id)
-
     """Completar"""
 
     return redirect(url_for('hello'))
