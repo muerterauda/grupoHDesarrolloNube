@@ -118,8 +118,10 @@
             <div class="popup" id="popup">
                 <a id="btn-cerrar-popup" class="btn-cerrar-popup"><i class="fas fa-times"></i></a>
                 <h3>Añadir nuevo tesoro</h3>
-                <form id="insertar-tesoro">
+                <form id="insertar-tesoro" method="post" action="/verAciertos/{{ juego.id }}"
+                      enctype="application/x-www-form-urlencoded">
                     <div class="map" id="map_popup" style="height: 500px;"></div>
+                    <div id="tesorosID"></div>
                     <!-- Cambiar por mapa de encontrar tesoro -->
                     <input type="submit" class="btn-submit" id="btn-submit" name="submitted" value="Anadir"
                            style="margin-top: 30px;"/>
@@ -128,6 +130,7 @@
         </div>
     </div>
     <script type="text/javascript">
+        let cont = 1;
         const markerSource_pop = new ol.source.Vector();
         const markerSource = new ol.source.Vector();
         var map_pop = new ol.Map({
@@ -176,6 +179,17 @@
                 for (var y of x_pop) {
                     markerSource_pop.removeFeature(y);
                 }
+                let puntosMarcados = document.getElementsByName("puntoMarcado");
+                let valor = pos[1] + "," + pos[0];
+                for (let pm of puntosMarcados) {
+                    let pm_lon = parseFloat(pm.value.split(",")[0]);
+                    let pm_lat = parseFloat(pm.value.split(",")[1]);
+                    if (Math.abs(pm_lon - pos[0]) <= 0.001 && Math.abs(pm_lat - pos[1]) <= 0.001) {
+                        let pm_id = pm.id.split("_")[1];
+                        document.getElementById("tesorosID").removeChild(document.getElementById("div_" + pm_id));
+                        break;
+                    }
+                }
             } else {
                 addMarker(pos[0], pos[1], false);
             }
@@ -218,8 +232,42 @@
             markerSource_pop.addFeature(iconFeature);
             if (precargando)
                 markerSource.addFeature(iconFeature);
+            else {
+                let myDiv = document.createElement("div");
+                myDiv.id = "div_" + cont.toString();
+
+                let newInput = document.createElement("input");
+                newInput.id = "puntoMarcado_" + cont.toString();
+                newInput.setAttribute("name", "puntoMarcado");
+                newInput.setAttribute("hidden", "hidden");
+                newInput.value = lon + "," + lat;
+                myDiv.appendChild(newInput);
+
+                let labelInput2 = document.createElement("LABEL");
+                labelInput2.id = "labelMarcado_" + cont.toString();
+                labelInput2.setAttribute("for", "tesoroMarcado_" + cont.toString());
+                labelInput2.innerHTML = "<b>¿Qué tesoro es este? </b>&nbsp;";
+                myDiv.appendChild(labelInput2);
+
+                let newInput2 = document.createElement("input");
+                newInput2.id = "tesoroMarcado_" + cont.toString();
+                newInput2.setAttribute("name", "tesoroMarcado");
+                newInput2.setAttribute("type", "text");
+                newInput2.setAttribute("required", "required");
+                myDiv.appendChild(newInput2);
+
+                document.getElementById("tesorosID").appendChild(myDiv);
+
+                cont++;
+            }
         }
 
+        $('#insertar-tesoro').submit(function (evt) {
+            if (document.getElementsByName("puntoMarcado").length === 0) {
+                alert("Debes marcar al menos la posición de un tesoro para poder enviar tus hallazgos.");
+                evt.preventDefault();
+            }
+        });
 
         $('#encontrar-tesoro').click(function () {
             $("#overlay").addClass("active");

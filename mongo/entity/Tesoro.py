@@ -29,7 +29,9 @@ class Tesoro:
         self.__pista_imagen = nueva_pista
 
     def encontrar_tesoro(self, usuario: User, latitud, longitud, imagen_tesoro) -> bool:
-        if latitud == self.latitud and longitud == self.longitud and usuario.id_mongo not in self.descubridores:
+        latitud = float(latitud)
+        longitud = float(longitud)
+        if latitud - self.latitud <= 0.001 and longitud - self.longitud <= 0.001 and usuario.id_mongo not in self.descubridores:
             self.__descubridores[usuario.id_mongo] = {
                 "email": usuario.id,
                 "imagen_tesoro": imagen_tesoro,

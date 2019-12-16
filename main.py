@@ -264,15 +264,28 @@ def eliminar_juego(id):
     return redirect(url_for('hello'))
 
 
+@app.route("/verAciertos/<id>", methods=['POST'])
+def recoger_datos_jugador(id):
+    user = current_user
+    juego = find_juego_by_id(id)
+    puntos_coor = request.values.getlist("puntoMarcado")
+    tesoros_id = request.values.getlist("tesoroMarcado")
+    for p, t in zip(puntos_coor, tesoros_id):
+        juego.encontrar_tesoro(identificador_tesoro=t, latitud=p.split(",")[1], longitud=p.split(",")[0],
+                               imagen_tesoro="imagen", descubridor=user)
+
+    return redirect(url_for('hello'))
+
+
 @app.route("/recogerdatos", methods=['POST'])
-def recogerdatos():
+def recoger_datos_creacion():
     print(request.args)
     """Almacena el todos los tesoros en la variable juego"""
     tesoros = {}
     for i in range(1, int(request.values.get("nTesoros"))):
         coordenadas = request.values.get("coordenadas_" + str(i)).split(",")
         pista_imagen = base64.b64encode(request.files.get("pista_imagen_" + str(i)).read()).decode('utf-8')
-        tesoro = Tesoro(i, coordenadas[0], coordenadas[1], pista_texto=request.values.get("pista_texto_" + str(i)),
+        tesoro = Tesoro(i, float(coordenadas[0]), float(coordenadas[1]), pista_texto=request.values.get("pista_texto_" + str(i)),
                         pista_imagen=pista_imagen)
         tesoros[i] = tesoro
     juego = Juego(diccionario_tesoros=tesoros, creador=current_user, dimensiones=[(0, 0), (0, 1), (1, 0), (1, 1)])
