@@ -236,7 +236,8 @@ def ver_juego(id):
 def abandonar_juego(id):
     user = current_user
     juego = find_juego_by_id(id)
-    """Completar"""
+    juego.remove_participante(user)
+    save_juego(juego)
 
     return redirect(url_for('hello'))
 
@@ -285,7 +286,8 @@ def recoger_datos_creacion():
     for i in range(1, int(request.values.get("nTesoros"))):
         coordenadas = request.values.get("coordenadas_" + str(i)).split(",")
         pista_imagen = base64.b64encode(request.files.get("pista_imagen_" + str(i)).read()).decode('utf-8')
-        tesoro = Tesoro(i, float(coordenadas[0]), float(coordenadas[1]), pista_texto=request.values.get("pista_texto_" + str(i)),
+        tesoro = Tesoro(i, float(coordenadas[0]), float(coordenadas[1]),
+                        pista_texto=request.values.get("pista_texto_" + str(i)),
                         pista_imagen=pista_imagen)
         tesoros[i] = tesoro
     juego = Juego(diccionario_tesoros=tesoros, creador=current_user, dimensiones=[(0, 0), (0, 1), (1, 0), (1, 1)])

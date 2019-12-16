@@ -56,6 +56,19 @@ class Juego:
         if user.id not in self.participantes:
             self.__participantes[user.id_mongo] = {"email": user.id, "tesoros": 0}
 
+    def remove_participante(self, user: User):
+        id = user.id_mongo
+        if not self.estado:
+            raise JuegoException('Juego ya acabado, no se puede abandonar')
+        if id not in self.__participantes:
+            raise JuegoException('Parrticipante no encontrado')
+        else:
+            participante = self.__participantes.pop(id)
+            for t in self.tesoros:
+                self.tesoros[t].eliminar_participante(user)
+            if len(self.tesoros) - participante['tesoros'] == self.tesoros_restantes:
+                self.__recalcular_tesoros()
+
     def remove_tesoro(self, id_tesoro) -> bool:
         tesoro = self.__tesoros.get(id_tesoro)
         if tesoro:
@@ -75,13 +88,20 @@ class Juego:
         else:
             return False
 
+    def __recalcular_tesoros(self):
+        maximo = 0
+        for x in self.__participantes:
+            tesoros = self.__participantes[x]['tesoros']
+            if tesoros > maximo:
+                maximo = tesoros
+        self.__tesoros_restantes = len(self.tesoros) - maximo
+
     def reset_game(self):
         self.__participantes = {}
         self.__estado = True
         self.__ganador = None
         for tesoro in self.tesoros.values():
             tesoro.reset()
-
 
     @property
     def tesoros_restantes(self):

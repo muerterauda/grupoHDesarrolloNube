@@ -25,6 +25,10 @@ class Tesoro:
     def cambiar_pista_texto(self, nueva_pista):
         self.__pista_texto = nueva_pista
 
+    def eliminar_participante(self, user:User):
+        if user.id_mongo in self.__descubridores:
+            self.__descubridores.pop(user.id_mongo)
+
     def cambiar_pista_imagen(self, nueva_pista):
         self.__pista_imagen = nueva_pista
 
