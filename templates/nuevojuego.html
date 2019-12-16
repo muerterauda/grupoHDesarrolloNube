@@ -48,16 +48,46 @@
      </div>
     <script type="text/javascript">
 
-        var OSM_id=340746;
-
         var x = 1;
         var geo;
-        var url = 'https://nominatim.openstreetmap.org/reverse?format=json&osm_id=' + OSM_id + '&osm_type=R&polygon_geojson=1';
         var bounds = [
             [-11.438829, 35.210037], // Southwest coordinates
             [5.718196, 44.680023]  // Northeast coordinates
         ];
 
+        var longitud=-4.4216366;
+        var latitud=36.7213028;
+
+
+        function obtainPolygonURL(){
+
+            var urlLonLat='https://nominatim.openstreetmap.org/reverse?format=json&lon=' + longitud + '&lat=' + latitud;
+
+            $.getJSON(urlLonLat, function(data0) {
+
+            var City = data0.address.city;
+            //console.log(data0);
+
+            var urlLocation='https://nominatim.openstreetmap.org/search?format=json&q=' + City;
+
+                $.getJSON(urlLocation, function(data1) {
+
+                var CityLoca = data1[0];
+                var urlPoly = 'https://nominatim.openstreetmap.org/reverse?format=json&osm_id=' + CityLoca.osm_id + '&osm_type=R&polygon_geojson=1';
+
+                    $.getJSON(urlPoly, function(data2) {
+
+                            //console.log(data);
+                            geo = data2;
+
+                    });
+                });
+             });
+        }
+
+
+
+        obtainPolygonURL();
 
 
         mapboxgl.accessToken = 'pk.eyJ1IjoibWFudXBsLTk3IiwiYSI6ImNrM3Vmd2JvNzBjM3kzZ3Brc253cTl0b3EifQ.06G3hmSOFoDuxGu38AT76w';
@@ -70,17 +100,6 @@
             center: [-4.42437579073269, 36.719449160631086],
             zoom: 8
         });
-
-
-
-        $.getJSON(url, function(data) {
-
-            //console.log(data);
-            geo = data;
-
-        });
-
-
 
         map.on('load', function () {
 
@@ -97,7 +116,7 @@
 
                 'layout': {},
                 'paint': {
-                    'fill-color': '#088',
+                    'fill-color': '#800',
                     'fill-opacity': 0.2
                 }
             });
