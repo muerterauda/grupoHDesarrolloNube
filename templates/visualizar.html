@@ -17,6 +17,17 @@
             margin: 10px 0px;
             box-sizing: border-box;
         }
+        .pista{
+            background: rgba(255, 252, 82, 0.55);
+            padding: 20px;
+            box-sizing:border-box;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            border: 1px solid #ffd841;
+            margin: 10px 0px;
+            box-sizing: border-box;
+        }
         li{
             margin-left: 15px;
             list-style:none;
@@ -59,6 +70,32 @@
                             <li>Tesoros restantes: {{juego.tesoros.keys() | max | int - juego.participantes[participante]['tesoros']}}</li>
                         </ul>
                     {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <A name="pistas"><h3 style="margin-top: 30px;">Pistas</h3></A>
+                <div class="row">
+                    <div class="col">
+                        {% for tesoro in juego.tesoros %}
+                            <div class="row pista">
+                                <div class="col">
+                                    <h3>Pista {{ juego.tesoros[tesoro].identificador }}</h3>
+
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <img src="data:image/gif;base64,{{ juego.tesoros[tesoro].get_pistas()[1] }}"/>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            Texto: {{ juego.tesoros[tesoro].get_pistas()[0]}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
