@@ -17,7 +17,6 @@
             border: 1px solid #1b98ff;
             margin: 10px 0px;
             text-decoration: none;
-            box-sizing: border-box;
         }
     </style>
 {% endblock %}
@@ -27,7 +26,6 @@
         <hr>
         <div class="container-header text-center"><h2>Juego {{ juego.id }}</h2></div>
         <hr>
-
          <div class="container">
             <div class="row">
                 <div class="col align-center">
@@ -35,12 +33,10 @@
                 </div>
             </div>
          </div>
-
              <form action="/tesorosmod" method="get">
                         {% for tesoro in juego.tesoros %}
                             <div class="row juego">
                                 <div class="col">
-
                                     <h3>Tesoro {{ juego.tesoros[tesoro].identificador }}</h3>
                                     <input type="hidden" id = "ID_{{ juego.tesoros[tesoro].identificador }}" name="ID_{{ juego.tesoros[tesoro].identificador }}" value='{{ juego.tesoros[tesoro].identificador }}'>
                                     <div class="row">

@@ -25,6 +25,10 @@ class User(UserMixin):
         return self.__id_mongo
 
     @property
+    def id_mongo_str(self):
+        return str(self.__id_mongo)
+
+    @property
     def get_admin(self):
         return self.__admin
 

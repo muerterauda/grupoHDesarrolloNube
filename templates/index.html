@@ -34,7 +34,6 @@
             border: 1px solid #1b98ff;
             margin: 10px 0px;
             text-decoration: none;
-            box-sizing: border-box;
         }
 
         .juego:hover {
@@ -55,367 +54,360 @@
 {% endblock %}
 
 {% block content %}
+
     <div class="container-fluid">
         <hr>
-        <div class="container-header text-center"><h2>Bienvenido a Caza del Tesoro</h2></div>
+        <h1 class="text-center">Bienvenido a Caza del Tesoro</h1>
         <hr>
-
-        <div class="row text-center">
-            <div class="col">
-                <br>
-                <h3>Mis juegos</h3>
-                <br>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xl-10 col-lg-9">
-                <div class="row">
-                    <!-- MIS JUEGOS ACTIVOS -->
-                    <div class="col">
+        <div class="row flex-x1-nowrap">
+            <div class="offset-lg-3 col-lg-6 col-9">
+                <h2 class="text-center">Mis juegos</h2>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="activos-tab" data-toggle="tab" href="#juegosPartipanteActivos"
+                           role="tab" aria-controls="activos" aria-selected="true">Mis Juegos activos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id=finalizados-tab" data-toggle="tab" href="#juegosPartipanteFinalizados"
+                           role="tab" aria-controls="finalizados" aria-selected="false">Mis Juegos finalizados</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="administracion-tab" data-toggle="tab" href="#misJuegos" role="tab"
+                           aria-controls="administracion" aria-selected="false">Administrar mis juegos</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="activos" role="tabpanel" aria-labelledby="activos-tab">
                         <h3>Mis Juegos Activos</h3>
                         {% if mis_juegos_activos %}
                             {% for juego in mis_juegos_activos %}
-                                <div class="row juego">
-                                    <!-- DATOS -->
-                                    <div class="col-md-9">
+                                <div class="card">
+                                    <div class="card-body">
                                         <div class="row">
-                                            <div class="col-md-4">
-                                                <p><strong>ID:</strong> {{ juego.id }}</p>
-                                                <p>Tesoros total: {{ juego.tesoros | length }}</p>
-                                                <p>Tesoros restantes: {{ juego.tesoros_restantes }}</p>
+                                            <div class="offset-lg-1 col-lg-5 col-6">
+                                                <p class="card-title text-left" style="font-size: large">
+                                                    <b>{{ juego.id }}</b></p>
+                                                <p class="card-text">{{ juego.id }}</p>
+                                                <ul>
+                                                    <li>Tesoros total: {{ juego.tesoros | length }}</li>
+                                                    <li>Tesoros restantes: {{ juego.tesoros_restantes }}</li>
+                                                    <li>Mis tesoros
+                                                        encontrados: {{ juego.participantes[user.id_mongo_str]['tesoros'] }}</li>
+                                                </ul>
+                                                <a class="btn btn-primary" href="/juego/{{ juego.id }}">Entrar al
+                                                    juego</a>
                                             </div>
-
-                                            <div class="col-md-4">
-                                                <p>Participantes:</p>
-                                                {% for participante in juego.participantes %}
-                                                    <li>{{ juego.participantes[participante]['email'] }}</li>
-                                                {% endfor %}
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <p>Acciones:</p>
-
-                                                <li><a href="/juego/{{ juego.id }}">Entrar al juego</a></li>
-                                                <li><a href="/abandonarJuego/{{ juego.id }}">Abandonar juego</a></li>
-
+                                            <div class="col-6">
+                                                <div style="max-height: 200px !important; min-height: 200px !important;"
+                                                     class="map" id="map"></div>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- MAPAS -->
-                                    <div class="col-md-3 map" id="map"></div>
                                 </div>
                             {% endfor %}
                         {% else %}
-                            <div class="row">
-                                <div class="col">
-                                    <p>No existe ningun juego activo</p>
-                                </div>
-                            </div>
+                            <p>No existe ningun juego activo</p>
                         {% endif %}
                     </div>
-                </div>
-                <div class="row">
-                    <!-- MIS JUEGOS ACABADOS -->
-                    <div class="col">
+                    <div class="tab-pane fade" id="finalizados" role="tabpanel" aria-labelledby="finalizados-tab">
                         <h3>Mis Juegos Acabados</h3>
                         {% if mis_juegos_acabados %}
                             {% for juego in mis_juegos_acabados %}
-                                <div class="row juego">
-                                    <!-- DATOS -->
-                                    <div class="col-md-9">
+                                <div class="card">
+                                    <div class="card-body">
                                         <div class="row">
-                                            <div class="col-md-4">
-                                                <p><strong>ID:</strong> {{ juego.id }}</p>
-                                                <p>Tesoros total: {{ juego.tesoros | length }}</p>
-                                                <p>Tesoros restantes: {{ juego.tesoros_restantes }}</p>
+                                            <div class="offset-lg-1 col-lg-5 col-6">
+                                                <p class="card-title text-left" style="font-size: large">
+                                                    <b>{{ juego.id }}</b></p>
+                                                <p class="card-text">{{ juego.id }}</p>
+                                                <ul>
+                                                    <li>Tesoros total: {{ juego.tesoros | length }}</li>
+                                                    <li>Tesoros restantes: {{ juego.tesoros_restantes }}</li>
+                                                    <li>Mis tesoros
+                                                        encontrados: {{ juego.participantes[user.id_mongo_str]['tesoros'] }}</li>
+                                                </ul>
+                                                <a class="btn btn-primary" href="/juego/{{ juego.id }}">Entrar al
+                                                    juego</a>
                                             </div>
-
-                                            <div class="col-md-4">
-                                                <p>Participantes:</p>
-                                                {% for participante in juego.participantes %}
-                                                    <li>{{ juego.participantes[participante]['email'] }}</li>
-                                                {% endfor %}
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <p>Acciones:</p>
-
-                                                <li><a href="/juego/{{ juego.id }}">Entrar al juego</a></li>
-                                                <li><a href="/abandonarJuego/{{ juego.id }}">Abandonar juego</a></li>
-
+                                            <div class="col-6">
+                                                <div style="max-height: 200px !important; min-height: 200px !important;"
+                                                     class="map" id="map"></div>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- MAPAS -->
-                                    <div class="col-md-3 map" id="map"></div>
                                 </div>
                             {% endfor %}
                         {% else %}
-                            <div class="row">
-                                <div class="col">
-                                    <p>No existe ningun juego activo</p>
-                                </div>
-                            </div>
+                            <p>No existe ningun juego activo</p>
                         {% endif %}
                     </div>
-                </div>
-                <div class="row">
-                    <!-- JUEGOS ACTIVOS -->
-                    <div class="col">
-                        <h3>Todos los Juegos Activos</h3>
-                        {% if juegos_activos %}
-                            {% for juego in juegos_activos %}
-                                <div class="row juego">
-                                    <!-- DATOS -->
-                                    <div class="col-md-9">
+                    <div class="tab-pane fade" id="administracion" role="tabpanel" aria-labelledby="administracion-tab">
+                        <h3>Administracion de juegos</h3>
+                        {% if mis_juegos_acabados %}
+                            {% for juego in mis_juegos_acabados %}
+                                <div class="card">
+                                    <div class="card-body">
                                         <div class="row">
-                                            <div class="col-md-4">
-                                                <p><strong>ID:</strong> {{ juego.id }}</p>
-                                                <p>Tesoros total: {{ juego.tesoros | length }}</p>
-                                                <p>Tesoros restantes: {{ juego.tesoros_restantes }}</p>
+                                            <div class="offset-lg-1 col-lg-5 col-6">
+                                                <p class="card-title text-left" style="font-size: large">
+                                                    <b>{{ juego.id }}</b></p>
+                                                <p class="card-text">{{ juego.id }}</p>
+                                                <ul>
+                                                    <li>Tesoros total: {{ juego.tesoros | length }}</li>
+                                                    <li>Tesoros restantes: {{ juego.tesoros_restantes }}</li>
+                                                    <li>Mis tesoros
+                                                        encontrados: {{ juego.participantes[user.id_mongo_str]['tesoros'] }}</li>
+                                                </ul>
+                                                <a class="btn btn-primary" href="/juego/{{ juego.id }}">Entrar al
+                                                    juego</a>
                                             </div>
-
-                                            <div class="col-md-4">
-                                                <p>Participantes:</p>
-                                                {% for participante in juego.participantes %}
-                                                    <li>{{ juego.participantes[participante]['email'] }}</li>
-                                                {% endfor %}
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <p>Acciones:</p>
-
-                                                <li><a href="/juego/{{ juego.id }}">Entrar al juego</a></li>
-                                                <li><a href="/abandonarJuego/{{ juego.id }}">Abandonar juego</a></li>
-
+                                            <div class="col-6">
+                                                <div style="max-height: 200px !important; min-height: 200px !important;"
+                                                     class="map" id="map"></div>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- MAPAS -->
-                                    <div class="col-md-3 map" id="map"></div>
                                 </div>
                             {% endfor %}
                         {% else %}
-                            <div class="row">
-                                <div class="col">
-                                    <p>No existe ningun juego activo</p>
-                                </div>
-                            </div>
+                            <p>No existe ningun juego activo</p>
                         {% endif %}
                     </div>
                 </div>
-
-                <div class="row">
-                    <!-- JUEGOS ACABADOS -->
-                    <div class="col">
-                        <h3>Todos los Juegos Acabados</h3>
-                        {% if juegos_acabados %}
-                            {% for juego in juegos_acabados %}
-                                {% if user.id == juego.ganador %} <!-- Si el ganador es el usuario se pone en verde -->
-                                    <div class="row juego ganado">
-                                {% else %}
-                                    <div class="row juego perdido">
-                                {% endif %}
-                            <!-- DATOS -->
-                            <div class="col-md-9">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <p><strong>ID:</strong> {{ juego.id }}</p>
-                                        <p>Tesoros total: {{ juego.tesoros | length }}</p>
-                                        <p>Tesoros restantes: {{ juego.tesoros_restantes }}</p>
-                                        {% if juego.ganador != "" %}
-                                            <p>Ganador: {{ juego.ganador }}</p>
-                                        {% endif %}
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <p>Participantes:</p>
-                                        {% for participante in juego.participantes %}
-                                            <li>{{ juego.participantes[participante]['email'] }}</li>
-                                        {% endfor %}
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <p>Acciones:</p>
-
-                                        <li><a href="/abandonarJuego/{{ juego.id }}">Abandonar juego</a></li>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <!-- MAPAS -->
-                            <div class="col-md-3 map" id="map"></div>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="row">
-                                <div class="col">
-                                    <p>No existe ningun juego acabado</p>
-                                </div>
-                            </div>
-                        {% endif %}
-                        </div>
+            </div>
+            <div class="col-3">
+                <div class="card bg-light">
+                    <div class="card-header text-center">
+                        <h3>Opciones</h3>
                     </div>
-
-                    <div class="row">
-                        <!-- JUEGOS CREADOS -->
-                        <div class="col">
-                            <h3>Juegos creados</h3>
-                            {% if juegos_creados %}
-                                {% for juego in juegos_creados %}
-                                    {% if juego.ganador != "" %}
-                                        {% if user.id == juego.ganador %}
-                                            <!-- Si el ganador es el usuario se pone en verde -->
-                                            <div class="row juego ganado">
-                                        {% else %}
-                                            <div class="row juego perdido">
-                                        {% endif %}
-                                    {% else %}
-                                        <div class="row juego">
-                                    {% endif %}
-                                <!-- DATOS -->
-                                <div class="col-md-9">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <p><strong>ID:</strong> {{ juego.id }}</p>
-                                            <p>Tesoros total: {{ juego.tesoros | length }}</p>
-                                            <p>Tesoros restantes: {{ juego.tesoros_restantes }}</p>
-                                            {% if juego.ganador != "" %}
-                                                <p>Ganador: {{ juego.ganador }}</p>
-                                            {% endif %}
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <p>Participantes:</p>
-                                            {% for participante in juego.participantes %}
-                                                <li>{{ juego.participantes[participante]['email'] }}</li>
-                                            {% endfor %}
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <p>Acciones:</p>
-                                            <li><a href="/editarJuego/{{ juego.id }}">Editar juego</a></li>
-                                            <li><a href="/verJuego/{{ juego.id }}">Visualizar juego</a></li>
-                                            <li><a href="/reiniciarJuego/{{ juego.id }}">Reiniciar juego</a></li>
-                                            <li><a href="/eliminarJuego/{{ juego.id }}">Eliminar juego</a></li>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- MAPAS -->
-                                <div class="col-md-3 map" id="map"></div>
-                                </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="row">
-                                    <div class="col">
-                                        <p>No existe ningun juego creado</p>
-                                    </div>
-                                </div>
-                            {% endif %}
-                            </div>
-                            </div>
-
-                        </div>
-                        <div class="col-xl-2 col-lg-3 ">
+                    <div class="card-body">
+                        <div class="text-center">
+                            <a class="btn btn-success" href="/nuevoJuego">Crear juego</a>
                             <br>
-                            <!-- SIDEBAR -->
-                            <div class="sidebar">
-                                <h3>Opciones</h3>
-                                <p>
-                                <li><a href="/nuevoJuego">Crear juego</a></li>
-                                <li id="unirse-juego" class="unirse-juego"><a href="#">Unirse</a></li>
-                                </p>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="overlay" id="overlay">
-                        <div class="popup" id="popup" style="max-width: 400px;">
-                            <a id="btn-cerrar-popup" class="btn-cerrar-popup"><i class="fas fa-times"></i></a>
-                            <h3>Añadir juego</h3>
                             <br>
-                            <h4>ID del juego: </h4>
-                            <form id="insertar-tesoro" action="/añadirJuego" method="post">
-                                <div class="contenedor-inputs">
-                                    <input type="text" name="id_juego" id="id_juego" maxlength="24"/>
-                                </div>
-                                <input type="submit" class="btn-submit" id="btn-submit" name="submitted" value="Añadir"
-                                       style="margin-top: 30px;"/>
-                            </form>
+                            <a class="btn btn-primary" href="#">Ver todos los juegos</a>
                         </div>
                     </div>
                 </div>
-
-                <script type="text/javascript">
-                    const markerSource = new ol.source.Vector();
-                    var map = new ol.Map({
-                        target: 'map',
-                        layers: [
-                            new ol.layer.Tile({
-                                source: new ol.source.OSM()
-                            }),
-                            new ol.layer.Vector({
-                                source: markerSource
-                            })
-                        ],
-                        view: new ol.View({
-                            center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
-                            zoom: 4
-                        })
-                    });
-
-                    var puntosPuestos = new Map();
-
-                    map.on('click', function (evt) {
-                        var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
-                        addMarker(pos[0], pos[1]);
-                        var x = map.getFeaturesAtPixel(evt.pixel);
-                        for (var y of x) {
-                            markerSource.removeFeature(y);
-                            alert("eliminado" + y.ol_iud)
-                        }
-                    });
-
-                    function addMarker(lon, lat) {
-                        console.log('lon:', lon);
-                        console.log('lat:', lat);
-                        /* for (var icono of puntosPuestos.values()) {
-                             markerSource.removeFeature(icono);
-                         }*/
-                        var iconFeature = new ol.Feature({
-                            geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326',
-                                'EPSG:3857')),
-                            population: 4000,
-                            rainfall: 500
-                        });
-
-                        var myStyle = new ol.style.Style({
-                            image: new ol.style.Circle({
-                                radius: 7,
-                                fill: new ol.style.Fill({color: 'yellow'}),
-                                stroke: new ol.style.Stroke({
-                                    color: [255, 204, 0], width: 2
-                                })
-                            })
-                        });
-                        iconFeature.setStyle(myStyle);
-                        markerSource.addFeature(iconFeature);
-                        puntosPuestos.set(lon + lat, iconFeature);
-                    }
-
-
-                    $('#unirse-juego').click(function () {
-                        $("#overlay").addClass("active");
-                        $("#popup").addClass("active");
-                    });
-
-                    $('#btn-cerrar-popup').click(function () {
-                        $("#overlay").removeClass("active");
-                        $("#popup").removeClass("active");
-                    });
-
-                </script>
             </div>
         </div>
+
+        {#            <div class="overlay" id="overlay">#}
+        {#                <div class="popup" id="popup" style="max-width: 400px;">#}
+        {#                    <a id="btn-cerrar-popup" class="btn-cerrar-popup"><i class="fas fa-times"></i></a>#}
+        {#                    <h3>Añadir juego</h3>#}
+        {#                    <br>#}
+        {#                    <h4>ID del juego: </h4>#}
+        {#                    <form id="insertar-tesoro" action="/añadirJuego" method="post">#}
+        {#                        <div class="contenedor-inputs">#}
+        {#                            <input type="text" name="id_juego" id="id_juego" maxlength="24"/>#}
+        {#                        </div>#}
+        {#                        <input type="submit" class="btn-submit" id="btn-submit" name="submitted" value="Añadir"#}
+        {#                               style="margin-top: 30px;"/>#}
+        {#                    </form>#}
+        {#                </div>#}
+        {#            </div>#}
+        {#        </div>#}
+        <!-- MIS JUEGOS ACTIVOS -->
+
+        {#    <div>#}
+        {#        <h3>Todos los Juegos Activos</h3>#}
+        {#        {% if juegos_activos %}#}
+        {#            {% for juego in juegos_activos %}#}
+        {#                <div class="row juego">#}
+        {#                    <!-- DATOS -->#}
+        {#                    <div class="col-md-9">#}
+        {#                        <div class="row">#}
+        {#                            <div class="col-md-4">#}
+        {#                                <p><strong>ID:</strong> {{ juego.id }}</p>#}
+        {#                                <p>Tesoros total: {{ juego.tesoros | length }}</p>#}
+        {#                                <p>Tesoros restantes: {{ juego.tesoros_restantes }}</p>#}
+        {#                            </div>#}
+        {##}
+        {#                            <div class="col-md-4">#}
+        {#                                <p>Participantes:</p>#}
+        {#                                {% for participante in juego.participantes %}#}
+        {#                                    <li>{{ juego.participantes[participante]['email'] }}</li>#}
+        {#                                {% endfor %}#}
+        {#                            </div>#}
+        {##}
+        {#                            <div class="col-md-4">#}
+        {#                                <p>Acciones:</p>#}
+        {#                                <ul>#}
+        {#                                    <li><a href="/juego/{{ juego.id }}">Entrar al juego</a></li>#}
+        {#                                    <li><a href="/abandonarJuego/{{ juego.id }}">Abandonar juego</a></li>#}
+        {#                                </ul>#}
+        {#                            </div>#}
+        {#                        </div>#}
+        {#                    </div>#}
+        {#                    <!-- MAPAS -->#}
+        {#                    <div class="col-md-3 map" id="map"></div>#}
+        {#                </div>#}
+        {#            {% endfor %}#}
+        {#        {% else %}#}
+        {#            <p>No existe ningun juego activo</p>#}
+        {#        {% endif %}#}
+        {#    </div>#}
+        {#    <div>#}
+        {#        <h3>Todos los Juegos Acabados</h3>#}
+        {#        {% if juegos_acabados %}#}
+        {#            {% for juego in juegos_acabados %}#}
+        {#                {% if user.id == juego.ganador %} <!-- Si el ganador es el usuario se pone en verde -->#}
+        {#                    <div class="row juego ganado">#}
+        {#                {% else %}#}
+        {#                    <div class="row juego perdido">#}
+        {#                {% endif %}#}
+        {#                        <!-- DATOS -->#}
+        {#                        <div class="col-md-9">#}
+        {#                            <div class="row">#}
+        {#                                <div class="col-md-4">#}
+        {#                                    <p><strong>ID:</strong> {{ juego.id }}</p>#}
+        {#                                    <p>Tesoros total: {{ juego.tesoros | length }}</p>#}
+        {#                                    <p>Tesoros restantes: {{ juego.tesoros_restantes }}</p>#}
+        {#                                    {% if juego.ganador != "" %}#}
+        {#                                        <p>Ganador: {{ juego.ganador }}</p>#}
+        {#                                    {% endif %}#}
+        {#                                </div>#}
+        {##}
+        {#                                <div class="col-md-4">#}
+        {#                                    <p>Participantes:</p>#}
+        {#                                    {% for participante in juego.participantes %}#}
+        {#                                        <li>{{ juego.participantes[participante]['email'] }}</li>#}
+        {#                                    {% endfor %}#}
+        {#                                </div>#}
+        {#                            </div>#}
+        {#                        </div>#}
+        {#                        <!-- MAPAS -->#}
+        {#                        <div class="col-md-3 map" id="map"></div>#}
+        {#                    </div>#}
+        {#            {% endfor %}#}
+        {#        {% else %}#}
+        {#            <p>No existe ningun juego acabado</p>#}
+        {#        {% endif %}#}
+        {#        </div>#}
+        {#    </div>#}
+        {#    <div>#}
+        {#        <h3>Juegos creados</h3>#}
+        {#        {% if juegos_creados %}#}
+        {#            {% for juego in juegos_creados %}#}
+        {#                {% if juego.ganador != "" %}#}
+        {#                    {% if user.id == juego.ganador %}#}
+        {#                        <!-- Si el ganador es el usuario se pone en verde -->#}
+        {#                        <div class="row juego ganado">#}
+        {#                    {% else %}#}
+        {#                        <div class="row juego perdido">#}
+        {#                    {% endif %}#}
+        {#                {% else %}#}
+        {#                    <div class="row juego">#}
+        {#                {% endif %}#}
+        {#            <!-- DATOS -->#}
+        {#            <div class="col-md-9">#}
+        {#                <div class="row">#}
+        {#                    <div class="col-md-4">#}
+        {#                        <p><strong>ID:</strong> {{ juego.id }}</p>#}
+        {#                        <p>Tesoros total: {{ juego.tesoros | length }}</p>#}
+        {#                        <p>Tesoros restantes: {{ juego.tesoros_restantes }}</p>#}
+        {#                        {% if juego.ganador != "" %}#}
+        {#                            <p>Ganador: {{ juego.ganador }}</p>#}
+        {#                        {% endif %}#}
+        {#                    </div>#}
+        {##}
+        {#                    <div class="col-md-4">#}
+        {#                        <p>Participantes:</p>#}
+        {#                        {% for participante in juego.participantes %}#}
+        {#                            <li>{{ juego.participantes[participante]['email'] }}</li>#}
+        {#                        {% endfor %}#}
+        {#                    </div>#}
+        {##}
+        {#                    <div class="col-md-4">#}
+        {#                        <p>Acciones:</p>#}
+        {#                        <ul>#}
+        {#                            <li><a href="/editarJuego/{{ juego.id }}">Editar juego</a></li>#}
+        {#                        <li><a href="/verJuego/{{ juego.id }}">Visualizar juego</a></li>#}
+        {#                        <li><a href="/reiniciarJuego/{{ juego.id }}">Reiniciar juego</a></li>#}
+        {#                        <li><a href="/eliminarJuego/{{ juego.id }}">Eliminar juego</a></li>#}
+        {#                        </ul>#}
+        {#                    </div>#}
+        {#                </div>#}
+        {#            </div>#}
+        {#            <!-- MAPAS -->#}
+        {#            <div class="col-md-3 map" id="map"></div>#}
+        {#            </div>#}
+        {#            {% endfor %}#}
+        {#        {% else %}#}
+        {#            <p>No existe ningun juego creado</p>#}
+        {#        {% endif %}#}
+        {#        </div>#}
+        {#    </div>#}
+
+        <script type="text/javascript">
+            const markerSource = new ol.source.Vector();
+            var map = new ol.Map({
+                target: 'map',
+                layers: [
+                    new ol.layer.Tile({
+                        source: new ol.source.OSM()
+                    }),
+                    new ol.layer.Vector({
+                        source: markerSource
+                    })
+                ],
+                view: new ol.View({
+                    center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
+                    zoom: 4
+                })
+            });
+
+            var puntosPuestos = new Map();
+
+            map.on('click', function (evt) {
+                var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+                addMarker(pos[0], pos[1]);
+                var x = map.getFeaturesAtPixel(evt.pixel);
+                for (var y of x) {
+                    markerSource.removeFeature(y);
+                    alert("eliminado" + y.ol_iud)
+                }
+            });
+
+            function addMarker(lon, lat) {
+                console.log('lon:', lon);
+                console.log('lat:', lat);
+                /* for (var icono of puntosPuestos.values()) {
+                     markerSource.removeFeature(icono);
+                 }*/
+                var iconFeature = new ol.Feature({
+                    geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326',
+                        'EPSG:3857')),
+                    population: 4000,
+                    rainfall: 500
+                });
+
+                var myStyle = new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 7,
+                        fill: new ol.style.Fill({color: 'yellow'}),
+                        stroke: new ol.style.Stroke({
+                            color: [255, 204, 0], width: 2
+                        })
+                    })
+                });
+                iconFeature.setStyle(myStyle);
+                markerSource.addFeature(iconFeature);
+                puntosPuestos.set(lon + lat, iconFeature);
+            }
+
+
+            $('#unirse-juego').click(function () {
+                $("#overlay").addClass("active");
+                $("#popup").addClass("active");
+            });
+
+            $('#btn-cerrar-popup').click(function () {
+                $("#overlay").removeClass("active");
+                $("#popup").removeClass("active");
+            });
+
+        </script>
     </div>
 {% endblock %}
