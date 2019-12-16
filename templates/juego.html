@@ -121,7 +121,7 @@
                 <form id="insertar-tesoro">
                     <div class="map" id="map_popup" style="height: 500px;"></div>
                     <!-- Cambiar por mapa de encontrar tesoro -->
-                    <input type="submit" class="btn-submit" id="btn-submit" name="submitted" value="Añadir"
+                    <input type="submit" class="btn-submit" id="btn-submit" name="submitted" value="Anadir"
                            style="margin-top: 30px;"/>
                 </form>
             </div>
@@ -130,7 +130,6 @@
     <script type="text/javascript">
         const markerSource_pop = new ol.source.Vector();
         const markerSource = new ol.source.Vector();
-        var showed = false;
         var map_pop = new ol.Map({
             target: 'map_popup',
             layers: [
@@ -172,12 +171,11 @@
         map_pop.on('click', function (evt) {
             var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
             var x_pop = map_pop.getFeaturesAtPixel(evt.pixel);
-            var x = map.getFeaturesAtPixel(evt.pixel);
-            if (x_pop.length > 0 && !showed) {
+            if (x_pop.length > 0) {
                 alert("Cada vez que pinche sobre un punto ya posicionado, este se eliminará.");
-                showed = true;
-            } else if (x.length > 0) {
-                alert("Este tesoro ya lo ha descubirto.");
+                for (var y of x_pop) {
+                    markerSource_pop.removeFeature(y);
+                }
             } else {
                 addMarker(pos[0], pos[1], false);
             }
