@@ -271,9 +271,9 @@ def recoger_datos_jugador(id):
     puntos_coor = request.values.getlist("puntoMarcado")
     tesoros_id = request.values.getlist("tesoroMarcado")
     for p, t in zip(puntos_coor, tesoros_id):
-        juego.encontrar_tesoro(identificador_tesoro=t, latitud=p.split(",")[1], longitud=p.split(",")[0],
+        juego.encontrar_tesoro(identificador_tesoro=t, latitud=p.split(",")[0], longitud=p.split(",")[1],
                                imagen_tesoro="imagen", descubridor=user)
-
+    save_juego(juego)
     return redirect(url_for('hello'))
 
 

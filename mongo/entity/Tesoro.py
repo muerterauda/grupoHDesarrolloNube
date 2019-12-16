@@ -31,7 +31,7 @@ class Tesoro:
     def encontrar_tesoro(self, usuario: User, latitud, longitud, imagen_tesoro) -> bool:
         latitud = float(latitud)
         longitud = float(longitud)
-        if latitud - self.latitud <= 0.001 and longitud - self.longitud <= 0.001 and usuario.id_mongo not in self.descubridores:
+        if abs(latitud - self.latitud) <= 0.001 and abs(longitud - self.longitud) <= 0.001 and usuario.id_mongo not in self.descubridores:
             self.__descubridores[usuario.id_mongo] = {
                 "email": usuario.id,
                 "imagen_tesoro": imagen_tesoro,
