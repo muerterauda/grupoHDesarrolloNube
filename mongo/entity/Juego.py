@@ -82,6 +82,15 @@ class Juego:
         for tesoro in self.tesoros.values():
             tesoro.reset()
 
+    def get_tesoros(self, user: User) -> list:
+        if user.id_mongo not in self.__participantes:
+            raise JuegoException('Jugador no perteneciente a este juego')
+        tesoros = []
+        for t in self.__tesoros:
+            tesoro = self.__tesoros[t]
+            if user.id_mongo in tesoro.descubridores:
+                tesoros.append(tesoro)
+        return tesoros
 
     @property
     def tesoros_restantes(self):
