@@ -48,16 +48,8 @@
      </div>
     <script type="text/javascript">
 
-        var x = 1;
+        /*
         var geo;
-        var bounds = [
-            [-11.438829, 35.210037], // Southwest coordinates
-            [5.718196, 44.680023]  // Northeast coordinates
-        ];
-
-        var longitud=-4.4216366;
-        var latitud=36.7213028;
-
 
         function obtainPolygonURL(){
 
@@ -89,37 +81,96 @@
 
         obtainPolygonURL();
 
+        */
 
-        mapboxgl.accessToken = 'pk.eyJ1IjoibWFudXBsLTk3IiwiYSI6ImNrM3Vmd2JvNzBjM3kzZ3Brc253cTl0b3EifQ.06G3hmSOFoDuxGu38AT76w';
+        var x = 1;
 
-        var map = new mapboxgl.Map({
-            style: 'mapbox://styles/mapbox/streets-v11',
-            maxBounds: bounds, // Sets bounds as max
-            container: 'map',
-            target: 'map',
-            center: [-4.42437579073269, 36.719449160631086],
-            zoom: 8
+        //Bound para España
+        //var newBound1= ol.proj.transform([-12.586875, 35.796490] , 'EPSG:4326', 'EPSG:3857'); // console.log(newBound1); -> [-1401164.5156785853, 4272654.721278845]
+        //var newBound2= ol.proj.transform([5.254922, 43.049677] , 'EPSG:4326', 'EPSG:3857'); // console.log(newBound2); -> [584975.2411983708, 5319536.252219139]
+
+
+        var styles = {
+          'MultiPolygon': new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: 'blue',
+                  lineDash: [4],
+                  width: 3
+                }),
+                fill: new ol.style.Fill({
+                  color: 'rgba(0, 0, 255, 0.1)'
+            })
+          })/*,
+            'Polygon': new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                  color: 'blue',
+                  lineDash: [4],
+                  width: 3
+                }),
+                fill: new ol.style.Fill({
+                  color: 'rgba(0, 0, 255, 0.1)'
+                })
+              })
+*/
+        };
+
+        var styleFunction = function(feature) {
+          return styles[feature.getGeometry().getType()];
+        };
+
+        //Coordenadas random para formar el polígono -> [longitud, latitud]
+
+        var PolyCoor1 = ol.proj.transform([-4.5878887, 36.7841131] , 'EPSG:4326', 'EPSG:3857');
+        var PolyCoor2 = ol.proj.transform([-4.5812935, 36.7685439] , 'EPSG:4326', 'EPSG:3857');
+        var PolyCoor3 = ol.proj.transform([-4.2936721, 36.7778861], 'EPSG:4326', 'EPSG:3857');
+        var PolyCoor4 = ol.proj.transform([-4.3812535, 36.87574] , 'EPSG:4326', 'EPSG:3857');
+
+        var geojsonObject = {
+            "type":"FeatureCollection",
+            'properties': {
+                'name': 'EPSG:3857'
+            },
+            "features":[
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "MultiPolygon",
+                        "coordinates": [[[PolyCoor1, PolyCoor2, PolyCoor3, PolyCoor4]]]
+                    }
+                }]
+        };
+
+
+        //console.log(PolyCoor1);
+        //console.log(PolyCoor2);
+        //console.log(PolyCoor3);
+        //console.log(PolyCoor4);
+
+
+        var vectorSource = new ol.source.Vector({
+            features: (new ol.format.GeoJSON()).readFeatures(geojsonObject, 'EPSG:3857')
         });
 
-        map.on('load', function () {
+        var vectorLayer = new ol.layer.Vector({
+            source : vectorSource,
+            style: styleFunction
+        });
 
-            map.addLayer({
-                'id' : geo.address.city,
-                'type': 'fill',
-                'source': {
-                    'type': 'geojson',
-                    'data': {
-                        'type': 'Feature',
-                        'geometry': geo.geojson
-                    }
-                },
+        var cen= ol.proj.transform([-4.4785522, 36.7151063], 'EPSG:4326', 'EPSG:3857');
 
-                'layout': {},
-                'paint': {
-                    'fill-color': '#800',
-                    'fill-opacity': 0.2
-                }
-            });
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                }),
+                vectorLayer
+            ],
+            view: new ol.View({
+                center: cen,
+                extent: [-1401164.5156785853,4272654.721278845,584975.2411983708,5479536.252219139],
+                zoom: 9
+            })
         });
 
         $('#add_field').click(function () {
