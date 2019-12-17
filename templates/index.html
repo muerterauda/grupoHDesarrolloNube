@@ -53,8 +53,8 @@
                                         <div class="row">
                                             <div class="offset-lg-1 col-lg-5 col-6">
                                                 <p class="card-title text-left" style="font-size: large">
-                                                    <b>{{ juego.id }}</b></p>
-                                                <p class="card-text">{{ juego.id }}</p>
+                                                    <b>{{ juego.titulo }}</b></p>
+                                                <p class="card-text"><small><i>{{ juego.descripcion }}</i></small></p>
                                                 <ul>
                                                     <li>Tesoros total: {{ juego.tesoros | length }}</li>
                                                     <li>Tesoros restantes: {{ juego.tesoros_restantes }}</li>
@@ -85,8 +85,8 @@
                                         <div class="row">
                                             <div class="offset-lg-1 col-lg-5 col-6">
                                                 <p class="card-title text-left" style="font-size: large">
-                                                    <b>{{ juego.id }}</b></p>
-                                                <p class="card-text">{{ juego.id }}</p>
+                                                    <b>{{ juego.titulo }}</b></p>
+                                                <p class="card-text"><small><i>{{ juego.descripcion }}</i></small></p>
                                                 <ul>
                                                     <li>Tesoros total: {{ juego.tesoros | length }}</li>
                                                     <li>Ganador: {{ juego.ganador }}</li>
@@ -117,12 +117,12 @@
                                         <div class="row">
                                             <div class="offset-lg-1 col-lg-5 col-6">
                                                 <p class="card-title text-left" style="font-size: large">
-                                                    <b>{{ juego.id }}</b>
+                                                    <b>{{ juego.titulo }}</b>
                                                     {% if user.id_mongo_str in juego.participantes %}
                                                         <i class="text-success"> (Participando) </i>
                                                     {% endif %}
                                                 </p>
-                                                <p class="card-text">{{ juego.id }}</p>
+                                                    <p class="card-text"><small><i>{{ juego.descripcion }}</i></small></p>
                                                 <ul>
                                                     <li>Tesoros total: {{ juego.tesoros | length }}</li>
                                                     <li>Tesoros restantes: {{ juego.tesoros_restantes }}</li>
@@ -153,8 +153,8 @@
                                             <div class="row">
                                                 <div class="offset-lg-1 col-lg-5 col-6">
                                                     <p class="card-title text-left" style="font-size: large">
-                                                        <b>{{ juego.id }}</b></p>
-                                                    <p class="card-text">{{ juego.id }}</p>
+                                                        <b>{{ juego.titulo }}</b></p>
+                                                    <p class="card-text"><small><i>{{ juego.descripcion }}</i></small></p>
                                                     <ul>
                                                         <li>Tesoros total: {{ juego.tesoros | length }}</li>
                                                         <li>Ganador: {{ juego.ganador }}</li>
@@ -183,8 +183,8 @@
                                             <div class="row">
                                                 <div class="offset-lg-1 col-lg-5 col-6">
                                                     <p class="card-title text-left" style="font-size: large">
-                                                        <b>{{ juego.id }}</b></p>
-                                                    <p class="card-text">{{ juego.id }}</p>
+                                                        <b>{{ juego.titulo }}</b></p>
+                                                     <p class="card-text"><small><i>{{ juego.descripcion }}</i></small></p>
                                                     <ul>
                                                         <li>Tesoros total: {{ juego.tesoros | length }}</li>
                                                         <li>Tesoros restantes: {{ juego.tesoros_restantes }}</li>
