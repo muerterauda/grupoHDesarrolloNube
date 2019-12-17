@@ -42,6 +42,30 @@
     <div class="container-fluid">
         <hr>
         <div class="container-header text-center"><h2>Juego {{ juego.id }}</h2></div>
+        {% if mensaje %}
+            {% if mensaje == "ganador" %}
+                <div class="card border-success mb-3">
+                    <div class="card-header">Resultado</div>
+                    <div class="card-body text-success">
+                        <h5 class="card-title">¡ENHORABUENA!</h5>
+                        <p class="card-text">Has ganado el juego.</p>
+                    </div>
+                </div>
+            {% elif mensaje == "acierto" %}
+                <div class="card border-dark mb-3" style="max-width: 18rem;">
+                    <div class="card-header">Resultado</div>
+                    <div class="card-body text-dark">
+                        <h5 class="card-title">Tesoros encontrados</h5>
+                        <p class="card-text">Acabas de encontrar los siguientes tesoros: </p>
+                        <ul>
+                            {% for tesoro in recienEncontrados %}
+                                <li style="list-style-type: circle"> Tesoro n&uacute;mero <b>{{ tesoro }}</b></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
         <hr>
         <div class="row">
             <div class="col-lg-9">
@@ -57,18 +81,32 @@
                 </div>
             </div>
 
+            {% if juego.estado == False %}
+                {% for tesoro in juego.tesoros.values() %}
+                    <input hidden type="text" class="tesoroEncontrado"
+                           value="{{ tesoro.longitud }}, {{ tesoro.latitud }}">
+                {% endfor %}
+            {% else %}
+                {% for tesoro in encontrados %}
+                    <input hidden type="text" class="tesoroEncontrado"
+                           value="{{ tesoro.longitud }}, {{ tesoro.latitud }}">
+                {% endfor %}
+            {% endif %}
+
             <div class="col-lg-3 ">  <!-- SIDEBAR -->
                 <br>
-                <div class="sidebar">
-                    <h3>Opciones</h3>
-                    {% if jugando %}
-                        <li id="encontrar-tesoro" class="encontrar-tesoro"><a href="#">Localizar tesoro</a></li>
-                        <li><a href="#pistas">Pistas</a></li>
-                        <a href="/abandonarJuego/{{ juego.id }}" class="btn btn-danger">Abandonar juego</a>
-                    {% else %}
-                        <a href="/anadirJuego/{{ juego.id }}" class="btn btn-success">Unirme al juego</a>
-                    {% endif %}
-                </div>
+                {% if juego.estado == True %}
+                    <div class="sidebar">
+                        <h3>Opciones</h3>
+                        {% if jugando %}
+                            <li id="encontrar-tesoro" class="encontrar-tesoro"><a href="#">Localizar tesoro</a></li>
+                            <li><a href="#pistas">Pistas</a></li>
+                            <a href="/abandonarJuego/{{ juego.id }}" class="btn btn-danger">Abandonar juego</a>
+                        {% else %}
+                            <a href="/anadirJuego/{{ juego.id }}" class="btn btn-success">Unirme al juego</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
                 <br>
                 <div class="sidebar">
                     <h3>Detalles</h3>
@@ -78,9 +116,11 @@
                     {% for participante in juego.participantes %}
                         {% if juego.participantes[participante]['email'] == user.id %}
                             <li><b>Mis tesoros encontrados:</b> {{ juego.participantes[participante]['tesoros'] }}</li>
-                            <li><b>Mis tesoros
-                                restantes:</b> {{ juego.tesoros.keys() | max | int - juego.participantes[participante]['tesoros'] }}
-                            </li>
+
+                            {% if juego.estado == True %}
+                                <li><b>Mis tesoros
+                                    restantes:</b> {{ juego.tesoros.keys() | max | int - juego.participantes[participante]['tesoros'] }}
+                                </li>{% endif %}
                         {% endif %}
                     {% endfor %}
                 </div>
