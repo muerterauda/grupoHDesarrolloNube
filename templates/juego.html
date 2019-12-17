@@ -52,7 +52,7 @@
                     </div>
                 </div>
             {% elif mensaje == "acierto" %}
-                <div class="card border-dark mb-3" style="max-width: 18rem;">
+                <div class="card border-dark mb-3">
                     <div class="card-header">Resultado</div>
                     <div class="card-body text-dark">
                         <h5 class="card-title">Tesoros encontrados</h5>
@@ -64,7 +64,24 @@
                         </ul>
                     </div>
                 </div>
+            {% elif mensaje == "ninguno" %}
+                <div class="card border-danger mb-3">
+                    <div class="card-header">Resultado</div>
+                    <div class="card-body text-danger">
+                        <h5 class="card-title">No has encontrado ning&uacute;n tesoro</h5>
+                        <p class="card-text">No hab&iacute;a ning&uacute;n tesoro en las posiciones marcadas. ¡Prueba de
+                            nuevo! </p>
+                    </div>
+                </div>
             {% endif %}
+        {% elif user.id == juego.ganador %}
+            <div class="card border-info mb-3">
+                <div class="card-header">Resultado</div>
+                <div class="card-body text-info">
+                    <h5 class="card-title">¡ENHORABUENA!</h5>
+                    <p class="card-text">Ganaste este juego.</p>
+                </div>
+            </div>
         {% endif %}
         <hr>
         <div class="row">
@@ -187,7 +204,7 @@
                     </div>
                 </div>
                 <form id="insertar-tesoro" method="post" action="/verAciertos/{{ juego.id }}"
-                      enctype="application/x-www-form-urlencoded">
+                      enctype="multipart/form-data">
                     <div class="map" id="map_popup" style="height: 500px;"></div>
                     <div id="tesorosID"></div>
                     <!-- Cambiar por mapa de encontrar tesoro -->
@@ -251,7 +268,7 @@
                 for (let pm of puntosMarcados) {
                     let pm_lon = parseFloat(pm.value.split(",")[0]);
                     let pm_lat = parseFloat(pm.value.split(",")[1]);
-                    if (Math.abs(pm_lon - pos[0]) <= 0.001 && Math.abs(pm_lat - pos[1]) <= 0.001) {
+                    if (Math.abs(pm_lon - pos[0]) <= 0.1 && Math.abs(pm_lat - pos[1]) <= 0.1) {
                         let pm_id = pm.id.split("_")[1];
                         document.getElementById("tesorosID").removeChild(document.getElementById("div_" + pm_id));
                         break;
@@ -324,7 +341,16 @@
                 newInput2.setAttribute("name", "tesoroMarcado");
                 newInput2.setAttribute("type", "number");
                 newInput2.setAttribute("required", "required");
+                newInput2.style.marginRight = "10px";
                 myDiv.appendChild(newInput2);
+
+                let newInput3 = document.createElement("input");
+                newInput3.id = "imagenMarcado_" + cont.toString();
+                newInput3.setAttribute("name", "imagenMarcado");
+                newInput3.setAttribute("type", "file");
+                newInput3.setAttribute("required", "required");
+                newInput3.setAttribute("accept", "image/*");
+                myDiv.appendChild(newInput3);
 
                 document.getElementById("tesorosID").appendChild(myDiv);
 

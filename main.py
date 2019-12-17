@@ -274,23 +274,25 @@ def recoger_datos_jugador(id):
     juego = find_juego_by_id(id)
     puntos_coor = request.values.getlist("puntoMarcado")
     tesoros_id = request.values.getlist("tesoroMarcado")
+    imagenes = request.files.getlist("imagenMarcado")
     error = False
     recien_encontrados = []
     mensaje = None
-    i = 0
-    for p, t in zip(puntos_coor, tesoros_id):
+    for p, t, imagen in zip(puntos_coor, tesoros_id, imagenes):
         try:
-            juego.encontrar_tesoro(identificador_tesoro=int(t), latitud=p.split(",")[0], longitud=p.split(",")[1],
-                                   imagen_tesoro="imagen", descubridor=user)
-            recien_encontrados[i] = t
-            i = i + 1
-        except Exception:
+            imagen_marcado = base64.b64encode(imagen.read()).decode('utf-8')
+            encontrado = juego.encontrar_tesoro(identificador_tesoro=int(t), latitud=p.split(",")[0],
+                                                longitud=p.split(",")[1],
+                                                imagen_tesoro=imagen_marcado, descubridor=user)
+            if encontrado is True:
+                recien_encontrados.append(t)
+        except Exception as e:
             error = True
     save_juego(juego)
     if juego.ganador == user.id:
         mensaje = "ganador"
-    elif juego.ganador is not None:
-        mensaje = "acabado"
+    elif error is True or len(recien_encontrados) == 0:
+        mensaje = "ninguno"
     elif error is False:
         mensaje = "acierto"
     encontrados = juego.get_tesoros(user)
