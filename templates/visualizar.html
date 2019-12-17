@@ -79,7 +79,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <A name="pistas"><h3 style="margin-top: 30px;">Pistas</h3></A>
+                <a name="pistas"><h3 style="margin-top: 30px;">Pistas</h3></a>
                 <div class="row">
                     <div class="col">
                         {% for tesoro in juego.tesoros %}
@@ -92,7 +92,7 @@
                                     <div class="row">
                                         <div class="col-lg-4">
                                             <b>Imagen:</b>
-                                            <img src="data:image/jpeg;base64,{{ juego.tesoros[tesoro].get_pistas()[1] }}"/>
+                                            <img alt="Pista" style="max-height: 400px; max-width: 400px" src="data:image/jpeg;base64,{{ juego.tesoros[tesoro].get_pistas()[1] }}"/>
                                         </div>
                                         <div class="col-lg-8">
                                             <b>Texto:</b> {{ juego.tesoros[tesoro].get_pistas()[0] }}
@@ -139,7 +139,7 @@
 
                 var myStyle = new ol.style.Style({
                     image: new ol.style.Circle({
-                        radius: 7,
+                        radius: 10,
                         fill: new ol.style.Fill({color: 'yellow'}),
                         stroke: new ol.style.Stroke({
                             color: [255, 204, 0], width: 2

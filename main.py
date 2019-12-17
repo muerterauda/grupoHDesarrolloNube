@@ -200,22 +200,27 @@ def nuevo_juego():
 
 
 @app.route("/juego/<id>")
-def mostrar_articulo(id):
+def ver_juego(id):
     user = current_user
     juego = find_juego_by_id(id)
-    return render_template("juego.html", juego=juego, user=user)
+    if user.id_mongo in juego.participantes:
+        jugando = True
+    else:
+        jugando = False
+    return render_template("juego.html", juego=juego, user=user, jugando=jugando)
 
-    """Funcion para añadir un nuevo jugador a un juegor"""
 
-
-@app.route("/añadirJuego", methods=['GET', 'POST'])
-def añadir_juego():
+@app.route("/anadirJuego/<id>", methods=['GET'])
+def anadir_participante_juego(id):
     user = current_user
-    juego = find_juego_by_id(request.form['id_juego'])
-
-    """Completar"""
-
-    return redirect(url_for('hello'))
+    juego = find_juego_by_id(id)
+    juego.add_participante(user)
+    save_juego(juego)
+    if user.id_mongo in juego.participantes:
+        jugando = True
+    else:
+        jugando = False
+    return render_template("juego.html", juego=juego, user=user, jugando=jugando)
 
 
 @app.route("/verJuego/<id>")
@@ -231,8 +236,8 @@ def ver_juego(id):
 def abandonar_juego(id):
     user = current_user
     juego = find_juego_by_id(id)
-
-    """Completar"""
+    juego.remove_participante(user)
+    save_juego(juego)
 
     return redirect(url_for('hello'))
 
@@ -260,17 +265,34 @@ def eliminar_juego(id):
     return redirect(url_for('hello'))
 
 
+@app.route("/verAciertos/<id>", methods=['POST'])
+def recoger_datos_jugador(id):
+    user = current_user
+    juego = find_juego_by_id(id)
+    puntos_coor = request.values.getlist("puntoMarcado")
+    tesoros_id = request.values.getlist("tesoroMarcado")
+    for p, t in zip(puntos_coor, tesoros_id):
+        juego.encontrar_tesoro(identificador_tesoro=t, latitud=p.split(",")[0], longitud=p.split(",")[1],
+                               imagen_tesoro="imagen", descubridor=user)
+    save_juego(juego)
+    return redirect(url_for('hello'))
+
+
 @app.route("/recogerdatos", methods=['POST'])
-def recogerdatos():
+def recoger_datos_creacion():
     print(request.args)
     """Almacena el todos los tesoros en la variable juego"""
     tesoros = {}
-    for i in range(1, int(request.values.get("nTesoros"))):
-        coordenadas = request.values.get("coordenadas_" + str(i)).split(",")
-        pista_imagen = base64.b64encode(request.files.get("pista_imagen_" + str(i)).read()).decode('utf-8')
-        tesoro = Tesoro(i, coordenadas[0], coordenadas[1], pista_texto=request.values.get("pista_texto_" + str(i)),
+    i = 1
+    for coordenada, imagen, texto in zip(request.values.getlist("coordenadas"),
+                                         request.files.getlist("pista_imagen"),
+                                         request.values.getlist("pista_texto")):
+        pista_imagen = base64.b64encode(imagen.read()).decode('utf-8')
+        tesoro = Tesoro(i, float(coordenada.split(",")[0]), float(coordenada.split(",")[1]),
+                        pista_texto=texto,
                         pista_imagen=pista_imagen)
         tesoros[i] = tesoro
+        i += 1
     juego = Juego(diccionario_tesoros=tesoros, creador=current_user, dimensiones=[(0, 0), (0, 1), (1, 0), (1, 1)])
     save_juego(juego)
     return redirect(url_for('hello'))

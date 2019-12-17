@@ -6,10 +6,11 @@
             padding: 5px 5px;
             height: 80vh;
         }
-        .sidebar{
+
+        .sidebar {
             background: #7ebff5;
             padding: 20px;
-            box-sizing:border-box;
+            box-sizing: border-box;
             -moz-border-radius: 10px;
             -webkit-border-radius: 10px;
             border-radius: 10px;
@@ -17,10 +18,11 @@
             margin: 10px 0px;
             box-sizing: border-box;
         }
-        .pista{
+
+        .pista {
             background: rgba(255, 252, 82, 0.55);
             padding: 20px;
-            box-sizing:border-box;
+            box-sizing: border-box;
             -moz-border-radius: 10px;
             -webkit-border-radius: 10px;
             border-radius: 10px;
@@ -28,9 +30,10 @@
             margin: 10px 0px;
             box-sizing: border-box;
         }
-        li{
+
+        li {
             margin-left: 15px;
-            list-style:none;
+            list-style: none;
         }
     </style>
 {% endblock %}
@@ -54,44 +57,51 @@
                 </div>
             </div>
 
-             <div class="col-lg-3 ">  <!-- SIDEBAR -->
+            <div class="col-lg-3 ">  <!-- SIDEBAR -->
                 <br>
                 <div class="sidebar">
                     <h3>Opciones</h3>
-                    <li id="encontrar-tesoro" class="encontrar-tesoro"><a href="#">Localizar tesoro</a></li>
-                    <li><a href="#pistas">Pistas</a></li>
+                    {% if jugando %}
+                        <li id="encontrar-tesoro" class="encontrar-tesoro"><a href="#">Localizar tesoro</a></li>
+                        <li><a href="#pistas">Pistas</a></li>
+                        <a href="/abandonarJuego/{{ juego.id }}" class="btn btn-danger">Abandonar juego</a>
+                    {% else %}
+                        <a href="/anadirJuego/{{ juego.id }}" class="btn btn-success">Unirme al juego</a>
+                    {% endif %}
                 </div>
                 <br>
                 <div class="sidebar">
                     <h3>Detalles</h3>
-                    <li>Tesoros totales: {{ juego.tesoros | length }}</li>
-
+                    <li><b>Tesoros totales:</b> {{ juego.tesoros | length }}</li>
+                    <li><b>Tesoros restantes juego:</b> {{ juego.tesoros_restantes }}</li>
+                    <br/>
                     {% for participante in juego.participantes %}
                         {% if juego.participantes[participante]['email'] == user.id %}
-                            <li>Tesoros encontrados:{{juego.participantes[participante]['tesoros']}}</li>
-                            <li>Tesoros restantes jugador: {{juego.tesoros.keys() | max | int - juego.participantes[participante]['tesoros']}}</li>
+                            <li><b>Mis tesoros encontrados:</b> {{ juego.participantes[participante]['tesoros'] }}</li>
+                            <li><b>Mis tesoros
+                                restantes:</b> {{ juego.tesoros.keys() | max | int - juego.participantes[participante]['tesoros'] }}
+                            </li>
                         {% endif %}
                     {% endfor %}
-                    <li>Tesoros restantes juego: {{juego.tesoros_restantes}}</li>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col">
-                <A name="pistas"><h3 style="margin-top: 30px;">Pistas</h3></A>
+                <A><h3 style="margin-top: 30px;">Pistas</h3></A>
                 <div class="row">
                     <div class="col">
                         {% for tesoro in juego.tesoros %}
                             <div class="row pista">
                                 <div class="col">
                                     <h3>Pista {{ juego.tesoros[tesoro].identificador }}</h3>
-
                                     <div class="row">
                                         <div class="col-lg-4">
-                                            <img src="data:image/gif;base64,{{ juego.tesoros[tesoro].get_pistas()[1] }}"/>
+                                            <b>Imagen:</b><img alt="Pista" style="max-height: 400px; max-width: 400px"
+                                                               src="data:image/gif;base64,{{ juego.tesoros[tesoro].get_pistas()[1] }}"/>
                                         </div>
                                         <div class="col-lg-8">
-                                            Texto: {{ juego.tesoros[tesoro].get_pistas()[0]}}
+                                            <b>Texto:</b> {{ juego.tesoros[tesoro].get_pistas()[0] }}
                                         </div>
                                     </div>
                                 </div>
@@ -102,50 +112,199 @@
                 </div>
             </div>
         </div>
-        <div class="overlay" id="overlay">
-            <div class="popup" id="popup">
+        <div class="overlay" id="overlay" style="overflow-y: scroll;">
+            <div class="popup" id="popup" style="overflow-y: scroll; max-height: 95%; min-width: 80%">
                 <a id="btn-cerrar-popup" class="btn-cerrar-popup"><i class="fas fa-times"></i></a>
-                <h3>Añadir nuevo tesoro</h3>
-                <form id="insertar-tesoro">
-                    <div class="map" id="map_popup" style="height: 500px;"></div>  <!-- Cambiar por mapa de encontrar tesoro -->
-                    <input type="submit" class="btn-submit" id="btn-submit" name="submitted" value="Añadir" style="margin-top: 30px;" />
+                <h1 class="display-4">Encontrar tesoros</h1><br/>
+                <div class="card border-info mb-3">
+                    <div class="card-header">Ayuda</div>
+                    <div class="card-body text-info">
+                        <ul>
+                            <li style="list-style-type: circle"><b>Marcar tesoro:</b> para marcar la posici&oacute;n de
+                                un posible tesoro, pinche la
+                                posici&oacute;n
+                                que crea en el mapa e introduzca el identificador <b>(ID)</b> del tesoro que intenta
+                                encontrar.<br/>
+
+                                Los n&uacute;meros representados en el mapa junto a los puntos son <b>meramente
+                                    identificativos</b>, y no pretenden representar, en nin&uacute;n caso, el ID del
+                                tesoro que debi&eacute;sen representar.
+                            </li>
+                            <li style="list-style-type: circle"><b>Para eliminar:</b> para eliminar una posici&oacute;n
+                                marcada, pinche de nuevo en el
+                                punto y se eliminar&aacute; autom&aacute;ticamente.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card border-warning mb-3">
+                    <div class="card-header">Leyenda</div>
+                    <div class="card-body text-warning">
+                        <ul>
+                            <li style="list-style-type: circle"><b>Amarillo:</b> tesoros ya encontrados.</li>
+                            <li style="list-style-type: circle"><b>Azul:</b> supuesta posici&oacute;n de un tesoro.</li>
+                        </ul>
+                    </div>
+                </div>
+                <form id="insertar-tesoro" method="post" action="/verAciertos/{{ juego.id }}"
+                      enctype="application/x-www-form-urlencoded">
+                    <div class="map" id="map_popup" style="height: 500px;"></div>
+                    <div id="tesorosID"></div>
+                    <!-- Cambiar por mapa de encontrar tesoro -->
+                    <input type="submit" class="btn-submit" id="btn-submit" name="submitted" value="Anadir"
+                           style="margin-top: 30px;"/>
                 </form>
             </div>
         </div>
     </div>
     <script type="text/javascript">
+        let cont = 1;
+        const markerSource_pop = new ol.source.Vector();
+        const markerSource = new ol.source.Vector();
+        var map_pop = new ol.Map({
+            target: 'map_popup',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                }),
+                new ol.layer.Vector({
+                    source: markerSource_pop
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
+                zoom: 14
+            })
+        });
         var map = new ol.Map({
             target: 'map',
             layers: [
                 new ol.layer.Tile({
                     source: new ol.source.OSM()
+                }),
+                new ol.layer.Vector({
+                    source: markerSource
                 })
             ],
             view: new ol.View({
                 center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
-                zoom: 4
+                zoom: 14
             })
         });
 
-        var map = new ol.Map({
-            target: 'map_popup',
-            layers: [
-                new ol.layer.Tile({
-                    source: new ol.source.OSM()
-                })
-            ],
-            view: new ol.View({
-                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
-                zoom: 4
-            })
+        var coordinadas = document.getElementsByClassName("tesoroEncontrado");
+        for (let tesoro of coordinadas) {
+            let first = tesoro.value.split(",")[1];
+            let second = tesoro.value.split(",")[0];
+            addMarker(first, second, true);
+        }
+
+        map_pop.on('click', function (evt) {
+            var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+            var x_pop = map_pop.getFeaturesAtPixel(evt.pixel);
+            if (x_pop.length > 0) {
+                for (var y of x_pop) {
+                    markerSource_pop.removeFeature(y);
+                }
+                let puntosMarcados = document.getElementsByName("puntoMarcado");
+                let valor = pos[1] + "," + pos[0];
+                for (let pm of puntosMarcados) {
+                    let pm_lon = parseFloat(pm.value.split(",")[0]);
+                    let pm_lat = parseFloat(pm.value.split(",")[1]);
+                    if (Math.abs(pm_lon - pos[0]) <= 0.001 && Math.abs(pm_lat - pos[1]) <= 0.001) {
+                        let pm_id = pm.id.split("_")[1];
+                        document.getElementById("tesorosID").removeChild(document.getElementById("div_" + pm_id));
+                        break;
+                    }
+                }
+            } else {
+                addMarker(pos[0], pos[1], false);
+            }
         });
 
-        $('#encontrar-tesoro').click(function(){
+        function addMarker(lon, lat, precargando) {
+            console.log('lon:', lon);
+            console.log('lat:', lat);
+            /* for (var icono of puntosPuestos.values()) {
+                 markerSource.removeFeature(icono);
+             }*/
+            var iconFeature = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326',
+                    'EPSG:3857')),
+                population: 4000,
+                rainfall: 500
+            });
+            var myStyle;
+            if (precargando)
+                myStyle = new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 7,
+                        fill: new ol.style.Fill({color: 'yellow'}),
+                        stroke: new ol.style.Stroke({
+                            color: [255, 204, 0], width: 2
+                        })
+                    })
+                });
+            else
+                myStyle = new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 7,
+                        fill: new ol.style.Fill({color: [51, 204, 255]}),
+                        stroke: new ol.style.Stroke({
+                            color: [0, 153, 255], width: 2
+                        })
+                    }),
+                    text: new ol.style.Text({
+                        text: cont.toString(),
+                    })
+                });
+            iconFeature.setStyle(myStyle);
+            markerSource_pop.addFeature(iconFeature);
+            if (precargando)
+                markerSource.addFeature(iconFeature);
+            else {
+                let myDiv = document.createElement("div");
+                myDiv.id = "div_" + cont.toString();
+
+                let newInput = document.createElement("input");
+                newInput.id = "puntoMarcado_" + cont.toString();
+                newInput.setAttribute("name", "puntoMarcado");
+                newInput.setAttribute("hidden", "hidden");
+                newInput.value = lon + "," + lat;
+                myDiv.appendChild(newInput);
+
+                let labelInput2 = document.createElement("LABEL");
+                labelInput2.id = "labelMarcado_" + cont.toString();
+                labelInput2.setAttribute("for", "tesoroMarcado_" + cont.toString());
+                labelInput2.innerHTML = "<b>" + cont.toString() + ". Identificación del tesoro posicionado en dicho punto: </b>&nbsp;";
+                myDiv.appendChild(labelInput2);
+
+                let newInput2 = document.createElement("input");
+                newInput2.id = "tesoroMarcado_" + cont.toString();
+                newInput2.setAttribute("name", "tesoroMarcado");
+                newInput2.setAttribute("type", "number");
+                newInput2.setAttribute("required", "required");
+                myDiv.appendChild(newInput2);
+
+                document.getElementById("tesorosID").appendChild(myDiv);
+
+                cont++;
+            }
+        }
+
+        $('#insertar-tesoro').submit(function (evt) {
+            if (document.getElementsByName("puntoMarcado").length === 0) {
+                alert("Debes marcar al menos la posición de un tesoro para poder enviar tus hallazgos.");
+                evt.preventDefault();
+            }
+        });
+
+        $('#encontrar-tesoro').click(function () {
             $("#overlay").addClass("active");
             $("#popup").addClass("active");
         });
 
-        $('#btn-cerrar-popup').click(function(){
+        $('#btn-cerrar-popup').click(function () {
             $("#overlay").removeClass("active");
             $("#popup").removeClass("active");
         });

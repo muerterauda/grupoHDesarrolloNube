@@ -25,11 +25,17 @@ class Tesoro:
     def cambiar_pista_texto(self, nueva_pista):
         self.__pista_texto = nueva_pista
 
+    def eliminar_participante(self, user:User):
+        if user.id_mongo in self.__descubridores:
+            self.__descubridores.pop(user.id_mongo)
+
     def cambiar_pista_imagen(self, nueva_pista):
         self.__pista_imagen = nueva_pista
 
     def encontrar_tesoro(self, usuario: User, latitud, longitud, imagen_tesoro) -> bool:
-        if latitud == self.latitud and longitud == self.longitud and usuario.id_mongo not in self.descubridores:
+        latitud = float(latitud)
+        longitud = float(longitud)
+        if abs(latitud - self.latitud) <= 0.001 and abs(longitud - self.longitud) <= 0.001 and usuario.id_mongo not in self.descubridores:
             self.__descubridores[usuario.id_mongo] = {
                 "email": usuario.id,
                 "imagen_tesoro": imagen_tesoro,
