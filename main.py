@@ -203,11 +203,14 @@ def nuevo_juego():
 def ver_juego(id):
     user = current_user
     juego = find_juego_by_id(id)
+    encontrados = {}
     if user.id_mongo in juego.participantes:
         jugando = True
+        if juego.estado is True:
+            encontrados = juego.get_tesoros(user)
     else:
         jugando = False
-    return render_template("juego.html", juego=juego, user=user, jugando=jugando)
+    return render_template("juego.html", juego=juego, user=user, jugando=jugando, encontrados=encontrados)
 
 
 @app.route("/anadirJuego/<id>", methods=['GET'])
@@ -224,7 +227,7 @@ def anadir_participante_juego(id):
 
 
 @app.route("/verJuego/<id>")
-def ver_juego(id):
+def visualizar_juego_creador(id):
     user = current_user
     juego = find_juego_by_id(id)
     return render_template("visualizar.html", juego=juego, user=user)
@@ -271,11 +274,28 @@ def recoger_datos_jugador(id):
     juego = find_juego_by_id(id)
     puntos_coor = request.values.getlist("puntoMarcado")
     tesoros_id = request.values.getlist("tesoroMarcado")
+    error = False
+    recien_encontrados = []
+    mensaje = None
+    i = 0
     for p, t in zip(puntos_coor, tesoros_id):
-        juego.encontrar_tesoro(identificador_tesoro=t, latitud=p.split(",")[0], longitud=p.split(",")[1],
-                               imagen_tesoro="imagen", descubridor=user)
+        try:
+            juego.encontrar_tesoro(identificador_tesoro=int(t), latitud=p.split(",")[0], longitud=p.split(",")[1],
+                                   imagen_tesoro="imagen", descubridor=user)
+            recien_encontrados[i] = t
+            i = i + 1
+        except Exception:
+            error = True
     save_juego(juego)
-    return redirect(url_for('hello'))
+    if juego.ganador == user.id:
+        mensaje = "ganador"
+    elif juego.ganador is not None:
+        mensaje = "acabado"
+    elif error is False:
+        mensaje = "acierto"
+    encontrados = juego.get_tesoros(user)
+    return render_template("juego.html", juego=juego, user=user, jugando=True, encontrados=encontrados, mensaje=mensaje,
+                           recienEncontrados=recien_encontrados)
 
 
 @app.route("/recogerdatos", methods=['POST'])
