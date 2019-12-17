@@ -9,26 +9,42 @@ class JuegoException(ValueError):
 class Juego:
 
     def __init__(self, diccionario_tesoros: dict = None, creador: User = None, dimensiones: list = None,
-                 juego_last: dict = None):
+                 titulo:str = None, descipcion:str = None, juego_last: dict = None):
         if juego_last:
             self.__id = str(juego_last.get('_id'))
+            self.__titulo = juego_last.get('titulo')
+            self.__descripcion = juego_last.get('descripcion')
             self.__tesoros = Tesoro.generar_tesoros_object(juego_last.get('tesoros'))
             self.__creador = juego_last.get('creador')
+            self.__centro = juego_last.get('centro')
             self.__participantes = juego_last.get('participantes')
             self.__estado = juego_last.get('estado')
             self.__ganador = juego_last.get('ganador')
             self.__dimensiones = juego_last.get('dimensiones')
             self.__tesoros_restantes = juego_last.get('tesoros_restantes')
         else:
-            if diccionario_tesoros is None or creador is None or dimensiones is None:
+            if diccionario_tesoros is None or creador is None or dimensiones is None or titulo is None:
                 raise JuegoException('Parametros invalidos')
             self.__id = ''
+            self.__titulo = titulo
+            if not descipcion:
+                self.__descripcion = ""
+            else:
+                self.__descripcion = descipcion
             self.__tesoros = diccionario_tesoros
             self.__creador = creador.id
             self.__participantes = {}
             self.__estado = True
             self.__ganador = None
             self.__dimensiones = dimensiones
+            x = 0
+            y = 0
+            for punto in dimensiones:
+                x += punto[0]
+                y += punto[1]
+            x = x/4
+            y = y/4
+            self.__centro = (x, y)
             self.__tesoros_restantes = len(self.__tesoros.keys())
 
     def encontrar_tesoro(self, identificador_tesoro, latitud, longitud, imagen_tesoro, descubridor: User) -> bool:
@@ -130,6 +146,10 @@ class Juego:
         return self.__tesoros
 
     @property
+    def centro(self):
+        return self.__centro
+
+    @property
     def ganador(self):
         return self.__ganador
 
@@ -142,18 +162,27 @@ class Juego:
         return self.__dimensiones
 
     @property
+    def titulo(self):
+        return self.__titulo
+
+    @property
+    def descripcion(self):
+        return self.__descripcion
+
+    @property
     def id(self):
         return self.__id
 
     def juego_to_dict(self, id_juego: bool = False) -> dict:
         dic = {"participantes": self.participantes, "estado": self.estado, "creador": self.creador,
                "tesoros": Tesoro.generar_tesoros(self.tesoros), "ganador": self.ganador,
-               "tesoros_restantes": self.tesoros_restantes, "dimensiones": self.__dimensiones}
+               "tesoros_restantes": self.tesoros_restantes, "dimensiones": self.__dimensiones, "titulo": self.__titulo,
+               "centro": self.__centro,  "descripcion": self.__descripcion}
         if id_juego:
             dic['id'] = self.id
         return dic
 
     def __str__(self):
-        return self.id + '(' + self.creador + '): ' + (
+        return self.titulo + '(' + self.creador + '): ' + (
             'Activo' if self.estado else 'Terminado') + ', numero de tesoros restantes: ' + str(
             self.tesoros_restantes) + ('. Ganador: ' + self.ganador if self.ganador else '')

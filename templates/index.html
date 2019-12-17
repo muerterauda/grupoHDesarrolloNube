@@ -22,7 +22,6 @@
         <hr>
         <div class="row flex-x1-nowrap">
             <div class="offset-lg-2 col-lg-7 col-9">
-                <h2 class="text-center">Mis juegos</h2>
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active" id="activos-tab" data-toggle="tab" href="#activos"
@@ -74,8 +73,8 @@
                                 </div>
                             {% endfor %}
                         {% else %}
-                            <h4 class="text-center" style="margin-top: 10px;">No estas participando en ning&uacute;n
-                                juego</h4>
+                            <h4 class="text-center" style="margin-top: 15px;">No estas participando en ning&uacute;n
+                                juego.</h4>
                         {% endif %}
                     </div>
                     <div class="tab-pane fade" id="finalizados" role="tabpanel" aria-labelledby="finalizados-tab">
@@ -106,8 +105,8 @@
                                 </div>
                             {% endfor %}
                         {% else %}
-                            <h4 class="text-center" style="margin-top: 10px;">No se ha terminado ning&uacute;n juego en
-                                el que seas participante</h4>
+                            <h4 class="text-center" style="margin-top: 15px;">No se ha terminado ning&uacute;n juego en
+                                el que seas participante.</h4>
                         {% endif %}
                     </div>
                     <div class="tab-pane fade" id="todosActivos" role="tabpanel" aria-labelledby="todosActivos-tab">
@@ -118,11 +117,18 @@
                                         <div class="row">
                                             <div class="offset-lg-1 col-lg-5 col-6">
                                                 <p class="card-title text-left" style="font-size: large">
-                                                    <b>{{ juego.id }}</b></p>
+                                                    <b>{{ juego.id }}</b>
+                                                    {% if user.id_mongo_str in juego.participantes %}
+                                                        <i class="text-success"> (Participando) </i>
+                                                    {% endif %}
+                                                </p>
                                                 <p class="card-text">{{ juego.id }}</p>
                                                 <ul>
                                                     <li>Tesoros total: {{ juego.tesoros | length }}</li>
                                                     <li>Tesoros restantes: {{ juego.tesoros_restantes }}</li>
+                                                    {% if user.id_mongo_str in juego.participantes %}
+                                                       <li>Mis tesoros encontrados: {{ juego.participantes[user.id_mongo_str]['tesoros'] }}</li>
+                                                    {% endif %}
                                                 </ul>
                                                 <a class="btn btn-primary" href="/juego/{{ juego.id }}">Entrar al
                                                     juego</a>
@@ -136,7 +142,7 @@
                                 </div>
                             {% endfor %}
                         {% else %}
-                            <h4 class="text-center" style="margin-top: 10px;">No hay ning&uacute;n juego activo en el sistema</h4>
+                            <h4 class="text-center" style="margin-top: 15px;">No hay ning&uacute;n juego activo en el sistema.</h4>
                         {% endif %}
                     </div>
                     <div class="tab-pane fade" id="todosAcabados" role="tabpanel" aria-labelledby="todosAcabados-tab">
@@ -165,8 +171,8 @@
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                <h4 class="text-center" style="margin-top: 10px;">No se ha terminado ning&uacute;n juego en
-                                    el sistema</h4>
+                                <h4 class="text-center" style="margin-top: 15px;">No se ha terminado ning&uacute;n juego en
+                                    el sistema.</h4>
                             {% endif %}
                         </div>
                         <div class="tab-pane fade" id="administracion" role="tabpanel" aria-labelledby="administracion-tab">
@@ -196,7 +202,7 @@
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                <h4 class="text-center" style="margin-top: 10px;">No has creado ning&uacute;n juego</h4>
+                                <h4 class="text-center" style="margin-top: 15px;">No has creado ning&uacute;n juego.</h4>
                             {% endif %}
                         </div>
                 </div>
@@ -208,10 +214,10 @@
                     </div>
                     <div class="card-body">
                         <div class="text-center">
-                            <a class="btn btn-success" href="/nuevoJuego">Crear juego</a>
+                            <a class="btn btn-success" href="/nuevoJuego">P&aacute;gina de creaci&oacute;n</a>
                             <br>
-                            <br>
-                            <a class="btn btn-primary" href="#">Ver todos los juegos</a>
+                            <small class="form-text text-muted"><b>
+                                <i class="help-block">Ir a la p&aacute;gina de creaci&oacute;n de juegos</i></b></small>
                         </div>
                     </div>
                 </div>
