@@ -4,33 +4,8 @@
     <style>
         .map {
             padding: 5px 5px;
-            height: 80vh;
+            height: 82vh;
         }
-
-        .sidebar {
-            background: #7ebff5;
-            padding: 20px;
-            box-sizing: border-box;
-            -moz-border-radius: 10px;
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-            border: 1px solid #1b98ff;
-            margin: 10px 0px;
-            box-sizing: border-box;
-        }
-
-        .pista {
-            background: rgba(255, 252, 82, 0.55);
-            padding: 20px;
-            box-sizing: border-box;
-            -moz-border-radius: 10px;
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-            border: 1px solid #ffd841;
-            margin: 10px 0px;
-            box-sizing: border-box;
-        }
-
         li {
             margin-left: 15px;
             list-style: none;
@@ -41,7 +16,7 @@
 {% block content %}
     <div class="container-fluid">
         <hr>
-        <div class="container-header text-center"><h2>Juego {{ juego.id }}</h2></div>
+        <div class="container-header text-center"><h3>Juego {{ juego.titulo }}</h3></div>
         {% if mensaje %}
             {% if mensaje == "ganador" %}
                 <div class="card border-success mb-3">
@@ -49,6 +24,7 @@
                     <div class="card-body text-success">
                         <h5 class="card-title">¡ENHORABUENA!</h5>
                         <p class="card-text">Has ganado el juego.</p>
+                        <a href="https://twitter.com/intent/tweet?button_hashtag=CazaTesoroGrupoAGanador{{ juego.titulo.replace(' ', '')[:15] }}&ref_src=twsrc%5Etfw" class="twitter-hashtag-button" data-show-count="false"></a>
                     </div>
                 </div>
             {% elif mensaje == "acierto" %}
@@ -80,140 +56,141 @@
                 <div class="card-body text-info">
                     <h5 class="card-title">¡ENHORABUENA!</h5>
                     <p class="card-text">Ganaste este juego.</p>
+                    <a href="https://twitter.com/intent/tweet?button_hashtag=CazaTesoroGrupoAGanador{{ juego.titulo.replace(' ', '')[:15] }}&ref_src=twsrc%5Etfw" class="twitter-hashtag-button" data-show-count="false"></a>
                 </div>
             </div>
         {% endif %}
         <hr>
-        <div class="row">
-            <div class="col-lg-9">
-                <div class="row">
-                    <div class="col text-center">
-                        <h3>Mapa</h3>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="map" id="map"></div>
-                    </div>
-                </div>
-            </div>
-
-            {% if juego.estado == False %}
-                {% for tesoro in juego.tesoros.values() %}
-                    <input hidden type="text" class="tesoroEncontrado"
-                           value="{{ tesoro.longitud }}, {{ tesoro.latitud }}">
-                {% endfor %}
-            {% else %}
-                {% for tesoro in encontrados %}
-                    <input hidden type="text" class="tesoroEncontrado"
-                           value="{{ tesoro.longitud }}, {{ tesoro.latitud }}">
-                {% endfor %}
-            {% endif %}
-
-            <div class="col-lg-3 ">  <!-- SIDEBAR -->
-                <br>
-                {% if juego.estado == True %}
-                    <div class="sidebar">
-                        <h3>Opciones</h3>
-                        {% if jugando %}
-                            <li id="encontrar-tesoro" class="encontrar-tesoro"><a href="#">Localizar tesoro</a></li>
-                            <li><a href="#pistas">Pistas</a></li>
-                            <a href="/abandonarJuego/{{ juego.id }}" class="btn btn-danger">Abandonar juego</a>
-                        {% else %}
-                            <a href="/anadirJuego/{{ juego.id }}" class="btn btn-success">Unirme al juego</a>
-                        {% endif %}
-                    </div>
-                {% endif %}
-                <br>
-                <div class="sidebar">
-                    <h3>Detalles</h3>
-                    <li><b>Tesoros totales:</b> {{ juego.tesoros | length }}</li>
-                    <li><b>Tesoros restantes juego:</b> {{ juego.tesoros_restantes }}</li>
-                    <br/>
-                    {% for participante in juego.participantes %}
-                        {% if juego.participantes[participante]['email'] == user.id %}
-                            <li><b>Mis tesoros encontrados:</b> {{ juego.participantes[participante]['tesoros'] }}</li>
-
-                            {% if juego.estado == True %}
-                                <li><b>Mis tesoros
-                                    restantes:</b> {{ juego.tesoros.keys() | max | int - juego.participantes[participante]['tesoros'] }}
-                                </li>{% endif %}
-                        {% endif %}
+        <div class="row flex-x1-nowrap" style="margin-bottom: 10px;">
+            <div class="offset-lg-2 col-lg-7 col-9">
+                <div class="map" id="map"></div>
+                {% if juego.estado == False %}
+                    {% for tesoro in juego.tesoros.values() %}
+                        <input hidden type="text" class="tesoroEncontrado"
+                               value="{{ tesoro.longitud }}, {{ tesoro.latitud }}">
                     {% endfor %}
-                </div>
+                {% else %}
+                    {% for tesoro in encontrados %}
+                        <input hidden type="text" class="tesoroEncontrado"
+                               value="{{ tesoro.longitud }}, {{ tesoro.latitud }}">
+                    {% endfor %}
+                {% endif %}
             </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <A><h3 style="margin-top: 30px;">Pistas</h3></A>
-                <div class="row">
-                    <div class="col">
-                        {% for tesoro in juego.tesoros %}
-                            <div class="row pista">
-                                <div class="col">
-                                    <h3>Pista {{ juego.tesoros[tesoro].identificador }}</h3>
-                                    <div class="row">
-                                        <div class="col-lg-4">
-                                            <b>Imagen:</b><img alt="Pista" style="max-height: 400px; max-width: 400px"
-                                                               src="data:image/gif;base64,{{ juego.tesoros[tesoro].get_pistas()[1] }}"/>
-                                        </div>
-                                        <div class="col-lg-8">
-                                            <b>Texto:</b> {{ juego.tesoros[tesoro].get_pistas()[0] }}
-                                        </div>
-                                    </div>
-                                </div>
+            <div class="col-3">
+                <div class="card bg-light" style="margin-top: 15px;">
+                    <div class="card-header text-center">
+                        <h3>Detalles</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-left">
+                            <div class="text-left" style="margin-bottom: 5px;">
+                                <a href="https://twitter.com/intent/tweet?button_hashtag=CazaTesoroGrupoA{{ juego.titulo.replace(' ', '')[:15] }}&ref_src=twsrc%5Etfw" class="twitter-hashtag-button" data-show-count="false"></a>
                             </div>
-                            <br>
-                        {% endfor %}
+                            <br/>
+                            <b><u>Descripci&oacute;n</u></b>
+                            <br/>
+                            {{ juego.descripcion }}
+                            <br/>
+                            <br/>
+                            <b>Tesoros totales:</b> {{ juego.tesoros | length }}
+                            <br/>
+                            <b>Tesoros restantes juego:</b> {{ juego.tesoros_restantes }}
+                            <br/>
+                            <b>Mis tesoros encontrados:</b> {{ juego.participantes[user.id_mongo_str]['tesoros'] }}
+                            {% if juego.estado %}
+                                <div class="text-center" style="margin-top: 5px;">
+                                    <a href="#" class="btn btn-primary" style="margin-top: 5px;" id="encontrar-tesoro">Localizar tesoro</a>
+                                    <a href="/abandonarJuego/{{ juego.id }}" class="btn btn-danger"
+                                       style="margin-top: 5px;">Abandonar juego</a>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="overlay" id="overlay" style="overflow-y: scroll;">
-            <div class="popup" id="popup" style="overflow-y: scroll; max-height: 95%; min-width: 80%">
-                <a id="btn-cerrar-popup" class="btn-cerrar-popup"><i class="fas fa-times"></i></a>
-                <h1 class="display-4">Encontrar tesoros</h1><br/>
-                <div class="card border-info mb-3">
-                    <div class="card-header">Ayuda</div>
-                    <div class="card-body text-info">
-                        <ul>
-                            <li style="list-style-type: circle"><b>Marcar tesoro:</b> para marcar la posici&oacute;n de
-                                un posible tesoro, pinche la
-                                posici&oacute;n
-                                que crea en el mapa e introduzca el identificador <b>(ID)</b> del tesoro que intenta
-                                encontrar.<br/>
-
-                                Los n&uacute;meros representados en el mapa junto a los puntos son <b>meramente
-                                    identificativos</b>, y no pretenden representar, en nin&uacute;n caso, el ID del
-                                tesoro que debi&eacute;sen representar.
-                            </li>
-                            <li style="list-style-type: circle"><b>Para eliminar:</b> para eliminar una posici&oacute;n
-                                marcada, pinche de nuevo en el
-                                punto y se eliminar&aacute; autom&aacute;ticamente.
-                            </li>
-                        </ul>
+                <div class="card bg-light" style="margin-top: 15px;">
+                    <div class="card-header text-center">
+                        <h3>Pistas</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-left">
+                            {% for tesoro in juego.tesoros %}
+                                <div style="margin-top: 5px;">
+                                    <b>Pista Tesoro {{ juego.tesoros[tesoro].identificador }}</b>:
+                                    {% if juego.tesoros[tesoro].get_pistas()[1] %}
+                                        <a  href="#modal{{juego.tesoros[tesoro].identificador}}" data-toggle="modal" data-target="#modal{{juego.tesoros[tesoro].identificador}}">Ver imagen de la pista</a>
+                                        <div class="modal fade modal{{juego.tesoros[tesoro].identificador}}" id="modal{{juego.tesoros[tesoro].identificador}}" tabindex="-1" role="dialog"
+                                             aria-labelledby="modal{{juego.tesoros[tesoro].identificador}}" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle"> Pista {{juego.tesoros[tesoro].identificador}}</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                       <img alt="Pista" style="max-height: 100%; max-width: 100%" src="data:image/gif;base64,{{ juego.tesoros[tesoro].get_pistas()[1] }}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    <br>
+                                    {{ juego.tesoros[tesoro].get_pistas()[0] }}
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
-                <div class="card border-warning mb-3">
-                    <div class="card-header">Leyenda</div>
-                    <div class="card-body text-warning">
-                        <ul>
-                            <li style="list-style-type: circle"><b>Amarillo:</b> tesoros ya encontrados.</li>
-                            <li style="list-style-type: circle"><b>Azul:</b> supuesta posici&oacute;n de un tesoro.</li>
-                        </ul>
-                    </div>
-                </div>
-                <form id="insertar-tesoro" method="post" action="/verAciertos/{{ juego.id }}"
-                      enctype="multipart/form-data">
-                    <div class="map" id="map_popup" style="height: 500px;"></div>
-                    <div id="tesorosID"></div>
-                    <!-- Cambiar por mapa de encontrar tesoro -->
-                    <input type="submit" class="btn-submit" id="btn-submit" name="submitted" value="Anadir"
-                           style="margin-top: 30px;"/>
-                </form>
             </div>
         </div>
     </div>
+    <div class="overlay" id="overlay" style="overflow-y: scroll;">
+        <div class="popup" id="popup" style="overflow-y: scroll; max-height: 95%; min-width: 80%">
+            <a id="btn-cerrar-popup" class="btn-cerrar-popup"><i class="fas fa-times"></i></a>
+            <h1 class="display-4">Encontrar tesoros</h1><br/>
+            <div class="card border-info mb-3">
+                <div class="card-header">Ayuda</div>
+                <div class="card-body text-info">
+                    <ul>
+                        <li style="list-style-type: circle"><b>Marcar tesoro:</b> para marcar la posici&oacute;n de
+                            un posible tesoro, pinche la
+                            posici&oacute;n
+                            que crea en el mapa e introduzca el identificador <b>(ID)</b> del tesoro que intenta
+                            encontrar.<br/>
+
+                            Los n&uacute;meros representados en el mapa junto a los puntos son <b>meramente
+                                identificativos</b>, y no pretenden representar, en nin&uacute;n caso, el ID del
+                            tesoro que debi&eacute;sen representar.
+                        </li>
+                        <li style="list-style-type: circle"><b>Para eliminar:</b> para eliminar una posici&oacute;n
+                            marcada, pinche de nuevo en el
+                            punto y se eliminar&aacute; autom&aacute;ticamente.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card border-warning mb-3">
+                <div class="card-header">Leyenda</div>
+                <div class="card-body text-warning">
+                    <ul>
+                        <li style="list-style-type: circle"><b>Amarillo:</b> tesoros ya encontrados.</li>
+                        <li style="list-style-type: circle"><b>Azul:</b> supuesta posici&oacute;n de un tesoro.</li>
+                    </ul>
+                </div>
+            </div>
+            <form id="insertar-tesoro" method="post" action="/verAciertos/{{ juego.id }}"
+                  enctype="multipart/form-data">
+                <div class="map" id="map_popup" style="height: 500px;"></div>
+                <div id="tesorosID"></div>
+                <!-- Cambiar por mapa de encontrar tesoro -->
+                <input type="submit" class="btn-submit" id="btn-submit" name="submitted" value="Anadir"
+                       style="margin-top: 30px;"/>
+            </form>
+        </div>
+    </div>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <script type="text/javascript">
         let cont = 1;
         const markerSource_pop = new ol.source.Vector();

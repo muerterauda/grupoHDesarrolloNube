@@ -7,30 +7,6 @@
             height: 80vh;
         }
 
-        .sidebar {
-            background: #7ebff5;
-            padding: 20px;
-            box-sizing: border-box;
-            -moz-border-radius: 10px;
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-            border: 1px solid #1b98ff;
-            margin: 10px 0px;
-            box-sizing: border-box;
-        }
-
-        .pista {
-            background: rgba(255, 252, 82, 0.55);
-            padding: 20px;
-            box-sizing: border-box;
-            -moz-border-radius: 10px;
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-            border: 1px solid #ffd841;
-            margin: 10px 0px;
-            box-sizing: border-box;
-        }
-
         li {
             margin-left: 15px;
             list-style: none;
@@ -41,67 +17,83 @@
 {% block content %}
     <div class="container-fluid">
         <hr>
-        <div class="container-header text-center"><h2>Juego {{ juego.id }}</h2></div>
+        <div class="container-header text-center"><h3>Juego {{ juego.titulo }}</h3></div>
         <hr>
-
-        <div class="row">
-            <div class="col-lg-9">
-                <div class="row">
-                    <div class="col text-center">
-                        <h3>Mapa</h3>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="map" id="map"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 ">  <!-- SIDEBAR -->
-                <br>
-                <div class="sidebar">
-                    <h3>Detalles</h3>
-                    <li>Tesoros totales: {{ juego.tesoros.keys() | max }}</li>
-                    <li>Tesoros restantes juego: {{ juego.tesoros_restantes }}</li>
-                    <br>
-                    <li><strong>Jugadores:</strong></li>
-                    {% for participante in juego.participantes %}
-                        <li>{{ juego.participantes[participante]['email'] }}</li>
-                        <ul>
-                            <li>Tesoros encontrados:{{ juego.participantes[participante]['tesoros'] }}</li>
-                            <li>Tesoros
-                                restantes: {{ juego.tesoros.keys() | max | int - juego.participantes[participante]['tesoros'] }}</li>
-                        </ul>
+        <div class="row flex-x1-nowrap" style="margin-bottom: 10px;">
+            <div class="offset-lg-2 col-lg-7 col-9">
+                <div class="map" id="map"></div>
+                {% if juego.estado == False %}
+                    {% for tesoro in juego.tesoros.values() %}
+                        <input hidden type="text" class="tesoroEncontrado"
+                               value="{{ tesoro.longitud }}, {{ tesoro.latitud }}">
                     {% endfor %}
-                </div>
+                {% else %}
+                    {% for tesoro in encontrados %}
+                        <input hidden type="text" class="tesoroEncontrado"
+                               value="{{ tesoro.longitud }}, {{ tesoro.latitud }}">
+                    {% endfor %}
+                {% endif %}
             </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <a name="pistas"><h3 style="margin-top: 30px;">Pistas</h3></a>
-                <div class="row">
-                    <div class="col">
-                        {% for tesoro in juego.tesoros %}
-                            <div class="row pista">
-                                <input hidden type="text" class="tesoro"
-                                       value="{{ juego.tesoros[tesoro].longitud }},{{ juego.tesoros[tesoro].latitud }}">
-                                <div class="col">
-                                    <h3>Pista {{ juego.tesoros[tesoro].identificador }}</h3>
-
-                                    <div class="row">
-                                        <div class="col-lg-4">
-                                            <b>Imagen:</b>
-                                            <img alt="Pista" style="max-height: 400px; max-width: 400px" src="data:image/jpeg;base64,{{ juego.tesoros[tesoro].get_pistas()[1] }}"/>
-                                        </div>
-                                        <div class="col-lg-8">
-                                            <b>Texto:</b> {{ juego.tesoros[tesoro].get_pistas()[0] }}
-                                        </div>
-                                    </div>
-                                </div>
+            <div class="col-3">
+                <div class="card bg-light" style="margin-top: 15px;">
+                    <div class="card-header text-center">
+                        <h3>Detalles</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-left">
+                            <div class="text-left" style="margin-bottom: 5px;">
+                                <a href="https://twitter.com/intent/tweet?button_hashtag=CazaTesoroGrupoA{{ juego.titulo.replace(' ', '')[:15] }}&ref_src=twsrc%5Etfw" class="twitter-hashtag-button" data-show-count="false"></a>
                             </div>
-                            <br>
-                        {% endfor %}
+                            <br/>
+                            <b><u>Descripci&oacute;n</u></b>
+                            <br/>
+                            {{ juego.descripcion }}
+                            <br/>
+                            <br/>
+                            <b>Tesoros totales:</b> {{ juego.tesoros | length }}
+                            <br/>
+                            <b>Tesoros restantes juego:</b> {{ juego.tesoros_restantes }}
+                            <div class="text-center" style="margin-top: 5px;">
+                                <a href="#" class="btn btn-warning" style="margin-top: 5px;">Reiniciar</a>
+                                 <a href="#" class="btn btn-danger" style="margin-top: 5px;">Borrar juego</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card bg-light" style="margin-top: 15px;">
+                    <div class="card-header text-center">
+                        <h3>Pistas</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-left">
+                            {% for tesoro in juego.tesoros %}
+                                <div style="margin-top: 5px;">
+                                    <b>Pista Tesoro {{ juego.tesoros[tesoro].identificador }}</b>:
+                                    {% if juego.tesoros[tesoro].get_pistas()[1] %}
+                                        <a  href="#modal{{juego.tesoros[tesoro].identificador}}" data-toggle="modal" data-target="#modal{{juego.tesoros[tesoro].identificador}}">Ver imagen de la pista</a>
+                                        <div class="modal fade modal{{juego.tesoros[tesoro].identificador}}" id="modal{{juego.tesoros[tesoro].identificador}}" tabindex="-1" role="dialog"
+                                             aria-labelledby="modal{{juego.tesoros[tesoro].identificador}}" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle"> Pista {{juego.tesoros[tesoro].identificador}}</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                       <img alt="Pista" style="max-height: 100%; max-width: 100%" src="data:image/gif;base64,{{ juego.tesoros[tesoro].get_pistas()[1] }}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    <br>
+                                    {{ juego.tesoros[tesoro].get_pistas()[0] }}
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>

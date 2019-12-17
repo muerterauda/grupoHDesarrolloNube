@@ -54,7 +54,8 @@
                                             <div class="offset-lg-1 col-lg-5 col-6">
                                                 <p class="card-title text-left" style="font-size: large">
                                                     <b>{{ juego.titulo }}</b></p>
-                                                <p class="card-text"><small><i>{{ juego.descripcion }}</i></small></p>
+                                                <p class="card-text"><small><i>{{ juego.descripcion }}</i></small><br>
+                                                    <small><i>Creador: {{ juego.creador }}</i></small></p>
                                                 <ul>
                                                     <li>Tesoros total: {{ juego.tesoros | length }}</li>
                                                     <li>Tesoros restantes: {{ juego.tesoros_restantes }}</li>
@@ -86,7 +87,8 @@
                                             <div class="offset-lg-1 col-lg-5 col-6">
                                                 <p class="card-title text-left" style="font-size: large">
                                                     <b>{{ juego.titulo }}</b></p>
-                                                <p class="card-text"><small><i>{{ juego.descripcion }}</i></small></p>
+                                                <p class="card-text"><small><i>{{ juego.descripcion }}</i></small><br>
+                                                    <small><i>Creador: {{ juego.creador }}</i></small></p>
                                                 <ul>
                                                     <li>Tesoros total: {{ juego.tesoros | length }}</li>
                                                     <li>Ganador: {{ juego.ganador }}</li>
@@ -122,7 +124,8 @@
                                                         <i class="text-success"> (Participando) </i>
                                                     {% endif %}
                                                 </p>
-                                                    <p class="card-text"><small><i>{{ juego.descripcion }}</i></small></p>
+                                                    <p class="card-text"><small><i>{{ juego.descripcion }}</i></small><br>
+                                                        <small><i>Creador: {{ juego.creador }}</i></small></p>
                                                 <ul>
                                                     <li>Tesoros total: {{ juego.tesoros | length }}</li>
                                                     <li>Tesoros restantes: {{ juego.tesoros_restantes }}</li>
@@ -130,8 +133,11 @@
                                                        <li>Mis tesoros encontrados: {{ juego.participantes[user.id_mongo_str]['tesoros'] }}</li>
                                                     {% endif %}
                                                 </ul>
-                                                <a class="btn btn-primary" href="/juego/{{ juego.id }}">Entrar al
-                                                    juego</a>
+                                                {% if user.id_mongo_str not in juego.participantes %}
+                                                    <a href="/anadirJuego/{{ juego.id }}" class="btn btn-primary" style="margin-top: 5px;">Unirme al juego</a>
+                                                {% else %}
+                                                    <a class="btn btn-primary" href="/juego/{{ juego.id }}">Entrar al juego</a>
+                                                {% endif %}
                                             </div>
                                             <div class="col-6">
                                                 <div style="max-height: 200px !important; min-height: 200px !important;"
@@ -154,7 +160,8 @@
                                                 <div class="offset-lg-1 col-lg-5 col-6">
                                                     <p class="card-title text-left" style="font-size: large">
                                                         <b>{{ juego.titulo }}</b></p>
-                                                    <p class="card-text"><small><i>{{ juego.descripcion }}</i></small></p>
+                                                    <p class="card-text"><small><i>{{ juego.descripcion }}</i></small><br>
+                                                        <small><i>Creador: {{ juego.creador }}</i></small></p>
                                                     <ul>
                                                         <li>Tesoros total: {{ juego.tesoros | length }}</li>
                                                         <li>Ganador: {{ juego.ganador }}</li>
@@ -176,8 +183,8 @@
                             {% endif %}
                         </div>
                         <div class="tab-pane fade" id="administracion" role="tabpanel" aria-labelledby="administracion-tab">
-                            {% if mis_juegos_acabados %}
-                                {% for juego in mis_juegos_acabados %}
+                            {% if juegos_creados %}
+                                {% for juego in juegos_creados %}
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="row">
@@ -188,8 +195,6 @@
                                                     <ul>
                                                         <li>Tesoros total: {{ juego.tesoros | length }}</li>
                                                         <li>Tesoros restantes: {{ juego.tesoros_restantes }}</li>
-                                                        <li>Mis tesoros
-                                                            encontrados: {{ juego.participantes[user.id_mongo_str]['tesoros'] }}</li>
                                                     </ul>
                                                     <a class="btn btn-primary" href="/verJuego/{{ juego.id }}">Visualizar juego</a>
                                                 </div>

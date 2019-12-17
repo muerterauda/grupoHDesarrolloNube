@@ -69,6 +69,8 @@ class Juego:
         return enc
 
     def add_participante(self, user: User):
+        if user.id == self.creador and not user.get_admin:
+            raise JuegoException('No te puedes meter en el juego siendo su organizador, salvo que seas administrador')
         if user.id not in self.participantes:
             self.__participantes[user.id_mongo] = {"email": user.id, "tesoros": 0}
 

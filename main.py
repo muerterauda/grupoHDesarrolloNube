@@ -232,7 +232,8 @@ def visualizar_juego_creador(id):
     juego = find_juego_by_id(id)
     return render_template("visualizar.html", juego=juego, user=user)
 
-    """Funcion para eliminar un participante del juego"""
+
+"""Funcion para eliminar un participante del juego"""
 
 
 @app.route("/abandonarJuego/<id>")
@@ -244,7 +245,8 @@ def abandonar_juego(id):
 
     return redirect(url_for('hello'))
 
-    """Funcion para reiniciar la partida"""
+
+"""Funcion para reiniciar la partida"""
 
 
 @app.route("/reiniciarJuego/<id>")
@@ -322,7 +324,7 @@ def recoger_datos_creacion():
 
 @app.route('/editarJuego/<id>')
 @login_required
-def editarJuego(id):
+def editar_juego(id):
     user = current_user
 
     juego = find_juego_by_id(id)
@@ -331,7 +333,7 @@ def editarJuego(id):
 
 
 @app.route("/tesorosmod", methods=['GET', 'POST'])
-def tesorosmodificados():
+def tesoros_modificados():
     print(request.args)
     juego = request.args.copy()
     """Devuelve todos los tesoros en la variable juego"""
