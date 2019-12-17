@@ -277,13 +277,11 @@ def recoger_datos_jugador(id):
     error = False
     recien_encontrados = []
     mensaje = None
-    i = 0
     for p, t in zip(puntos_coor, tesoros_id):
         try:
             juego.encontrar_tesoro(identificador_tesoro=int(t), latitud=p.split(",")[0], longitud=p.split(",")[1],
                                    imagen_tesoro="imagen", descubridor=user)
-            recien_encontrados[i] = t
-            i = i + 1
+            recien_encontrados.append(t)
         except Exception:
             error = True
     save_juego(juego)

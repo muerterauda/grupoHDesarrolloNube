@@ -65,6 +65,14 @@
                     </div>
                 </div>
             {% endif %}
+        {% elif user.id == juego.ganador %}
+                <div class="card border-info mb-3">
+                    <div class="card-header">Resultado</div>
+                    <div class="card-body text-info">
+                        <h5 class="card-title">¡ENHORABUENA!</h5>
+                        <p class="card-text">Ganaste este juego.</p>
+                    </div>
+                </div>
         {% endif %}
         <hr>
         <div class="row">
@@ -251,7 +259,7 @@
                 for (let pm of puntosMarcados) {
                     let pm_lon = parseFloat(pm.value.split(",")[0]);
                     let pm_lat = parseFloat(pm.value.split(",")[1]);
-                    if (Math.abs(pm_lon - pos[0]) <= 0.001 && Math.abs(pm_lat - pos[1]) <= 0.001) {
+                    if (Math.abs(pm_lon - pos[0]) <= 0.1 && Math.abs(pm_lat - pos[1]) <= 0.1) {
                         let pm_id = pm.id.split("_")[1];
                         document.getElementById("tesorosID").removeChild(document.getElementById("div_" + pm_id));
                         break;
