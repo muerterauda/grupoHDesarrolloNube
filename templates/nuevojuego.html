@@ -62,6 +62,7 @@
             <div class="col text-center">
                 <br>
                 <button type="submit" class="btn btn-success">Crear juego</button>
+                <button type="button" onclick="resetearZona()" class="btn btn-danger">Resetear juego</button>
             </div>
         </form>
     </div>
@@ -73,6 +74,7 @@
         let azul_relleno = [0, 204, 255];
         let azul = [0, 153, 204];
         let area = [];
+        let centroDefecto = ol.proj.fromLonLat([-4.4785522, 36.7151063]);
 
         var bounds = [
             [-11.438829, 35.210037], // Southwest coordinates
@@ -93,7 +95,7 @@
                 })
             ],
             view: new ol.View({
-                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
+                center: centroDefecto,
                 zoom: 14
             })
         });
@@ -114,6 +116,22 @@
             return styles[feature.getGeometry().getType()];
         };
 
+        function resetearZona() {
+            fase = 1;
+            area = [];
+            let coords = document.getElementsByName("punto");
+            for (let c of coords) {
+                c.value = "";
+            }
+            document.querySelectorAll('.tesoro').forEach(e => e.remove());
+            markerSource.clear();
+            var view = new ol.View({
+                extent: [-1401164.5156785853, 4272654.721278845, 584975.2411983708, 5479536.252219139],
+                center: centroDefecto,
+                zoom: 14
+            });
+            map.setView(view);
+        }
 
         map.on('click', function (evt) {
                 var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
@@ -122,6 +140,11 @@
                     alert("Ya existe un punto aquí. Si se trata de un tesoro, elminelo antes de crear otro en sus proximidades.")
                 } else {
                     if (fase === 1) {
+                        addMarker(pos[0], pos[1], evt, azul, azul_relleno);
+                        area.push(pos);
+                        console.log(area);
+                        document.getElementById("punto" + area.length.toString()).value = pos[1].toString() + " , " + pos[0].toString();
+
                         if (area.length === 4) {
                             console.log("area llena");
                             fase = 2;
@@ -148,15 +171,26 @@
                                 source: vectorSource,
                                 style: styleFunction
                             });
-                            map.addLayer(vectorLayer);
-                        } else {
-                            addMarker(pos[0], pos[1], evt, azul, azul_relleno);
-                            area.push(ol.proj.transform(pos, 'EPSG:4326', 'EPSG:3857'));
-                            console.log(area)
-                            document.getElementById("punto" + area.length.toString()).value = pos[0].toString() + " , " + pos[1].toString();
+                            let x_med = 0;
+                            let y_med = 0;
+                            for (let c of area) {
+                                x_med += c[0];
+                                y_med += c[1];
+                            }
+                            x_med = x_med / 4;
+                            y_med = y_med / 4;
+                            let goodOldCoordinates = ol.proj.transform([x_med, y_med], 'EPSG:4326', 'EPSG:3857');
+                            let limiteInferior = ol.proj.transform(area[3], 'EPSG:4326', 'EPSG:3857');
+                            let limiteSuperior = ol.proj.transform(area[1], 'EPSG:4326', 'EPSG:3857');
+                            var view = new ol.View({
+                                extent: [limiteInferior[0], limiteInferior[1], limiteSuperior[0], limiteSuperior[1]],
+                                center: goodOldCoordinates,
+                                zoom: 0
+                            });
+                            map.setView(view);
+                            markerSource.clear();
                         }
-                    }
-                    if (fase === 2) {
+                    } else {
                         addMarker(pos[0], pos[1], evt, amarillo, amarillo_relleno);
                     }
                 }
