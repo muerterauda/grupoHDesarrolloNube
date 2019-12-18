@@ -37,7 +37,8 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="todosActivos-tab" data-toggle="tab" href="#todosActivos" role="tab"
-                           aria-controls="todosActivos" aria-selected="false" onclick="recargarMapas(this.id)">Todos los
+                           aria-controls="todosActivos" aria-selected="false" ontoggle="recargarMapas(this.id)">Todos
+                            los
                             juegos activos</a>
                     </li>
                     <li class="nav-item">
@@ -231,123 +232,113 @@
             </div>
         </div>
 
-        {#            <div class="overlay" id="overlay">#}
-        {#                <div class="popup" id="popup" style="max-width: 400px;">#}
-        {#                    <a id="btn-cerrar-popup" class="btn-cerrar-popup"><i class="fas fa-times"></i></a>#}
-        {#                    <h3>Añadir juego</h3>#}
-        {#                    <br>#}
-        {#                    <h4>ID del juego: </h4>#}
-        {#                    <form id="insertar-tesoro" action="/añadirJuego" method="post">#}
-        {#                        <div class="contenedor-inputs">#}
-        {#                            <input type="text" name="id_juego" id="id_juego" maxlength="24"/>#}
-        {#                        </div>#}
-        {#                        <input type="submit" class="btn-submit" id="btn-submit" name="submitted" value="Añadir"#}
-        {#                               style="margin-top: 30px;"/>#}
-        {#                    </form>#}
-        {#                </div>#}
-        {#            </div>#}
-        {#        </div>#}
+    </div>
 
-        <script type="text/javascript">
-            $(document).ready(function () {
-                let todosMapas = document.getElementsByClassName("map");
-                for (let m of todosMapas)
-                    new ol.Map({
-                        target: m.id,
-                        layers: [
-                            new ol.layer.Tile({
-                                source: new ol.source.OSM()
-                            }),
-                            new ol.layer.Vector({
-                                source: markerSource
-                            })
-                        ],
-                        view: new ol.View({
-                            center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
-                            zoom: 4
+    <script type="text/javascript">
+        var maps = [];
+        $(document).ready(function () {
+            let todosMapas = document.getElementsByClassName("map");
+            for (let m of todosMapas)
+                maps.push(new ol.Map({
+                    target: m.id,
+                    layers: [
+                        new ol.layer.Tile({
+                            source: new ol.source.OSM()
+                        }),
+                        new ol.layer.Vector({
+                            source: markerSource
                         })
-                    });
+                    ],
+                    view: new ol.View({
+                        center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
+                        zoom: 4
+                    })
+                }))
+        });
+
+        function recargarMapas(id) {
+            let idSeccion = id.split("-")[0];
+            let mapas = document.getElementById(idSeccion).getElementsByClassName("map");
+            let todosMapas = document.getElementsByClassName("map");
+            for (let m of maps) {
+                m.updateSize();
+            }
+            {#for (let mapaShow of mapas) {#}
+            {#    if (mapaShow === m) {#}
+            {#        $(mapaShow).removeClass("hidden");#}
+            {#    } else {#}
+            {#        $(mapaShow).addClass("hidden");#}
+            {#    }#}
+            //{#}#}
+            //}
+        }
+
+        const markerSource = new ol.source.Vector();
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                }),
+                new ol.layer.Vector({
+                    source: markerSource
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
+                zoom: 4
+            })
+        });
+
+        var puntosPuestos = new Map();
+
+        map.on('click', function (evt) {
+            var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+            addMarker(pos[0], pos[1]);
+            var x = map.getFeaturesAtPixel(evt.pixel);
+            for (var y of x) {
+                markerSource.removeFeature(y);
+                alert("eliminado" + y.ol_iud)
+            }
+        });
+
+        function addMarker(lon, lat) {
+            console.log('lon:', lon);
+            console.log('lat:', lat);
+            /* for (var icono of puntosPuestos.values()) {
+                 markerSource.removeFeature(icono);
+             }*/
+            var iconFeature = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326',
+                    'EPSG:3857')),
+                population: 4000,
+                rainfall: 500
             });
 
-            function recargarMapas(id) {
-                let mapas = document.getElementById(id).getElementsByClassName("map");
-                let todosMapas = document.getElementsByClassName("map");
-                for (let m of todosMapas) {
-                    if (mapas.includes(m)) {
-                        m.removeAttribute("hidden");
-                    } else {
-                        m.setAttribute("hidden", "hidden");
-                    }
-                }
-            }
-
-            const markerSource = new ol.source.Vector();
-            var map = new ol.Map({
-                target: 'map',
-                layers: [
-                    new ol.layer.Tile({
-                        source: new ol.source.OSM()
-                    }),
-                    new ol.layer.Vector({
-                        source: markerSource
+            var myStyle = new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: 7,
+                    fill: new ol.style.Fill({color: 'yellow'}),
+                    stroke: new ol.style.Stroke({
+                        color: [255, 204, 0], width: 2
                     })
-                ],
-                view: new ol.View({
-                    center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
-                    zoom: 4
                 })
             });
-
-            var puntosPuestos = new Map();
-
-            map.on('click', function (evt) {
-                var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
-                addMarker(pos[0], pos[1]);
-                var x = map.getFeaturesAtPixel(evt.pixel);
-                for (var y of x) {
-                    markerSource.removeFeature(y);
-                    alert("eliminado" + y.ol_iud)
-                }
-            });
-
-            function addMarker(lon, lat) {
-                console.log('lon:', lon);
-                console.log('lat:', lat);
-                /* for (var icono of puntosPuestos.values()) {
-                     markerSource.removeFeature(icono);
-                 }*/
-                var iconFeature = new ol.Feature({
-                    geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326',
-                        'EPSG:3857')),
-                    population: 4000,
-                    rainfall: 500
-                });
-
-                var myStyle = new ol.style.Style({
-                    image: new ol.style.Circle({
-                        radius: 7,
-                        fill: new ol.style.Fill({color: 'yellow'}),
-                        stroke: new ol.style.Stroke({
-                            color: [255, 204, 0], width: 2
-                        })
-                    })
-                });
-                iconFeature.setStyle(myStyle);
-                markerSource.addFeature(iconFeature);
-                puntosPuestos.set(lon + lat, iconFeature);
-            }
+            iconFeature.setStyle(myStyle);
+            markerSource.addFeature(iconFeature);
+            puntosPuestos.set(lon + lat, iconFeature);
+        }
 
 
-            $('#unirse-juego').click(function () {
-                $("#overlay").addClass("active");
-                $("#popup").addClass("active");
-            });
+        $('#unirse-juego').click(function () {
+            $("#overlay").addClass("active");
+            $("#popup").addClass("active");
+        });
 
-            $('#btn-cerrar-popup').click(function () {
-                $("#overlay").removeClass("active");
-                $("#popup").removeClass("active");
-            });
+        $('#btn-cerrar-popup').click(function () {
+            $("#overlay").removeClass("active");
+            $("#popup").removeClass("active");
+        });
 
-        </script>
-    </div>
+    </script>
 {% endblock %}
