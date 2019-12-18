@@ -173,7 +173,10 @@ def hello():
     mis_juegos_activos = find_juego_by_participante_and_estado(user, True)
     mis_juegos_acabados = find_juego_by_participante_and_estado(user, False)
     juegos_activos = find_juego_by_estado(True)
-    juegos_acabados = find_juego_by_participante_and_estado(user, False)
+    if user.get_admin:
+        juegos_acabados = find_juego_by_participante_and_estado(user, False)
+    else:
+        juegos_acabados = None
     juegos_creados = find_juego_by_creador_and_estado(user)
     return render_template("index.html", mis_juegos_activos=mis_juegos_activos, mis_juegos_acabados=mis_juegos_acabados,
                            juegos_activos=juegos_activos, juegos_acabados=juegos_acabados,
@@ -257,7 +260,7 @@ def reiniciar_juego(id):
         juego.reset_game()
         save_juego(juego)
 
-    return redirect(url_for('hello'))
+    return render_template("visualizar.html", juego=juego, user=user)
 
 
 @app.route("/eliminarJuego/<id>")

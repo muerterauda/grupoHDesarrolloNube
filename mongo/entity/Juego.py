@@ -79,7 +79,7 @@ class Juego:
         if not self.estado:
             raise JuegoException('Juego ya acabado, no se puede abandonar')
         if id not in self.__participantes:
-            raise JuegoException('Parrticipante no encontrado')
+            raise JuegoException('Participante no encontrado')
         else:
             participante = self.__participantes.pop(id)
             for t in self.tesoros:
