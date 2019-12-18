@@ -10,11 +10,12 @@ from mysqlx import Auth
 from requests.exceptions import HTTPError
 from requests_oauthlib import OAuth2Session
 from mongo.entity.Juego import Juego, JuegoException
+from mongo.entity.Mensaje import Mensaje
 from mongo.entity.Tesoro import Tesoro
 from mongo.entity.Usuario import User
 from mongo.repository.juego_repository import find_juego_by_creador_and_estado, find_juego_by_participante_and_estado, \
     find_juego_by_id, save_juego, delete_juego_by_id, find_juego_by_estado
-from mongo.repository.mensaje_repository import find_all_mensajes_by_juego
+from mongo.repository.mensaje_repository import find_all_mensajes_by_juego, save_mensaje
 from mongo.repository.usuario_repository import find_user_by_id, replace_user_by_id, update_user_by_id, save_user
 
 #
@@ -190,6 +191,14 @@ def nuevo_juego():
     user = current_user
     return render_template("nuevojuego.html", user=user)
 
+
+@app.route("/nuevoMensaje/<id>", methods=['POST'])
+def nuevo_mensaje(id):
+    user = current_user
+    mensaje = request.values.getlist("nuevoMensaje")
+    m = Mensaje(user=user, juego=id, mensaje=mensaje)
+    save_mensaje(m)
+    return redirect(url_for('ver_juego'), id)
 
 @app.route("/juego/<id>")
 def ver_juego(id):

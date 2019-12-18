@@ -9,7 +9,7 @@ class MensajeException(ValueError):
 
 class Mensaje:
 
-    def __init__(self, user:User=None, juego:Juego=None, mensaje:str=None, mensaje_dict:dict=None):
+    def __init__(self, user:User=None, juego:str=None, mensaje:str=None, mensaje_dict:dict=None):
         if mensaje_dict:
             self.__id = mensaje_dict['_id']
             self.__creador = mensaje_dict['creador']
@@ -21,8 +21,8 @@ class Mensaje:
                 raise MensajeException('Parametros de creacion incorrectos')
             self.__creador = user.id
             self.__mensaje = mensaje
-            self.__hora = datetime.datetime.now()
-            self.__juego = str(juego.id)
+            self.__fecha = str(datetime.datetime.now())
+            self.__juego = juego
             self.__id = None
 
     @property
