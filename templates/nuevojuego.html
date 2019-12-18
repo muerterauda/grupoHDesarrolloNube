@@ -32,8 +32,26 @@
     <div class="container-fluid">
         <form action="/recogerdatos" method="POST" id="myForm" enctype="multipart/form-data">
             <input hidden type="text" value="0" id="nTesoros" name="nTesoros">
-            <div id="listas">
-                <div class="container">
+            <div class="container">
+                <div id="extremos">
+                    <div class="row text-center">
+                        <label for="punto1">Extremo 1</label> <input readonly id="punto1" name="punto" type="text"
+                                                                     class="form-control" required>
+                    </div>
+                    <div class="row text-center">
+                        <label for="puntow">Extremo 2</label> <input readonly id="punto2" name="punto" type="text"
+                                                                     class="form-control" required>
+                    </div>
+                    <div class="row text-center">
+                        <label for="punto3">Extremo 3</label> <input readonly id="punto3" name="punto" type="text"
+                                                                     class="form-control" required>
+                    </div>
+                    <div class="row text-center">
+                        <label for="punto4">Extremo 4</label> <input readonly id="punto4" name="punto" type="text"
+                                                                     class="form-control" required>
+                    </div>
+                </div>
+                <div id="listas">
                     <div class="row">
                         <div class="col align-center">
                             <div class="map" id="map"></div>
@@ -49,6 +67,12 @@
     </div>
     <script type="text/javascript">
         var x = 1;
+        let fase = 1;
+        let amarillo_relleno = [255, 255, 0];
+        let amarillo = [255, 204, 0];
+        let azul_relleno = [0, 204, 255];
+        let azul = [0, 153, 204];
+        let area = [];
 
         var bounds = [
             [-11.438829, 35.210037], // Southwest coordinates
@@ -74,47 +98,106 @@
             })
         });
 
-        var puntosPuestos = new Map();
+        var styles = {
+            'MultiPolygon': new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: 'blue',
+                    lineDash: [4],
+                    width: 3
+                }),
+                fill: new ol.style.Fill({
+                    color: 'rgba(0, 0, 255, 0.1)'
+                })
+            })
+        };
+        var styleFunction = function (feature) {
+            return styles[feature.getGeometry().getType()];
+        };
+
 
         map.on('click', function (evt) {
-            var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
-            var x = map.getFeaturesAtPixel(evt.pixel);
-            var iyo = evt.pixel;
-            console.log(typeof (iyo));
-            if (x.length > 0) {
-                alert("Ya existe un tesoro en esta posicion o en una muy cercana. Elminelo antes de crear otro en sus proximidades.")
-            } else {
-                addMarker(pos[0], pos[1], evt);
-            }
-        });
+                var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+                var x = map.getFeaturesAtPixel(evt.pixel);
+                if (x.length > 0) {
+                    alert("Ya existe un punto aquí. Si se trata de un tesoro, elminelo antes de crear otro en sus proximidades.")
+                } else {
+                    if (fase === 1) {
+                        if (area.length === 4) {
+                            console.log("area llena");
+                            fase = 2;
 
-        function addMarker(lon, lat, evt) {
-            console.log('lon:', lon);
-            console.log('lat:', lat);
-            /* for (var icono of puntosPuestos.values()) {
-                 markerSource.removeFeature(icono);
-             }*/
+                            var geojsonObject = {
+                                "type": "FeatureCollection",
+                                'properties': {
+                                    'name': 'EPSG:3857'
+                                },
+                                "features": [
+                                    {
+                                        "type": "Feature",
+                                        "geometry": {
+                                            "type": "MultiPolygon",
+                                            "coordinates": [[area]]
+                                        }
+                                    }]
+                            };
+
+                            var vectorSource = new ol.source.Vector({
+                                features: (new ol.format.GeoJSON()).readFeatures(geojsonObject, 'EPSG:3857')
+                            });
+                            var vectorLayer = new ol.layer.Vector({
+                                source: vectorSource,
+                                style: styleFunction
+                            });
+                            map.addLayer(vectorLayer);
+                        } else {
+                            addMarker(pos[0], pos[1], evt, azul, azul_relleno);
+                            area.push(ol.proj.transform(pos, 'EPSG:4326', 'EPSG:3857'));
+                            console.log(area)
+                            document.getElementById("punto" + area.length.toString()).value = pos[0].toString() + " , " + pos[1].toString();
+                        }
+                    }
+                    if (fase === 2) {
+                        addMarker(pos[0], pos[1], evt, amarillo, amarillo_relleno);
+                    }
+                }
+            }
+        );
+
+        function addMarker(lon, lat, evt, color, relleno) {
             var iconFeature = new ol.Feature({
                 geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326',
                     'EPSG:3857')),
                 population: 4000,
                 rainfall: 500
             });
-
-            var myStyle = new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 7,
-                    fill: new ol.style.Fill({color: 'yellow'}),
-                    stroke: new ol.style.Stroke({
-                        color: [255, 204, 0], width: 2
+            var myStyle;
+            if (fase === 1)
+                myStyle = new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 7,
+                        fill: new ol.style.Fill({color: relleno}),
+                        stroke: new ol.style.Stroke({
+                            color: color, width: 2
+                        })
                     })
-                })
-            });
+                });
+            else
+                myStyle = new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 7,
+                        fill: new ol.style.Fill({color: relleno}),
+                        stroke: new ol.style.Stroke({
+                            color: color, width: 2
+                        })
+                    }),
+                    text: new ol.style.Text({
+                        text: x.toString(),
+                    })
+                });
             iconFeature.setStyle(myStyle);
             markerSource.addFeature(iconFeature);
-            puntosPuestos.set(lon + lat, iconFeature);
-
-            $('#listas').append('<div class="row tesoro" id="tesoro' + x + '">\
+            if (fase !== 1) {
+                $('#listas').append('<div class="row tesoro" id="tesoro' + x + '">\
                         <div class="row align-items-center">\
                             <div class="col">\
                                 <br>\
@@ -131,12 +214,13 @@
                             </div>\
                             <div class="col">\
                               <br>\
-                                <button class="btn btn-danger eliminarTesoro" onclick="eliminarTesoro(this.id)" type="button" id="eliminar' + evt.pixel + 'eliminar' + x + '">Eliminar pista</button>\
+                                <button class="btn btn-danger eliminarTesoro" onclick="eliminarTesoro(this.id)" type="button" id="eliminar' + evt.pixel + 'eliminar' + x + '">Eliminar tesoro</button>\
                             </div>\
                         </div>\
                         </div>');
-            x++;
-            document.getElementById("nTesoros").value = x;
+                x++;
+                document.getElementById("nTesoros").value = x;
+            }
         }
 
         $('#myForm').submit(function (evt) {
