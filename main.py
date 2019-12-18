@@ -306,6 +306,12 @@ def recoger_datos_creacion():
     """Almacena el todos los tesoros en la variable juego"""
     tesoros = {}
     i = 1
+    nombre = request.values.get("nombre")
+    desc = request.values.get("descripcion")
+    coord = request.values.getlist("punto")
+    dimensiones = []
+    for elem in coord:
+        dimensiones.append((elem.split(",")[0], elem.split(",")[1]))
     for coordenada, imagen, texto in zip(request.values.getlist("coordenadas"),
                                          request.files.getlist("pista_imagen"),
                                          request.values.getlist("pista_texto")):
@@ -315,7 +321,8 @@ def recoger_datos_creacion():
                         pista_imagen=pista_imagen)
         tesoros[i] = tesoro
         i += 1
-    juego = Juego(diccionario_tesoros=tesoros, creador=current_user, dimensiones=[(0, 0), (0, 1), (1, 0), (1, 1)])
+    juego = Juego(diccionario_tesoros=tesoros, creador=current_user, dimensiones=dimensiones, nombre=nombre,
+                  descripcion=desc)
     save_juego(juego)
     return redirect(url_for('hello'))
 
