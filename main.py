@@ -247,7 +247,8 @@ def reiniciar_juego(id):
         juego.reset_game()
         save_juego(juego)
 
-    return render_template("visualizar.html", juego=juego, user=user)
+    return render_template("visualizar.html", juego=juego, user=user, centro_lon=juego.centro[0],
+                           centro_lat=juego.centro[1])
 
 
 @app.route("/eliminarJuego/<id>")
