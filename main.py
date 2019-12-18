@@ -303,7 +303,7 @@ def recoger_datos_creacion():
     coord = request.values.getlist("punto")
     dimensiones = []
     for elem in coord:
-        dimensiones.append((elem.split(",")[0], elem.split(",")[1]))
+        dimensiones.append((float(elem.split(",")[0]), float(elem.split(",")[1])))
     for coordenada, imagen, texto in zip(request.values.getlist("coordenadas"),
                                          request.files.getlist("pista_imagen"),
                                          request.values.getlist("pista_texto")):

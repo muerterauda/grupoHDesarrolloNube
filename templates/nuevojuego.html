@@ -66,6 +66,11 @@
             </div>
             <div class="col text-center">
                 <br>
+                <b class="text-danger">Si tras marcar la zona de juego el mapa no se visualiza bien, ¡haz click en <i>Resetear
+                    juego</i> y
+                    sigue el patr&oacute;n de dibujado!</b>
+                <br/>
+                <br/>
                 <button type="submit" class="btn btn-success">Crear juego</button>
                 <button type="button" onclick="resetearZona()" class="btn btn-danger">Resetear juego</button>
             </div>
@@ -80,16 +85,10 @@
         let azul = [0, 153, 204];
         let area = [];
         let centroDefecto = ol.proj.fromLonLat([-4.4785522, 36.7151063]);
-
-        var bounds = [
-            [-11.438829, 35.210037], // Southwest coordinates
-            [5.718196, 44.680023]  // Northeast coordinates
-        ];
-
+        let clicks = 0;
 
         const markerSource = new ol.source.Vector();
         var map = new ol.Map({
-            maxBounds: bounds, // Sets bounds as max
             target: 'map',
             layers: [
                 new ol.layer.Tile({
@@ -153,29 +152,6 @@
                         if (area.length === 4) {
                             console.log("area llena");
                             fase = 2;
-
-                            var geojsonObject = {
-                                "type": "FeatureCollection",
-                                'properties': {
-                                    'name': 'EPSG:3857'
-                                },
-                                "features": [
-                                    {
-                                        "type": "Feature",
-                                        "geometry": {
-                                            "type": "MultiPolygon",
-                                            "coordinates": [[area]]
-                                        }
-                                    }]
-                            };
-
-                            var vectorSource = new ol.source.Vector({
-                                features: (new ol.format.GeoJSON()).readFeatures(geojsonObject, 'EPSG:3857')
-                            });
-                            var vectorLayer = new ol.layer.Vector({
-                                source: vectorSource,
-                                style: styleFunction
-                            });
                             let x_med = 0;
                             let y_med = 0;
                             for (let c of area) {
