@@ -9,7 +9,8 @@ from flask_login import LoginManager, login_required, current_user, logout_user,
 from mysqlx import Auth
 from requests.exceptions import HTTPError
 from requests_oauthlib import OAuth2Session
-from mongo.entity.Juego import Juego, JuegoException
+
+from mongo.entity.Juego import Juego
 from mongo.entity.Tesoro import Tesoro
 from mongo.entity.Usuario import User
 from mongo.repository.juego_repository import find_juego_by_creador_and_estado, find_juego_by_participante_and_estado, \
@@ -312,7 +313,7 @@ def recoger_datos_creacion():
                         pista_imagen=pista_imagen)
         tesoros[i] = tesoro
         i += 1
-    juego = Juego(diccionario_tesoros=tesoros, creador=current_user, dimensiones=dimensiones, nombre=nombre,
+    juego = Juego(diccionario_tesoros=tesoros, creador=current_user, dimensiones=dimensiones, titulo=nombre,
                   descripcion=desc)
     save_juego(juego)
     return redirect(url_for('hello'))

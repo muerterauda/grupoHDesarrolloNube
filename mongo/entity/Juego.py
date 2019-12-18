@@ -9,7 +9,7 @@ class JuegoException(ValueError):
 class Juego:
 
     def __init__(self, diccionario_tesoros: dict = None, creador: User = None, dimensiones: list = None,
-                 titulo:str = None, descipcion:str = None, juego_last: dict = None):
+                 titulo:str = None, descripcion:str = None, juego_last: dict = None):
         if juego_last:
             self.__id = str(juego_last.get('_id'))
             self.__titulo = juego_last.get('titulo')
@@ -27,10 +27,10 @@ class Juego:
                 raise JuegoException('Parametros invalidos')
             self.__id = ''
             self.__titulo = titulo
-            if not descipcion:
+            if not descripcion:
                 self.__descripcion = ""
             else:
-                self.__descripcion = descipcion
+                self.__descripcion = descripcion
             self.__tesoros = diccionario_tesoros
             self.__creador = creador.id
             self.__participantes = {}
