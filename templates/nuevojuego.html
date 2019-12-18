@@ -17,7 +17,6 @@
             border: 1px solid #1b98ff;
             margin: 10px 0px;
             text-decoration: none;
-            box-sizing: border-box;
         }
     </style>
 {% endblock %}
@@ -32,6 +31,8 @@
     <div class="container-fluid">
         <form action="/recogerdatos" method="POST" id="myForm" enctype="multipart/form-data">
             <input hidden type="text" value="0" id="nTesoros" name="nTesoros">
+            <label for="name"></label> <input id="name" type="text" name="nombre" required/>
+            <label for="descripcion"></label> <textarea id="descripcion" name="descripcion" required></textarea>
             <div id="listas">
                 <div class="container">
                     <div class="row">

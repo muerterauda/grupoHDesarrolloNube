@@ -37,7 +37,8 @@
                     </li>
                     {% if user.get_admin %}
                         <li class="nav-item">
-                            <a class="nav-link" id="todosAcabados-tab" data-toggle="tab" href="#todosAcabados" role="tab"
+                            <a class="nav-link" id="todosAcabados-tab" data-toggle="tab" href="#todosAcabados"
+                               role="tab"
                                aria-controls="todosAcabados" aria-selected="false">Todos los juegos acabados</a>
                         </li>
                     {% endif %}
@@ -175,7 +176,9 @@
                                                             juego</a>
                                                     {% else %}
                                                         {% if user.id_mongo_str not in juego.participantes %}
-                                                            <a href="/anadirJuego/{{ juego.id }}" class="btn btn-primary" style="margin-top: 5px;">Unirme al juego</a>
+                                                            <a href="/anadirJuego/{{ juego.id }}"
+                                                               class="btn btn-primary" style="margin-top: 5px;">Unirme
+                                                                al juego</a>
                                                         {% else %}
                                                             <a class="btn btn-primary" href="/juego/{{ juego.id }}">Entrar
                                                                 al juego</a>
@@ -217,8 +220,8 @@
                                                         <li>Ganador: {{ juego.ganador }}</li>
                                                     </ul>
                                                     {% if user.id_mongo_str in juego.participantes %}
-                                                            <a class="btn btn-info" href="/juego/{{ juego.id }}">Entrar
-                                                                al juego</a>
+                                                        <a class="btn btn-info" href="/juego/{{ juego.id }}">Entrar
+                                                            al juego</a>
                                                     {% endif %}
                                                     <a class="btn btn-primary" href="/verJuego/{{ juego.id }}">Administrar
                                                         juego</a>
@@ -256,14 +259,14 @@
                                                     <li>Tesoros restantes: {{ juego.tesoros_restantes }}</li>
                                                 </ul>
                                                 {% if user.get_admin %}
-                                                        {% if user.id_mongo_str not in juego.participantes %}
-                                                            <a href="/anadirJuego/{{ juego.id }}" class="btn btn-info"
-                                                               style="margin-top: 5px;">Unirme al juego</a>
-                                                        {% else %}
-                                                            <a class="btn btn-info" href="/juego/{{ juego.id }}">Entrar
-                                                                al juego</a>
-                                                        {% endif %}
+                                                    {% if user.id_mongo_str not in juego.participantes %}
+                                                        <a href="/anadirJuego/{{ juego.id }}" class="btn btn-info"
+                                                           style="margin-top: 5px;">Unirme al juego</a>
+                                                    {% else %}
+                                                        <a class="btn btn-info" href="/juego/{{ juego.id }}">Entrar
+                                                            al juego</a>
                                                     {% endif %}
+                                                {% endif %}
                                                 <a class="btn btn-primary" href="/verJuego/{{ juego.id }}">Administrar
                                                     juego</a>
                                             </div>
@@ -297,24 +300,6 @@
                 </div>
             </div>
         </div>
-
-        {#            <div class="overlay" id="overlay">#}
-        {#                <div class="popup" id="popup" style="max-width: 400px;">#}
-        {#                    <a id="btn-cerrar-popup" class="btn-cerrar-popup"><i class="fas fa-times"></i></a>#}
-        {#                    <h3>Añadir juego</h3>#}
-        {#                    <br>#}
-        {#                    <h4>ID del juego: </h4>#}
-        {#                    <form id="insertar-tesoro" action="/añadirJuego" method="post">#}
-        {#                        <div class="contenedor-inputs">#}
-        {#                            <input type="text" name="id_juego" id="id_juego" maxlength="24"/>#}
-        {#                        </div>#}
-        {#                        <input type="submit" class="btn-submit" id="btn-submit" name="submitted" value="Añadir"#}
-        {#                               style="margin-top: 30px;"/>#}
-        {#                    </form>#}
-        {#                </div>#}
-        {#            </div>#}
-        {#        </div>#}
-
         <script type="text/javascript">
             const markerSource = new ol.source.Vector();
             var map = new ol.Map({
@@ -384,5 +369,7 @@
             });
 
         </script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"
+                integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
     </div>
 {% endblock %}

@@ -9,12 +9,12 @@ from flask_login import LoginManager, login_required, current_user, logout_user,
 from mysqlx import Auth
 from requests.exceptions import HTTPError
 from requests_oauthlib import OAuth2Session
-
-from mongo.entity.Juego import Juego
+from mongo.entity.Juego import Juego, JuegoException
 from mongo.entity.Tesoro import Tesoro
 from mongo.entity.Usuario import User
 from mongo.repository.juego_repository import find_juego_by_creador_and_estado, find_juego_by_participante_and_estado, \
     find_juego_by_id, save_juego, delete_juego_by_id, find_juego_by_estado
+from mongo.repository.mensaje_repository import find_all_mensajes_by_juego
 from mongo.repository.usuario_repository import find_user_by_id, replace_user_by_id, update_user_by_id, save_user
 
 #
@@ -181,17 +181,6 @@ def hello():
     return render_template("index.html", mis_juegos_activos=mis_juegos_activos, mis_juegos_acabados=mis_juegos_acabados,
                            juegos_activos=juegos_activos, juegos_acabados=juegos_acabados,
                            juegos_creados=juegos_creados, user=user)
-    """Completar"""
-    """if user.get_admin():
-        lista_juegos = find_juego_by_creador_and_estado(user)
-        return render_template("admin.html", lista_juegos=lista_juegos, user=user)
-
-    else:
-        juegos_activos = find_juego_by_participante_and_estado(user, True)
-        juegos_acabados = find_juego_by_participante_and_estado(user, False)
-        juegos_creados = find_juego_by_creador_and_estado(user)
-        return render_template("index.html", juegos_activos=juegos_activos, juegos_acabados=juegos_acabados,
-                           juegos_creados=juegos_creados, user=user)"""
 
 
 @app.route('/nuevoJuego')
@@ -205,15 +194,12 @@ def nuevo_juego():
 @app.route("/juego/<id>")
 def ver_juego(id):
     user = current_user
+    mensajes = find_all_mensajes_by_juego(id_juego=id)
     juego = find_juego_by_id(id)
     encontrados = {}
     if user.id_mongo in juego.participantes:
-        jugando = True
-        if juego.estado is True:
-            encontrados = juego.get_tesoros(user)
-    else:
-        jugando = False
-    return render_template("juego.html", juego=juego, user=user, jugando=jugando, encontrados=encontrados)
+        encontrados = juego.get_tesoros(user)
+    return render_template("juego.html", juego=juego, user=user, encontrados=encontrados, mensajes=mensajes)
 
 
 @app.route("/anadirJuego/<id>", methods=['GET'])
@@ -307,10 +293,12 @@ def recoger_datos_jugador(id):
 
 @app.route("/recogerdatos", methods=['POST'])
 def recoger_datos_creacion():
-    print(request.args)
+    # print(request.args)
     """Almacena el todos los tesoros en la variable juego"""
     tesoros = {}
     i = 1
+    name = request.values.get("nombre")
+    desc = request.values.get("descripcion")
     for coordenada, imagen, texto in zip(request.values.getlist("coordenadas"),
                                          request.files.getlist("pista_imagen"),
                                          request.values.getlist("pista_texto")):
@@ -320,7 +308,8 @@ def recoger_datos_creacion():
                         pista_imagen=pista_imagen)
         tesoros[i] = tesoro
         i += 1
-    juego = Juego(diccionario_tesoros=tesoros, creador=current_user, dimensiones=[(0, 0), (0, 1), (1, 0), (1, 1)])
+    juego = Juego(diccionario_tesoros=tesoros, creador=current_user, dimensiones=[(0, 0), (0, 1), (1, 0), (1, 1)],
+                  titulo=name, descipcion=desc)
     save_juego(juego)
     return redirect(url_for('hello'))
 
@@ -333,17 +322,6 @@ def editar_juego(id):
     juego = find_juego_by_id(id)
 
     return render_template("editarjuego.html", juego=juego, user=user)
-
-
-@app.route("/tesorosmod", methods=['GET', 'POST'])
-def tesoros_modificados():
-    print(request.args)
-    juego = request.args.copy()
-    """Devuelve todos los tesoros en la variable juego"""
-    """ si no se ha modificado el campo pista_imagen almacenar el existente en la BD"""
-    """Completar"""
-
-    return redirect(url_for('hello'))
 
 
 if __name__ == '__main__':
