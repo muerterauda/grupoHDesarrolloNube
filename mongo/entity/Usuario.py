@@ -32,5 +32,9 @@ class User(UserMixin):
     def get_admin(self):
         return self.__admin
 
+    @property
+    def nombre_email(self):
+        return self.id.split('@')[0]
+
     def __str__(self):
         return self.id + ", " + self.name

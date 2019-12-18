@@ -9,12 +9,12 @@ from flask_login import LoginManager, login_required, current_user, logout_user,
 from mysqlx import Auth
 from requests.exceptions import HTTPError
 from requests_oauthlib import OAuth2Session
-
-from mongo.entity.Juego import Juego
+from mongo.entity.Juego import Juego, JuegoException
 from mongo.entity.Tesoro import Tesoro
 from mongo.entity.Usuario import User
 from mongo.repository.juego_repository import find_juego_by_creador_and_estado, find_juego_by_participante_and_estado, \
     find_juego_by_id, save_juego, delete_juego_by_id, find_juego_by_estado
+from mongo.repository.mensaje_repository import find_all_mensajes_by_juego
 from mongo.repository.usuario_repository import find_user_by_id, replace_user_by_id, update_user_by_id, save_user
 
 #
@@ -173,22 +173,14 @@ def hello():
     mis_juegos_activos = find_juego_by_participante_and_estado(user, True)
     mis_juegos_acabados = find_juego_by_participante_and_estado(user, False)
     juegos_activos = find_juego_by_estado(True)
-    juegos_acabados = find_juego_by_participante_and_estado(user, False)
+    if user.get_admin:
+        juegos_acabados = find_juego_by_participante_and_estado(user, False)
+    else:
+        juegos_acabados = None
     juegos_creados = find_juego_by_creador_and_estado(user)
     return render_template("index.html", mis_juegos_activos=mis_juegos_activos, mis_juegos_acabados=mis_juegos_acabados,
                            juegos_activos=juegos_activos, juegos_acabados=juegos_acabados,
                            juegos_creados=juegos_creados, user=user)
-    """Completar"""
-    """if user.get_admin():
-        lista_juegos = find_juego_by_creador_and_estado(user)
-        return render_template("admin.html", lista_juegos=lista_juegos, user=user)
-
-    else:
-        juegos_activos = find_juego_by_participante_and_estado(user, True)
-        juegos_acabados = find_juego_by_participante_and_estado(user, False)
-        juegos_creados = find_juego_by_creador_and_estado(user)
-        return render_template("index.html", juegos_activos=juegos_activos, juegos_acabados=juegos_acabados,
-                           juegos_creados=juegos_creados, user=user)"""
 
 
 @app.route('/nuevoJuego')
@@ -202,15 +194,12 @@ def nuevo_juego():
 @app.route("/juego/<id>")
 def ver_juego(id):
     user = current_user
+    mensajes = find_all_mensajes_by_juego(id_juego=id)
     juego = find_juego_by_id(id)
     encontrados = {}
     if user.id_mongo in juego.participantes:
-        jugando = True
-        if juego.estado is True:
-            encontrados = juego.get_tesoros(user)
-    else:
-        jugando = False
-    return render_template("juego.html", juego=juego, user=user, jugando=jugando, encontrados=encontrados)
+        encontrados = juego.get_tesoros(user)
+    return render_template("juego.html", juego=juego, user=user, encontrados=encontrados, mensajes=mensajes)
 
 
 @app.route("/anadirJuego/<id>", methods=['GET'])
@@ -232,7 +221,8 @@ def visualizar_juego_creador(id):
     juego = find_juego_by_id(id)
     return render_template("visualizar.html", juego=juego, user=user)
 
-    """Funcion para eliminar un participante del juego"""
+
+"""Funcion para eliminar un participante del juego"""
 
 
 @app.route("/abandonarJuego/<id>")
@@ -244,7 +234,8 @@ def abandonar_juego(id):
 
     return redirect(url_for('hello'))
 
-    """Funcion para reiniciar la partida"""
+
+"""Funcion para reiniciar la partida"""
 
 
 @app.route("/reiniciarJuego/<id>")
@@ -255,7 +246,7 @@ def reiniciar_juego(id):
         juego.reset_game()
         save_juego(juego)
 
-    return redirect(url_for('hello'))
+    return render_template("visualizar.html", juego=juego, user=user)
 
 
 @app.route("/eliminarJuego/<id>")
@@ -302,7 +293,7 @@ def recoger_datos_jugador(id):
 
 @app.route("/recogerdatos", methods=['POST'])
 def recoger_datos_creacion():
-    print(request.args)
+    # print(request.args)
     """Almacena el todos los tesoros en la variable juego"""
     tesoros = {}
     i = 1
@@ -329,23 +320,12 @@ def recoger_datos_creacion():
 
 @app.route('/editarJuego/<id>')
 @login_required
-def editarJuego(id):
+def editar_juego(id):
     user = current_user
 
     juego = find_juego_by_id(id)
 
     return render_template("editarjuego.html", juego=juego, user=user)
-
-
-@app.route("/tesorosmod", methods=['GET', 'POST'])
-def tesorosmodificados():
-    print(request.args)
-    juego = request.args.copy()
-    """Devuelve todos los tesoros en la variable juego"""
-    """ si no se ha modificado el campo pista_imagen almacenar el existente en la BD"""
-    """Completar"""
-
-    return redirect(url_for('hello'))
 
 
 if __name__ == '__main__':
