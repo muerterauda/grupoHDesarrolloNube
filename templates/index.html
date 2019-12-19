@@ -91,6 +91,10 @@
                                                 <div style="max-height: 200px !important; min-height: 200px !important;"
                                                      class="map"
                                                      id="map_{{ juego.id }}_{{ range(1, 6000) | random }}"></div>
+                                                <input hidden type="text" id="dimensiones"
+                                                       value="{{ juego.dimensiones[3] }}~{{ juego.dimensiones[1] }}">
+                                                <input hidden type="text" id="centro"
+                                                       value="{{ juego.centro[0] }},{{ juego.centro[1] }}">
                                             </div>
                                         </div>
                                     </div>
@@ -135,6 +139,10 @@
                                                 <div style="max-height: 200px !important; min-height: 200px !important;"
                                                      class="map"
                                                      id="map_{{ juego.id }}_{{ range(1, 6000) | random }}"></div>
+                                                <input hidden type="text" id="dimensiones"
+                                                       value="{{ juego.dimensiones[3] }}~{{ juego.dimensiones[1] }}">
+                                                <input hidden type="text" id="centro"
+                                                       value="{{ juego.centro[0] }},{{ juego.centro[1] }}">
                                             </div>
                                         </div>
                                     </div>
@@ -201,6 +209,10 @@
                                                 <div style="max-height: 200px !important; min-height: 200px !important;"
                                                      class="map"
                                                      id="map_{{ juego.id }}_{{ range(1, 6000) | random }}"></div>
+                                                <input hidden type="text" id="dimensiones"
+                                                       value="{{ juego.dimensiones[3] }}~{{ juego.dimensiones[1] }}">
+                                                <input hidden type="text" id="centro"
+                                                       value="{{ juego.centro[0] }},{{ juego.centro[1] }}">
                                             </div>
                                         </div>
                                     </div>
@@ -240,7 +252,12 @@
                                                 </div>
                                                 <div class="col-6">
                                                     <div style="max-height: 200px !important; min-height: 200px !important;"
-                                                         class="map" id="map_{{ juego.id }}_{{ range(1, 6000) | random }}""></div>
+                                                         class="map"
+                                                         id="map_{{ juego.id }}_{{ range(1, 6000) | random }}"></div>
+                                                <input hidden type="text" id="dimensiones"
+                                                       value="{{ juego.dimensiones[3] }}~{{ juego.dimensiones[1] }}">
+                                                <input hidden type="text" id="centro"
+                                                       value="{{ juego.centro[0] }},{{ juego.centro[1] }}">
                                                 </div>
                                             </div>
                                         </div>
@@ -284,7 +301,12 @@
                                             </div>
                                             <div class="col-6">
                                                 <div style="max-height: 200px !important; min-height: 200px !important;"
-                                                     class="map" id="map_{{ juego.id }}_{{ range(1, 6000) | random }}""></div>
+                                                     class="map"
+                                                     id="map_{{ juego.id }}_{{ range(1, 6000) | random }}"></div>
+                                                <input hidden type="text" id="dimensiones"
+                                                       value="{{ juego.dimensiones[3] }}~{{ juego.dimensiones[1] }}">
+                                                <input hidden type="text" id="centro"
+                                                       value="{{ juego.centro[0] }},{{ juego.centro[1] }}">
                                             </div>
                                         </div>
                                     </div>
@@ -319,7 +341,23 @@
         var maps = [];
         $(document).ready(function () {
             let todosMapas = document.getElementsByClassName("map");
-            for (let m of todosMapas)
+            for (let m of todosMapas) {
+                let centro = m.document.getElementById("centro").value;
+                let dimensiones = m.document.getElementById("dimensiones").value;
+                const markerSource = new ol.source.Vector();
+                let mapCentro = [];
+                mapCentro.push(parseFloat(centro.split(",")[1]));
+                mapCentro.push(parseFloat(centro.split(",")[0]));
+                let limiteInferior = dimensiones.split("~")[0].replace("[", "").replace("]", "");
+                let limiteInferiorArray = [];
+                limiteInferiorArray.push(parseFloat(limiteInferior.split(",")[1]));
+                limiteInferiorArray.push(parseFloat(limiteInferior.split(",")[0]));
+                limiteInferiorArray = ol.proj.transform(limiteInferiorArray, 'EPSG:4326', 'EPSG:3857');
+                let limiteSuperior = dimensiones.split("~")[1].replace("[", "").replace("]", "");
+                let limiteSuperiorArray = [];
+                limiteSuperiorArray.push(parseFloat(limiteSuperior.split(",")[1]));
+                limiteSuperiorArray.push(parseFloat(limiteSuperior.split(",")[0]));
+                limiteSuperiorArray = ol.proj.transform(limiteSuperiorArray, 'EPSG:4326', 'EPSG:3857');
                 maps.push(new ol.Map({
                     target: m.id,
                     layers: [
@@ -331,10 +369,12 @@
                         })
                     ],
                     view: new ol.View({
-                        center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
-                        zoom: 4
+                        extent: [limiteInferiorArray[0], limiteInferiorArray[1], limiteSuperiorArray[0], limiteSuperiorArray[1]],
+                        center: ol.proj.fromLonLat(mapCentro),
+                        zoom: 0
                     })
                 }))
+            }
         });
 
         function recargarMapas(id) {
