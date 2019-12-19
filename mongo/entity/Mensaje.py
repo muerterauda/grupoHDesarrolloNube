@@ -1,15 +1,15 @@
 import datetime
 
-from mongo.entity.Juego import Juego
 from mongo.entity.Usuario import User
 
 
 class MensajeException(ValueError):
     pass
 
+
 class Mensaje:
 
-    def __init__(self, user:User=None, juego:str=None, mensaje:str=None, mensaje_dict:dict=None):
+    def __init__(self, user: User = None, juego: str = None, mensaje: str = None, mensaje_dict: dict = None):
         if mensaje_dict:
             self.__id = mensaje_dict['_id']
             self.__creador = mensaje_dict['creador']
@@ -21,7 +21,8 @@ class Mensaje:
                 raise MensajeException('Parametros de creacion incorrectos')
             self.__creador = user.id
             self.__mensaje = mensaje
-            self.__fecha = str(datetime.datetime.now())
+            fech = datetime.datetime.now()
+            self.__fecha = fech.strftime("%Y-%m-%d %H:%M")
             self.__juego = juego
             self.__id = None
 

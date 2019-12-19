@@ -195,15 +195,17 @@ def nuevo_juego():
 @app.route("/nuevoMensaje/<id>", methods=['POST'])
 def nuevo_mensaje(id):
     user = current_user
-    mensaje = request.values.getlist("nuevoMensaje")
+    mensaje = request.values.get("nuevoMensaje")
     m = Mensaje(user=user, juego=id, mensaje=mensaje)
     save_mensaje(m)
-    return redirect(url_for('ver_juego'), id)
+    return redirect(url_for('ver_juego', id=id))
+
 
 @app.route("/juego/<id>")
 def ver_juego(id):
     user = current_user
     mensajes = find_all_mensajes_by_juego(id_juego=id)
+    mensajes.sort(key=lambda x: x.fecha, reverse=False)
     juego = find_juego_by_id(id)
     encontrados = {}
     if user.id_mongo in juego.participantes:

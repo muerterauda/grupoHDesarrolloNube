@@ -8,7 +8,9 @@ def save_mensaje(mensaje: Mensaje):
 
 def find_all_mensajes_by_juego(id_juego: str):
     diccionario_busqueda = {'juego': id_juego}
-    mensajes.find(diccionario_busqueda)
+    res = mensajes.find(diccionario_busqueda)
+    lista_mensajes = __generar_lista_juegos(res)
+    return lista_mensajes
 
 
 def __generar_lista_juegos(res: dict) -> list:
