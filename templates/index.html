@@ -25,18 +25,18 @@
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active" id="activos-tab" data-toggle="tab" href="#activos"
-                           role="tab" aria-controls="activos" aria-selected="true" onclick="recargarMapas()">Mis
+                           role="tab" aria-controls="activos" aria-selected="true" onclick="recargarMapas(this.id)">Mis
                             Juegos
                             activos</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id=finalizados-tab" data-toggle="tab" href="#finalizados"
                            role="tab" aria-controls="finalizados" aria-selected="false"
-                           onclick="recargarMapas()">Mis Juegos finalizados</a>
+                           onclick="recargarMapas(this.id)">Mis Juegos finalizados</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="todosActivos-tab" data-toggle="tab" href="#todosActivos" role="tab"
-                           aria-controls="todosActivos" aria-selected="false" onclick="recargarMapas()">Todos
+                           aria-controls="todosActivos" aria-selected="false" onclick="recargarMapas(this.id)">Todos
                             los
                             juegos activos</a>
                     </li>
@@ -44,13 +44,15 @@
                         <li class="nav-item">
                             <a class="nav-link" id="todosAcabados-tab" data-toggle="tab" href="#todosAcabados"
                                role="tab"
-                               aria-controls="todosAcabados" aria-selected="false" onclick="recargarMapas()">Todos los
+                               aria-controls="todosAcabados" aria-selected="false" onclick="recargarMapas(this.id)">Todos
+                                los
                                 juegos acabados</a>
                         </li>
                     {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" id="administracion-tab" data-toggle="tab" href="#administracion" role="tab"
-                           aria-controls="administracion" aria-selected="false" onclick="recargarMapas()">Mis juegos
+                           aria-controls="administracion" aria-selected="false" onclick="recargarMapas(this.id)">Mis
+                            juegos
                             creados</a>
                     </li>
                 </ul>
@@ -238,7 +240,7 @@
                                                 </div>
                                                 <div class="col-6">
                                                     <div style="max-height: 200px !important; min-height: 200px !important;"
-                                                         class="map" id="map"></div>
+                                                         class="map" id="map_{{ juego.id }}_{{ range(1, 6000) | random }}""></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -282,7 +284,7 @@
                                             </div>
                                             <div class="col-6">
                                                 <div style="max-height: 200px !important; min-height: 200px !important;"
-                                                     class="map" id="map"></div>
+                                                     class="map" id="map_{{ juego.id }}_{{ range(1, 6000) | random }}""></div>
                                             </div>
                                         </div>
                                     </div>
@@ -335,21 +337,13 @@
                 }))
         });
 
-        function recargarMapas() {
-            {#let idSeccion = id.split("-")[0];#}
-            {#let mapas = document.getElementById(idSeccion).getElementsByClassName("map");#}
-            {#let todosMapas = document.getElementsByClassName("map");#}
+        function recargarMapas(id) {
+            let idSeccion = id.split("-")[0];
             for (let m of maps) {
-                setTimeout( function() { map.updateSize();}, 1000);
+                setTimeout(function () {
+                    m.updateSize();
+                }, 200);
             }
-            {#for (let mapaShow of mapas) {#}
-            {#    if (mapaShow === m) {#}
-            {#        $(mapaShow).removeClass("hidden");#}
-            {#    } else {#}
-            {#        $(mapaShow).addClass("hidden");#}
-            {#    }#}
-            //
-            //}
         }
 
         const markerSource = new ol.source.Vector();
