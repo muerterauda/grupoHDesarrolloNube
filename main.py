@@ -201,6 +201,15 @@ def nuevo_mensaje(id):
     return redirect(url_for('ver_juego', id=id))
 
 
+@app.route("/nuevoMensajeOrganizador/<id>", methods=['POST'])
+def nuevo_mensaje_organizador(id):
+    user = current_user
+    mensaje = request.values.get("nuevoMensaje")
+    m = Mensaje(user=user, juego=id, mensaje=mensaje)
+    save_mensaje(m)
+    return redirect(url_for('visualizar_juego_creador', id=id))
+
+
 @app.route("/juego/<id>")
 def ver_juego(id):
     user = current_user

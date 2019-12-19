@@ -82,7 +82,11 @@
                     {% if mensajes %}
                         {% for men in mensajes %}
                             <div class="card" style=" margin-bottom: 10px;">
-                                <div class="card-header"><span style="font-size: small;"><i>{{ men.fecha }}</i></span> - <b>{{ men.creador }}</b></div>
+                                {% if juego.creador == men.creador %}
+                                    <div class="card-header text-info"><span style="font-size: small;"><i>{{ men.fecha }}</i></span> - <b>{{ men.creador }}(Organizador)</b></div>
+                                {% else %}
+                                    <div class="card-header"><span style="font-size: small;"><i>{{ men.fecha }}</i></span> - <b>{{ men.creador }}</b></div>
+                                {% endif %}
                                 <div class="card-body">
                                     <p class="card-text">{{ men.mensaje }}</p>
                                 </div>
@@ -101,7 +105,6 @@
                         <button class="btn btn-success" style="margin-top: 5px;">Enviar mensaje</button>
                     </form>
                 </div>
-
             </div>
             <div class="col-3">
                 <div class="card bg-light" style="margin-top: 15px;">
