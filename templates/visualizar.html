@@ -72,7 +72,7 @@
                             <input hidden type="text" value="{{ centro_lon }},{{ centro_lat }}" id="centro">
                             {% for tesoro in juego.tesoros %}
                                 <input hidden type="text" class="tesoro"
-                                       value="{{ juego.tesoros[tesoro].longitud }},{{ juego.tesoros[tesoro].latitud }}">
+                                       value="{{ juego.tesoros[tesoro].longitud }},{{ juego.tesoros[tesoro].latitud }}~{{ juego.tesoros[tesoro].identificador }}">
                                 <div style="margin-top: 5px;">
                                     <b>Pista Tesoro {{ juego.tesoros[tesoro].identificador }}</b>:
                                     {% if juego.tesoros[tesoro].get_pistas()[1] %}
@@ -150,7 +150,8 @@
             var coordinadas = document.getElementsByClassName("tesoro");
             for (let tesoro of coordinadas) {
                 let lon = tesoro.value.split(",")[0];
-                let lat = tesoro.value.split(",")[1];
+                let lat = tesoro.value.split(",")[1].split("~")[0];
+                let id = tesoro.value.split(",")[1].split("~")[1];
                 var iconFeature = new ol.Feature({
                     geometry: new ol.geom.Point(ol.proj.transform([lat, lon], 'EPSG:4326',
                         'EPSG:3857')),
@@ -165,6 +166,9 @@
                         stroke: new ol.style.Stroke({
                             color: [255, 204, 0], width: 2
                         })
+                    }),
+                    text: new ol.style.Text({
+                        text: id,
                     })
                 });
                 iconFeature.setStyle(myStyle);
