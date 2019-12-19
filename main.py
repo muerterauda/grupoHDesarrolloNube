@@ -220,7 +220,9 @@ def anadir_participante_juego(id):
 def visualizar_juego_creador(id):
     user = current_user
     juego = find_juego_by_id(id)
-    return render_template("visualizar.html", juego=juego, user=user)
+    return render_template("visualizar.html", juego=juego, user=user, centro_lon=juego.centro[0],
+                           centro_lat=juego.centro[1], limite_superior=juego.dimensiones[1],
+                           limite_inferior=juego.dimensiones[3])
 
 
 """Funcion para eliminar un participante del juego"""
@@ -246,7 +248,8 @@ def reiniciar_juego(id):
     if user.id == juego.creador or user.get_admin():
         juego.reset_game()
         save_juego(juego)
-
+    centro_lon = juego.centro[0]
+    centro_lat = juego.centro[1]
     return render_template("visualizar.html", juego=juego, user=user, centro_lon=juego.centro[0],
                            centro_lat=juego.centro[1])
 
