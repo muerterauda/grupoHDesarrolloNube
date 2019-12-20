@@ -298,7 +298,9 @@ def recoger_datos_jugador(id):
         mensaje = "acierto"
     encontrados = juego.get_tesoros(user)
     return render_template("juego.html", juego=juego, user=user, jugando=True, encontrados=encontrados, mensaje=mensaje,
-                           recienEncontrados=recien_encontrados)
+                           recienEncontrados=recien_encontrados, centro_lon=juego.centro[0],
+                           centro_lat=juego.centro[1], limite_superior=juego.dimensiones[1],
+                           limite_inferior=juego.dimensiones[3])
 
 
 @app.route("/recogerdatos", methods=['POST'])

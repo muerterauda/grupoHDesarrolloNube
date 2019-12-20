@@ -73,7 +73,7 @@
                 {% if juego.estado == False %}
                     {% for tesoro in juego.tesoros.values() %}
                         <input hidden type="text" class="tesoroEncontrado"
-                               value="{{ tesoro.longitud }}, {{ tesoro.latitud }}">
+                               value="{{ tesoro.longitud }}, {{ tesoro.latitud }}~{{ tesoro.identificador }}">
                     {% endfor %}
                 {% else %}
                     {% for tesoro in encontrados %}
@@ -266,7 +266,7 @@
                 })
             ],
             view: new ol.View({
-                extent: [limiteInferiorArray[0] - 500, limiteInferiorArray[1] - 500, limiteSuperiorArray[0] + 1000, limiteSuperiorArray[1] + 1000],
+                extent: [limiteInferiorArray[0] - 1000, limiteInferiorArray[1] - 1000, limiteSuperiorArray[0] + 1000, limiteSuperiorArray[1] + 1000],
                 center: ol.proj.fromLonLat(mapCentro),
                 zoom: 0
             })
@@ -274,9 +274,9 @@
 
         var coordinadas = document.getElementsByClassName("tesoroEncontrado");
         for (let tesoro of coordinadas) {
-            let first = tesoro.value.split(",")[1];
-            let second = tesoro.value.split(",")[0].split("~")[0];
-            let id = tesoro.value.split(",")[0].split("~")[1];
+            let first = tesoro.value.split(",")[1].split("~")[0];
+            let second = tesoro.value.split(",")[0];
+            let id = tesoro.value.split(",")[1].split("~")[1];
             addMarker(first, second, id, true);
         }
 
@@ -299,7 +299,7 @@
                     }
                 }
             } else {
-                addMarker(pos[0], pos[1], cont, false);
+                addMarker(pos[0], pos[1], cont.toString(), false);
             }
         });
 
