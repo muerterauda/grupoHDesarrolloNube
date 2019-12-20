@@ -1,24 +1,6 @@
 {% extends "base.html" %}
 {% block head %}
     <title>Inicio</title>
-    <style>
-        .map {
-            min-height: 300px;
-            padding: 5px 5px;
-        }
-
-        .juego {
-            background: #dbefff;
-            padding: 5px;
-            box-sizing: border-box;
-            -moz-border-radius: 10px;
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-            border: 1px solid #1b98ff;
-            margin: 10px 0px;
-            text-decoration: none;
-        }
-    </style>
 {% endblock %}
 
 {% block content %}
@@ -36,7 +18,7 @@
                     <div id="listas">
                         <div class="row">
                             <div class="col align-center">
-                                <div class="map" id="map"></div>
+                                <div class="map" id="map" style="min-height: 300px; padding: 5px 5px;"></div>
                             </div>
                         </div>
                     </div>
