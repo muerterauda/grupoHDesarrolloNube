@@ -5,16 +5,32 @@
 
 {% block content %}
     <div class="container-fluid">
+        <hr>
+        <div class="container-header text-center"><h3>Nuevo juego</h3></div>
+        <hr>
         <form action="/recogerdatos" method="POST" id="myForm" enctype="multipart/form-data">
             <div class="row flex-x1-nowrap" style="margin-bottom: 10px;">
                 <div class="offset-lg-2 col-lg-7 col-9">
                     <input hidden type="text" value="0" id="nTesoros" name="nTesoros">
-                    <label for="name">Nombre</label> <input id="name" type="text" name="nombre" required
-                                                            class="form-control"
-                                                            placeholder="El nombre de tu aventura va aquí"/>
-                    <label for="descripcion">Descripci&oacute;n</label> <textarea id="descripcion" name="descripcion"
-                                                                                  required class="form-control"
-                                                                                  placeholder="Escribe una breve descripción para tu juego. ¡Con un par de frases bastará!"></textarea>
+                    <div class="input-group mb-3">
+                        <label class="sr-only" for="name">Nombre</label>
+                        <div class="input-group-prepend">
+                                                <span class="input-group-text"
+                                                      id="nombre"><b>Nombre</b></span>
+                        </div>
+                        <input id="name" name="nombre" class="form-control"
+                               type="text"
+                               aria-describedby="nombre" required placeholder="El nombre de tu aventura va aqu&iacute;">
+                    </div>
+                    <div class="input-group mb-3">
+                        <label class="sr-only" for="descripcion">Descripcion</label>
+                        <div class="input-group-prepend">
+                                                <span class="input-group-text"
+                                                      id="desc"><b>Descripci&oacute;n</b></span>
+                        </div>
+                        <textarea style="resize: none; height: 80px;" id="descripcion" name="descripcion" required aria-describedby="desc"
+                                  class="form-control" placeholder="Escribe una breve descripci&oacute;n para tu juego. ¡Con un par de frases bastar&aacute;!"></textarea>
+                    </div>
                     <div id="listas">
                         <div class="row">
                             <div class="col align-center">
@@ -41,7 +57,8 @@
                                             <label class="sr-only" for="punto{{ i }}">Extremo {{ i }}</label>
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"
-                                                      id="extremo{{ i }}" style="font-size: small;"><b>Extremo {{ i }}</b></span>
+                                                      id="extremo{{ i }}"
+                                                      style="font-size: small;"><b>Extremo {{ i }}</b></span>
                                             </div>
                                             <input readonly id="punto{{ i }}" name="punto" class="form-control"
                                                    type="text"
@@ -49,9 +66,11 @@
                                         </div>
                                     {% endfor %}
                                 </div>
-                                <b class="card-text text-danger" style="font-size: small;">Tras marcar los 4 puntos, la zona se ajustará al espacio de juego.<br/> Si la zona de
+                                <b class="card-text text-danger" style="font-size: small;">Tras marcar los 4 puntos, la
+                                    zona se ajustará al espacio de juego.<br/> Si la zona de
                                     juego no se visualiza bien o no le gusta:<br/> Haz click en <i>Resetear
-                                        juego</i> para empezar de nuevo. <br/> Recuerda seguir el patr&oacute;n de dibujo de arriba.</b>
+                                        juego</i> para empezar de nuevo. <br/> Recuerda seguir el patr&oacute;n de
+                                    dibujo de arriba.</b>
                                 <br/>
                                 <br/>
                                 <button type="button" onclick="resetearZona()"
