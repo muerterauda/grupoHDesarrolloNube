@@ -4,7 +4,7 @@ import os
 
 import flask
 from flask import Flask, url_for, redirect, \
-    render_template, session, request
+    render_template, session, request, send_from_directory
 from flask_login import LoginManager, login_required, current_user, logout_user, login_user
 from mysqlx import Auth
 from requests.exceptions import HTTPError
@@ -51,7 +51,7 @@ config = {
 }
 
 """APP creation and configuration"""
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 app.config.from_object(config['dev'])
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
@@ -82,6 +82,21 @@ def get_google_auth(state=None, token=None):
         redirect_uri=Auth.REDIRECT_URI,
         scope=Auth.SCOPE)
     return oauth
+
+
+@app.route('/js/<path:path>')
+def send_js(path):
+    return send_from_directory('resources/static/js', path)
+
+
+@app.route('/css/<path:path>')
+def send_css(path):
+    return send_from_directory('resources/static/css', path)
+
+
+@app.route('/img/<path:path>')
+def send_img(path):
+    return send_from_directory('resources/static/img', path)
 
 
 @app.route('/login')
@@ -187,9 +202,8 @@ def hello():
 @app.route('/nuevoJuego')
 @login_required
 def nuevo_juego():
-    # t = db.find_one()
     user = current_user
-    return render_template("nuevojuego.html", user=user)
+    return render_template("nuevojuego.html", user=user, image=url_for('static', filename='img/mapa.png'))
 
 
 @app.route("/nuevoMensaje/<id>", methods=['POST'])
@@ -239,7 +253,9 @@ def anadir_participante_juego(id):
 def visualizar_juego_creador(id):
     user = current_user
     juego = find_juego_by_id(id)
-    return render_template("visualizar.html", juego=juego, user=user)
+    return render_template("visualizar.html", juego=juego, user=user, centro_lon=juego.centro[0],
+                           centro_lat=juego.centro[1], limite_superior=juego.dimensiones[1],
+                           limite_inferior=juego.dimensiones[3])
 
 
 """Funcion para eliminar un participante del juego"""
@@ -265,8 +281,10 @@ def reiniciar_juego(id):
     if user.id == juego.creador or user.get_admin():
         juego.reset_game()
         save_juego(juego)
-
-    return render_template("visualizar.html", juego=juego, user=user)
+    centro_lon = juego.centro[0]
+    centro_lat = juego.centro[1]
+    return render_template("visualizar.html", juego=juego, user=user, centro_lon=juego.centro[0],
+                           centro_lat=juego.centro[1])
 
 
 @app.route("/eliminarJuego/<id>")
@@ -317,8 +335,12 @@ def recoger_datos_creacion():
     """Almacena el todos los tesoros en la variable juego"""
     tesoros = {}
     i = 1
-    name = request.values.get("nombre")
+    nombre = request.values.get("nombre")
     desc = request.values.get("descripcion")
+    coord = request.values.getlist("punto")
+    dimensiones = []
+    for elem in coord:
+        dimensiones.append((float(elem.split(",")[0]), float(elem.split(",")[1])))
     for coordenada, imagen, texto in zip(request.values.getlist("coordenadas"),
                                          request.files.getlist("pista_imagen"),
                                          request.values.getlist("pista_texto")):
@@ -328,8 +350,8 @@ def recoger_datos_creacion():
                         pista_imagen=pista_imagen)
         tesoros[i] = tesoro
         i += 1
-    juego = Juego(diccionario_tesoros=tesoros, creador=current_user, dimensiones=[(0, 0), (0, 1), (1, 0), (1, 1)],
-                  titulo=name, descipcion=desc)
+    juego = Juego(diccionario_tesoros=tesoros, creador=current_user, dimensiones=dimensiones, titulo=nombre,
+                  descripcion=desc)
     save_juego(juego)
     return redirect(url_for('hello'))
 

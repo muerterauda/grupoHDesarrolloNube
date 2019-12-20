@@ -22,44 +22,80 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col text-center">
-            <br>
-            {#            <input type="button" id="add_field" value="Añadir pista">#}
-        </div>
-    </div>
     <div class="container-fluid">
         <form action="/recogerdatos" method="POST" id="myForm" enctype="multipart/form-data">
-            <input hidden type="text" value="0" id="nTesoros" name="nTesoros">
-            <label for="name"></label> <input id="name" type="text" name="nombre" required/>
-            <label for="descripcion"></label> <textarea id="descripcion" name="descripcion" required></textarea>
-            <div id="listas">
-                <div class="container">
-                    <div class="row">
-                        <div class="col align-center">
-                            <div class="map" id="map"></div>
+            <div class="row flex-x1-nowrap" style="margin-bottom: 10px;">
+                <div class="offset-lg-2 col-lg-7 col-9">
+                    <input hidden type="text" value="0" id="nTesoros" name="nTesoros">
+                    <label for="name">Nombre</label> <input id="name" type="text" name="nombre" required
+                                                            class="form-control"
+                                                            placeholder="El nombre de tu aventura va aquí"/>
+                    <label for="descripcion">Descripci&oacute;n</label> <textarea id="descripcion" name="descripcion"
+                                                                                  required class="form-control"
+                                                                                  placeholder="Escribe una breve descripción para tu juego. ¡Con un par de frases bastará!"></textarea>
+                    <div id="listas">
+                        <div class="row">
+                            <div class="col align-center">
+                                <div class="map" id="map"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success">Crear juego</button>
+                </div>
+                <div class="col-3">
+                    <div class="card bg-light" style="margin-top: 15px;">
+                        <div class="card-header text-center">
+                            <h3>Explicación del mapa</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center">
+                                <b>Orden de los puntos</b>
+                                <br/>
+                                <img class="img-thumbnail rounded" src="/img/mapa.png" alt="Orden de los puntos"
+                                     width="180px" height="180px"/>
+                                <div id="extremos" style="margin-top: 10px;">
+                                    {% for i in range(1,5) %}
+                                        <div class="input-group mb-3 ">
+                                            <label class="sr-only" for="punto{{ i }}">Extremo {{ i }}</label>
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"
+                                                      id="extremo{{ i }}" style="font-size: small;"><b>Extremo {{ i }}</b></span>
+                                            </div>
+                                            <input readonly id="punto{{ i }}" name="punto" class="form-control"
+                                                   type="text"
+                                                   aria-describedby="extremo{{ i }}" required style="font-size: small;">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <b class="card-text text-danger" style="font-size: small;">Tras marcar los 4 puntos, la zona se ajustará al espacio de juego.<br/> Si la zona de
+                                    juego no se visualiza bien o no le gusta:<br/> Haz click en <i>Resetear
+                                        juego</i> para empezar de nuevo. <br/> Recuerda seguir el patr&oacute;n de dibujo de arriba.</b>
+                                <br/>
+                                <br/>
+                                <button type="button" onclick="resetearZona()"
+                                        class="btn btn-danger">Resetear zona<span
+                                        class="hidden-sm hidden-md hidden-xs"> de juego</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col text-center">
-                <br>
-                <button type="submit" class="btn btn-success">Crear juego</button>
             </div>
         </form>
     </div>
     <script type="text/javascript">
         var x = 1;
-
-        var bounds = [
-            [-11.438829, 35.210037], // Southwest coordinates
-            [5.718196, 44.680023]  // Northeast coordinates
-        ];
-
+        let fase = 1;
+        let amarillo_relleno = [255, 255, 0];
+        let amarillo = [255, 204, 0];
+        let azul_relleno = [0, 204, 255];
+        let azul = [0, 153, 204];
+        let area = [];
+        let centroDefecto = ol.proj.fromLonLat([-4.4785522, 36.7151063]);
+        let clicks = 0;
 
         const markerSource = new ol.source.Vector();
         var map = new ol.Map({
-            maxBounds: bounds, // Sets bounds as max
             target: 'map',
             layers: [
                 new ol.layer.Tile({
@@ -70,52 +106,120 @@
                 })
             ],
             view: new ol.View({
-                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
+                center: centroDefecto,
                 zoom: 14
             })
         });
 
-        var puntosPuestos = new Map();
+        var styles = {
+            'MultiPolygon': new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: 'blue',
+                    lineDash: [4],
+                    width: 3
+                }),
+                fill: new ol.style.Fill({
+                    color: 'rgba(0, 0, 255, 0.1)'
+                })
+            })
+        };
+        var styleFunction = function (feature) {
+            return styles[feature.getGeometry().getType()];
+        };
+
+        function resetearZona() {
+            fase = 1;
+            area = [];
+            let coords = document.getElementsByName("punto");
+            for (let c of coords) {
+                c.value = "";
+            }
+            document.querySelectorAll('.tesoro').forEach(e => e.remove());
+            markerSource.clear();
+            var view = new ol.View({
+                extent: [-1401164.5156785853, 4272654.721278845, 584975.2411983708, 5479536.252219139],
+                center: centroDefecto,
+                zoom: 14
+            });
+            map.setView(view);
+        }
 
         map.on('click', function (evt) {
-            var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
-            var x = map.getFeaturesAtPixel(evt.pixel);
-            var iyo = evt.pixel;
-            console.log(typeof (iyo));
-            if (x.length > 0) {
-                alert("Ya existe un tesoro en esta posicion o en una muy cercana. Elminelo antes de crear otro en sus proximidades.")
-            } else {
-                addMarker(pos[0], pos[1], evt);
-            }
-        });
+                var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+                var x = map.getFeaturesAtPixel(evt.pixel);
+                if (x.length > 0) {
+                    alert("Ya existe un punto aquí. Si se trata de un tesoro, elminelo antes de crear otro en sus proximidades.")
+                } else {
+                    if (fase === 1) {
+                        addMarker(pos[0], pos[1], evt, azul, azul_relleno);
+                        area.push(pos);
+                        console.log(area);
+                        document.getElementById("punto" + area.length.toString()).value = pos[1].toString() + " , " + pos[0].toString();
 
-        function addMarker(lon, lat, evt) {
-            console.log('lon:', lon);
-            console.log('lat:', lat);
-            /* for (var icono of puntosPuestos.values()) {
-                 markerSource.removeFeature(icono);
-             }*/
+                        if (area.length === 4) {
+                            console.log("area llena");
+                            fase = 2;
+                            let x_med = 0;
+                            let y_med = 0;
+                            for (let c of area) {
+                                x_med += c[0];
+                                y_med += c[1];
+                            }
+                            x_med = x_med / 4;
+                            y_med = y_med / 4;
+                            let goodOldCoordinates = ol.proj.transform([x_med, y_med], 'EPSG:4326', 'EPSG:3857');
+                            let limiteInferior = ol.proj.transform(area[3], 'EPSG:4326', 'EPSG:3857');
+                            let limiteSuperior = ol.proj.transform(area[1], 'EPSG:4326', 'EPSG:3857');
+                            var view = new ol.View({
+                                extent: [limiteInferior[0], limiteInferior[1], limiteSuperior[0], limiteSuperior[1]],
+                                center: goodOldCoordinates,
+                                zoom: 0
+                            });
+                            map.setView(view);
+                            markerSource.clear();
+                        }
+                    } else {
+                        addMarker(pos[0], pos[1], evt, amarillo, amarillo_relleno);
+                    }
+                }
+            }
+        );
+
+        function addMarker(lon, lat, evt, color, relleno) {
             var iconFeature = new ol.Feature({
                 geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326',
                     'EPSG:3857')),
                 population: 4000,
                 rainfall: 500
             });
-
-            var myStyle = new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 7,
-                    fill: new ol.style.Fill({color: 'yellow'}),
-                    stroke: new ol.style.Stroke({
-                        color: [255, 204, 0], width: 2
+            var myStyle;
+            if (fase === 1)
+                myStyle = new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 7,
+                        fill: new ol.style.Fill({color: relleno}),
+                        stroke: new ol.style.Stroke({
+                            color: color, width: 2
+                        })
                     })
-                })
-            });
+                });
+            else
+                myStyle = new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 7,
+                        fill: new ol.style.Fill({color: relleno}),
+                        stroke: new ol.style.Stroke({
+                            color: color, width: 2
+                        })
+                    }),
+                    text: new ol.style.Text({
+                        text: x.toString(),
+                    })
+                });
             iconFeature.setStyle(myStyle);
             markerSource.addFeature(iconFeature);
-            puntosPuestos.set(lon + lat, iconFeature);
-
-            $('#listas').append('<div class="row tesoro" id="tesoro' + x + '">\
+            if (fase !== 1) {
+                $('#listas').append('<div class="row tesoro" id="tesoro' + x + '">\
                         <div class="row align-items-center">\
                             <div class="col">\
                                 <br>\
@@ -132,12 +236,13 @@
                             </div>\
                             <div class="col">\
                               <br>\
-                                <button class="btn btn-danger eliminarTesoro" onclick="eliminarTesoro(this.id)" type="button" id="eliminar' + evt.pixel + 'eliminar' + x + '">Eliminar pista</button>\
+                                <button class="btn btn-danger eliminarTesoro" onclick="eliminarTesoro(this.id)" type="button" id="eliminar' + evt.pixel + 'eliminar' + x + '">Eliminar tesoro</button>\
                             </div>\
                         </div>\
                         </div>');
-            x++;
-            document.getElementById("nTesoros").value = x;
+                x++;
+                document.getElementById("nTesoros").value = x;
+            }
         }
 
         $('#myForm').submit(function (evt) {
