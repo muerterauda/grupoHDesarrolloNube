@@ -233,7 +233,10 @@ def ver_juego(id):
     encontrados = {}
     if user.id_mongo in juego.participantes:
         encontrados = juego.get_tesoros(user)
-    return render_template("juego.html", juego=juego, user=user, encontrados=encontrados, mensajes=mensajes)
+    return render_template("juego.html", juego=juego, user=user, encontrados=encontrados, mensajes=mensajes,
+                           centro_lon=juego.centro[0],
+                           centro_lat=juego.centro[1], limite_superior=juego.dimensiones[1],
+                           limite_inferior=juego.dimensiones[3])
 
 
 @app.route("/anadirJuego/<id>", methods=['GET'])
@@ -246,7 +249,9 @@ def anadir_participante_juego(id):
         jugando = True
     else:
         jugando = False
-    return render_template("juego.html", juego=juego, user=user, jugando=jugando)
+    return render_template("juego.html", juego=juego, user=user, jugando=jugando, centro_lon=juego.centro[0],
+                           centro_lat=juego.centro[1], limite_superior=juego.dimensiones[1],
+                           limite_inferior=juego.dimensiones[3])
 
 
 @app.route("/verJuego/<id>")
@@ -326,7 +331,9 @@ def recoger_datos_jugador(id):
         mensaje = "acierto"
     encontrados = juego.get_tesoros(user)
     return render_template("juego.html", juego=juego, user=user, jugando=True, encontrados=encontrados, mensaje=mensaje,
-                           recienEncontrados=recien_encontrados)
+                           recienEncontrados=recien_encontrados, centro_lon=juego.centro[0],
+                           centro_lat=juego.centro[1], limite_superior=juego.dimensiones[1],
+                           limite_inferior=juego.dimensiones[3])
 
 
 @app.route("/recogerdatos", methods=['POST'])
