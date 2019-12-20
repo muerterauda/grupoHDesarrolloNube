@@ -90,11 +90,11 @@
                                             <div class="col-6">
                                                 <div style="max-height: 200px !important; min-height: 200px !important;"
                                                      class="map"
-                                                     id="map_{{ juego.id }}_{{ range(1, 6000) | random }}"></div>
-                                                <input hidden type="text" id="dimensiones"
-                                                       value="{{ juego.dimensiones[3] }}~{{ juego.dimensiones[1] }}">
-                                                <input hidden type="text" id="centro"
-                                                       value="{{ juego.centro[0] }},{{ juego.centro[1] }}">
+                                                     id="map_{{ juego.id }}_{{ range(1, 6000) | random }}">
+                                                    <input hidden type="text" class="dimensiones"
+                                                           value="{{ juego.dimensiones[3] }}~{{ juego.dimensiones[1] }}">
+                                                    <input hidden type="text" class="centro"
+                                                           value="{{ juego.centro[0] }},{{ juego.centro[1] }}"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -138,11 +138,11 @@
                                             <div class="col-6">
                                                 <div style="max-height: 200px !important; min-height: 200px !important;"
                                                      class="map"
-                                                     id="map_{{ juego.id }}_{{ range(1, 6000) | random }}"></div>
-                                                <input hidden type="text" id="dimensiones"
-                                                       value="{{ juego.dimensiones[3] }}~{{ juego.dimensiones[1] }}">
-                                                <input hidden type="text" id="centro"
-                                                       value="{{ juego.centro[0] }},{{ juego.centro[1] }}">
+                                                     id="map_{{ juego.id }}_{{ range(1, 6000) | random }}">
+                                                    <input hidden type="text" class="dimensiones"
+                                                           value="{{ juego.dimensiones[3] }}~{{ juego.dimensiones[1] }}">
+                                                    <input hidden type="text" class="centro"
+                                                           value="{{ juego.centro[0] }},{{ juego.centro[1] }}"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -208,11 +208,11 @@
                                             <div class="col-6">
                                                 <div style="max-height: 200px !important; min-height: 200px !important;"
                                                      class="map"
-                                                     id="map_{{ juego.id }}_{{ range(1, 6000) | random }}"></div>
-                                                <input hidden type="text" id="dimensiones"
-                                                       value="{{ juego.dimensiones[3] }}~{{ juego.dimensiones[1] }}">
-                                                <input hidden type="text" id="centro"
-                                                       value="{{ juego.centro[0] }},{{ juego.centro[1] }}">
+                                                     id="map_{{ juego.id }}_{{ range(1, 6000) | random }}">
+                                                    <input hidden type="text" class="dimensiones"
+                                                           value="{{ juego.dimensiones[3] }}~{{ juego.dimensiones[1] }}">
+                                                    <input hidden type="text" class="centro"
+                                                           value="{{ juego.centro[0] }},{{ juego.centro[1] }}"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -253,11 +253,12 @@
                                                 <div class="col-6">
                                                     <div style="max-height: 200px !important; min-height: 200px !important;"
                                                          class="map"
-                                                         id="map_{{ juego.id }}_{{ range(1, 6000) | random }}"></div>
-                                                <input hidden type="text" id="dimensiones"
-                                                       value="{{ juego.dimensiones[3] }}~{{ juego.dimensiones[1] }}">
-                                                <input hidden type="text" id="centro"
-                                                       value="{{ juego.centro[0] }},{{ juego.centro[1] }}">
+                                                         id="map_{{ juego.id }}_{{ range(1, 6000) | random }}">
+                                                        <input hidden type="text" class="dimensiones"
+                                                               value="{{ juego.dimensiones[3] }}~{{ juego.dimensiones[1] }}">
+                                                        <input hidden type="text" class="centro"
+                                                               value="{{ juego.centro[0] }},{{ juego.centro[1] }}">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -302,11 +303,12 @@
                                             <div class="col-6">
                                                 <div style="max-height: 200px !important; min-height: 200px !important;"
                                                      class="map"
-                                                     id="map_{{ juego.id }}_{{ range(1, 6000) | random }}"></div>
-                                                <input hidden type="text" id="dimensiones"
-                                                       value="{{ juego.dimensiones[3] }}~{{ juego.dimensiones[1] }}">
-                                                <input hidden type="text" id="centro"
-                                                       value="{{ juego.centro[0] }},{{ juego.centro[1] }}">
+                                                     id="map_{{ juego.id }}_{{ range(1, 6000) | random }}">
+                                                    <input hidden type="text" class="dimensiones"
+                                                           value="{{ juego.dimensiones[3] }}~{{ juego.dimensiones[1] }}">
+                                                    <input hidden type="text" class="centro"
+                                                           value="{{ juego.centro[0] }},{{ juego.centro[1] }}">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -342,8 +344,8 @@
         $(document).ready(function () {
             let todosMapas = document.getElementsByClassName("map");
             for (let m of todosMapas) {
-                let centro = m.document.getElementById("centro").value;
-                let dimensiones = m.document.getElementById("dimensiones").value;
+                let centro = m.getElementsByClassName("centro")[0].value;
+                let dimensiones = m.getElementsByClassName("dimensiones")[0].value;
                 const markerSource = new ol.source.Vector();
                 let mapCentro = [];
                 mapCentro.push(parseFloat(centro.split(",")[1]));
