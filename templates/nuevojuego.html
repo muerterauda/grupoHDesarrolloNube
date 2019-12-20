@@ -135,6 +135,9 @@
                 zoom: 14
             });
             map.setView(view);
+            setTimeout(function () {
+                map.updateSize();
+            }, 200);
         }
 
         map.on('click', function (evt) {
