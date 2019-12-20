@@ -141,7 +141,7 @@
                     })
                 ],
                 view: new ol.View({
-                    [limiteInferiorArray[0] - 500, limiteInferiorArray[1] - 500, limiteSuperiorArray[0] + 1000, limiteSuperiorArray[1] + 1000],
+                    extent: [limiteInferiorArray[0] - 500, limiteInferiorArray[1] - 500, limiteSuperiorArray[0] + 1000, limiteSuperiorArray[1] + 1000],
                     center: ol.proj.fromLonLat(mapCentro),
                     zoom: -5
                 })

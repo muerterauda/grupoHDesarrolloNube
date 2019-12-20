@@ -67,6 +67,9 @@
         <div class="row flex-x1-nowrap" style="margin-bottom: 10px;">
             <div class="offset-lg-2 col-lg-7 col-9">
                 <div class="map" id="map"></div>
+                <input hidden type="text" value="{{ limite_inferior }}~{{ limite_superior }}"
+                       id="dimensiones">
+                <input hidden type="text" value="{{ centro_lon }},{{ centro_lat }}" id="centro">
                 {% if juego.estado == False %}
                     {% for tesoro in juego.tesoros.values() %}
                         <input hidden type="text" class="tesoroEncontrado"
@@ -219,6 +222,23 @@
         let cont = 1;
         const markerSource_pop = new ol.source.Vector();
         const markerSource = new ol.source.Vector();
+
+        let centro = document.getElementById("centro").value;
+        let dimensiones = document.getElementById("dimensiones").value;
+        let mapCentro = [];
+        mapCentro.push(parseFloat(centro.split(",")[1]));
+        mapCentro.push(parseFloat(centro.split(",")[0]));
+        let limiteInferior = dimensiones.split("~")[0].replace("[", "").replace("]", "");
+        let limiteInferiorArray = [];
+        limiteInferiorArray.push(parseFloat(limiteInferior.split(",")[1]));
+        limiteInferiorArray.push(parseFloat(limiteInferior.split(",")[0]));
+        limiteInferiorArray = ol.proj.transform(limiteInferiorArray, 'EPSG:4326', 'EPSG:3857');
+        let limiteSuperior = dimensiones.split("~")[1].replace("[", "").replace("]", "");
+        let limiteSuperiorArray = [];
+        limiteSuperiorArray.push(parseFloat(limiteSuperior.split(",")[1]));
+        limiteSuperiorArray.push(parseFloat(limiteSuperior.split(",")[0]));
+        limiteSuperiorArray = ol.proj.transform(limiteSuperiorArray, 'EPSG:4326', 'EPSG:3857');
+
         var map_pop = new ol.Map({
             target: 'map_popup',
             layers: [
@@ -230,8 +250,9 @@
                 })
             ],
             view: new ol.View({
-                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
-                zoom: 14
+                extent: [limiteInferiorArray[0] - 500, limiteInferiorArray[1] - 500, limiteSuperiorArray[0] + 1000, limiteSuperiorArray[1] + 1000],
+                center: ol.proj.fromLonLat(mapCentro),
+                zoom: 0
             })
         });
         var map = new ol.Map({
@@ -245,8 +266,9 @@
                 })
             ],
             view: new ol.View({
-                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
-                zoom: 14
+                extent: [limiteInferiorArray[0] - 500, limiteInferiorArray[1] - 500, limiteSuperiorArray[0] + 1000, limiteSuperiorArray[1] + 1000],
+                center: ol.proj.fromLonLat(mapCentro),
+                zoom: 0
             })
         });
 
