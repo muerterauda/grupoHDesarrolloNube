@@ -236,6 +236,9 @@
                 x++;
                 document.getElementById("nTesoros").value = x;
             }
+            setTimeout(function () {
+                map.updateSize();
+            }, 200);
         }
 
         $('#myForm').submit(function (evt) {

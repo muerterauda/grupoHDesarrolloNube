@@ -383,6 +383,9 @@
 
                 cont++;
             }
+            setTimeout(function () {
+                map.updateSize();
+            }, 200);
         }
 
         $('#insertar-tesoro').submit(function (evt) {
