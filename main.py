@@ -4,18 +4,18 @@ import os
 
 import flask
 from flask import Flask, url_for, redirect, \
-    render_template, session, request
+    render_template, session, request, send_from_directory
 from flask_login import LoginManager, login_required, current_user, logout_user, login_user
 from mysqlx import Auth
 from requests.exceptions import HTTPError
 from requests_oauthlib import OAuth2Session
-
-from mongo.entity.Juego import Juego
+from mongo.entity.Juego import Juego, JuegoException
+from mongo.entity.Mensaje import Mensaje
 from mongo.entity.Tesoro import Tesoro
 from mongo.entity.Usuario import User
 from mongo.repository.juego_repository import find_juego_by_creador_and_estado, find_juego_by_participante_and_estado, \
     find_juego_by_id, save_juego, delete_juego_by_id, find_juego_by_estado
-from mongo.repository.mensaje_repository import find_all_mensajes_by_juego
+from mongo.repository.mensaje_repository import find_all_mensajes_by_juego, save_mensaje
 from mongo.repository.usuario_repository import find_user_by_id, replace_user_by_id, update_user_by_id, save_user
 
 #
@@ -51,7 +51,7 @@ config = {
 }
 
 """APP creation and configuration"""
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 app.config.from_object(config['dev'])
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
@@ -82,6 +82,21 @@ def get_google_auth(state=None, token=None):
         redirect_uri=Auth.REDIRECT_URI,
         scope=Auth.SCOPE)
     return oauth
+
+
+@app.route('/js/<path:path>')
+def send_js(path):
+    return send_from_directory('resources/static/js', path)
+
+
+@app.route('/css/<path:path>')
+def send_css(path):
+    return send_from_directory('resources/static/css', path)
+
+
+@app.route('/img/<path:path>')
+def send_img(path):
+    return send_from_directory('resources/static/img', path)
 
 
 @app.route('/login')
@@ -187,15 +202,33 @@ def hello():
 @app.route('/nuevoJuego')
 @login_required
 def nuevo_juego():
-    # t = db.find_one()
     user = current_user
-    return render_template("nuevojuego.html", user=user)
+    return render_template("nuevojuego.html", user=user, image=url_for('static', filename='img/mapa.png'))
+
+
+@app.route("/nuevoMensaje/<id>", methods=['POST'])
+def nuevo_mensaje(id):
+    user = current_user
+    mensaje = request.values.get("nuevoMensaje")
+    m = Mensaje(user=user, juego=id, mensaje=mensaje)
+    save_mensaje(m)
+    return redirect(url_for('ver_juego', id=id))
+
+
+@app.route("/nuevoMensajeOrganizador/<id>", methods=['POST'])
+def nuevo_mensaje_organizador(id):
+    user = current_user
+    mensaje = request.values.get("nuevoMensaje")
+    m = Mensaje(user=user, juego=id, mensaje=mensaje)
+    save_mensaje(m)
+    return redirect(url_for('visualizar_juego_creador', id=id))
 
 
 @app.route("/juego/<id>")
 def ver_juego(id):
     user = current_user
     mensajes = find_all_mensajes_by_juego(id_juego=id)
+    mensajes.sort(key=lambda x: x.fecha, reverse=False)
     juego = find_juego_by_id(id)
     encontrados = {}
     if user.id_mongo in juego.participantes:

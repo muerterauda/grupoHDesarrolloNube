@@ -1,0 +1,67 @@
+.footer {
+    position: absolute;
+    bottom: 0;
+    height: 3.5rem;
+    width: 100%;
+    color: white;
+}
+
+.popup .btn-cerrar-popup {
+    font-size: 16px;
+    line-height: 16px;
+    display: block;
+    text-align: right;
+    transition: .3s ease all;
+    color: #BBBBBB;
+}
+
+.popup .btn-cerrar-popup:hover {
+    color: #000;
+}
+
+.popup h3 {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.popup h4 {
+    font-size: 22px;
+    font-weight: 300;
+    margin-bottom: 10px;
+}
+
+.popup form .contenedor-inputs input {
+    width: 100%;
+    margin-bottom: 20px;
+    height: 40px;
+    font-size: 18px;
+    line-height: 52px;
+    text-align: center;
+    border: 1px solid #BBBBBB;
+}
+
+.popup form .btn-submit {
+    padding: 0 20px;
+    height: 40px;
+    line-height: 40px;
+    border: none;
+    color: #fff;
+    background: #5E7DE3;
+    border-radius: 3px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: .3s ease all;
+}
+
+.popup form .btn-submit:hover {
+    background: rgba(94, 125, 227, .7);
+}
+
+/* ------------------------- */
+/* ANIMACIONES */
+/* ------------------------- */
+.popup.active {
+    transform: scale(1);
+    opacity: 1;
+}

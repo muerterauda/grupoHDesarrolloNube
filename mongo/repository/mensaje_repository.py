@@ -2,13 +2,15 @@ from mongo.entity.Mensaje import Mensaje
 from mongo.mongo_manager import mensajes
 
 
-def save_juego(mensaje: Mensaje):
+def save_mensaje(mensaje: Mensaje):
     mensajes.insert_one(mensaje.mensaje_to_dict())
 
 
 def find_all_mensajes_by_juego(id_juego: str):
     diccionario_busqueda = {'juego': id_juego}
-    mensajes.find(diccionario_busqueda)
+    res = mensajes.find(diccionario_busqueda)
+    lista_mensajes = __generar_lista_juegos(res)
+    return lista_mensajes
 
 
 def __generar_lista_juegos(res: dict) -> list:
