@@ -9,7 +9,8 @@ from flask_login import LoginManager, login_required, current_user, logout_user,
 from mysqlx import Auth
 from requests.exceptions import HTTPError
 from requests_oauthlib import OAuth2Session
-from mongo.entity.Juego import Juego, JuegoException
+
+from mongo.entity.Juego import Juego
 from mongo.entity.Mensaje import Mensaje
 from mongo.entity.Tesoro import Tesoro
 from mongo.entity.Usuario import User
@@ -105,7 +106,7 @@ def login():
         next_f = flask.request.args.get('next')
         if not next_f:
             next_f = session.get('next_f')
-        return flask.redirect(next_f or flask.url_for('hello'))
+        return flask.redirect(next_f or flask.url_for('inicio'))
     google = get_google_auth()
     next_f = flask.request.args.get('next')
     if next_f:
@@ -169,7 +170,7 @@ def callback():
             if next_f:
                 return redirect(next_f)
             else:
-                return redirect(url_for('hello'))
+                return redirect(url_for('inicio'))
         return 'No se pudo conseguir su informacion'
 
 
@@ -182,9 +183,7 @@ def logout():
 
 @app.route('/')
 @login_required
-def hello():
-    """Return a friendly HTTP greeting."""
-    # t = db.find_one()
+def inicio():
     user = current_user
     mis_juegos_activos = find_juego_by_participante_and_estado(user, True)
     mis_juegos_acabados = find_juego_by_participante_and_estado(user, False)
@@ -257,8 +256,10 @@ def anadir_participante_juego(id):
 @app.route("/verJuego/<id>")
 def visualizar_juego_creador(id):
     user = current_user
+    mensajes = find_all_mensajes_by_juego(id_juego=id)
+    mensajes.sort(key=lambda x: x.fecha, reverse=False)
     juego = find_juego_by_id(id)
-    return render_template("visualizar.html", juego=juego, user=user, centro_lon=juego.centro[0],
+    return render_template("visualizar.html", juego=juego, user=user, centro_lon=juego.centro[0], mensajes=mensajes,
                            centro_lat=juego.centro[1], limite_superior=juego.dimensiones[1],
                            limite_inferior=juego.dimensiones[3])
 
@@ -273,7 +274,7 @@ def abandonar_juego(id):
     juego.remove_participante(user)
     save_juego(juego)
 
-    return redirect(url_for('hello'))
+    return redirect(url_for('inicio'))
 
 
 """Funcion para reiniciar la partida"""
@@ -289,7 +290,8 @@ def reiniciar_juego(id):
     centro_lon = juego.centro[0]
     centro_lat = juego.centro[1]
     return render_template("visualizar.html", juego=juego, user=user, centro_lon=juego.centro[0],
-                           centro_lat=juego.centro[1])
+                           centro_lat=juego.centro[1], limite_superior=juego.dimensiones[1],
+                           limite_inferior=juego.dimensiones[3])
 
 
 @app.route("/eliminarJuego/<id>")
@@ -299,7 +301,7 @@ def eliminar_juego(id):
     if user.id == juego.creador or user.get_admin():
         delete_juego_by_id(id)
 
-    return redirect(url_for('hello'))
+    return redirect(url_for('inicio'))
 
 
 @app.route("/verAciertos/<id>", methods=['POST'])
@@ -330,7 +332,10 @@ def recoger_datos_jugador(id):
     elif error is False:
         mensaje = "acierto"
     encontrados = juego.get_tesoros(user)
+    mensajes = find_all_mensajes_by_juego(id_juego=id)
+    mensajes.sort(key=lambda x: x.fecha, reverse=False)
     return render_template("juego.html", juego=juego, user=user, jugando=True, encontrados=encontrados, mensaje=mensaje,
+                           mensajes=mensajes,
                            recienEncontrados=recien_encontrados, centro_lon=juego.centro[0],
                            centro_lat=juego.centro[1], limite_superior=juego.dimensiones[1],
                            limite_inferior=juego.dimensiones[3])
@@ -360,17 +365,7 @@ def recoger_datos_creacion():
     juego = Juego(diccionario_tesoros=tesoros, creador=current_user, dimensiones=dimensiones, titulo=nombre,
                   descripcion=desc)
     save_juego(juego)
-    return redirect(url_for('hello'))
-
-
-@app.route('/editarJuego/<id>')
-@login_required
-def editar_juego(id):
-    user = current_user
-
-    juego = find_juego_by_id(id)
-
-    return render_template("editarjuego.html", juego=juego, user=user)
+    return redirect(url_for('inicio'))
 
 
 if __name__ == '__main__':

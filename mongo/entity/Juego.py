@@ -120,6 +120,7 @@ class Juego:
         self.__ganador = None
         for tesoro in self.tesoros.values():
             tesoro.reset()
+        self.__tesoros_restantes = len(self.tesoros)
 
     def get_tesoros(self, user: User) -> list:
         if user.id_mongo not in self.__participantes:
