@@ -1,4 +1,7 @@
 var maps = [];
+
+window.addEventListener('resize', recargarMapas);
+
 $(document).ready(function () {
     let todosMapas = document.getElementsByClassName("map");
     for (let m of todosMapas) {
@@ -41,7 +44,7 @@ function recargarMapas() {
     for (let m of maps) {
         setTimeout(function () {
             m.updateSize();
-        }, 200);
+        }, 300);
     }
 }
 

@@ -25,18 +25,18 @@
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active" id="activos-tab" data-toggle="tab" href="#activos"
-                           role="tab" aria-controls="activos" aria-selected="true" onclick="recargarMapas(this.id)">Mis
+                           role="tab" aria-controls="activos" aria-selected="true" onclick="recargarMapas()">Mis
                             Juegos
                             activos</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id=finalizados-tab" data-toggle="tab" href="#finalizados"
                            role="tab" aria-controls="finalizados" aria-selected="false"
-                           onclick="recargarMapas(this.id)">Mis Juegos finalizados</a>
+                           onclick="recargarMapas()">Mis Juegos finalizados</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="todosActivos-tab" data-toggle="tab" href="#todosActivos" role="tab"
-                           aria-controls="todosActivos" aria-selected="false" onclick="recargarMapas(this.id)">Todos
+                           aria-controls="todosActivos" aria-selected="false" onclick="recargarMapas()">Todos
                             los
                             juegos activos</a>
                     </li>
@@ -44,14 +44,14 @@
                         <li class="nav-item">
                             <a class="nav-link" id="todosAcabados-tab" data-toggle="tab" href="#todosAcabados"
                                role="tab"
-                               aria-controls="todosAcabados" aria-selected="false" onclick="recargarMapas(this.id)">Todos
+                               aria-controls="todosAcabados" aria-selected="false" onclick="recargarMapas()">Todos
                                 los
                                 juegos acabados</a>
                         </li>
                     {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" id="administracion-tab" data-toggle="tab" href="#administracion" role="tab"
-                           aria-controls="administracion" aria-selected="false" onclick="recargarMapas(this.id)">Mis
+                           aria-controls="administracion" aria-selected="false" onclick="recargarMapas()">Mis
                             juegos
                             creados</a>
                     </li>
@@ -80,7 +80,7 @@
                                                 {% if user.get_admin %}
                                                     <a class="btn btn-info" href="/participante/juego/{{ juego.id }}">Entrar al
                                                         juego</a>
-                                                    <a class="btn btn-primary" href="/organizador/verJuego//{{ juego.id }}">Visualizar
+                                                    <a class="btn btn-primary" href="/organizador/verJuego/{{ juego.id }}">Visualizar
                                                         juego</a>
                                                 {% else %}
                                                     <a class="btn btn-primary" href="/participante/juego/{{ juego.id }}">Entrar al
@@ -128,7 +128,7 @@
                                                 {% if user.get_admin %}
                                                     <a class="btn btn-info" href="/participante/juego/{{ juego.id }}">Entrar al
                                                         juego</a>
-                                                    <a class="btn btn-primary" href="/organizador/verJuego//{{ juego.id }}">Administrar
+                                                    <a class="btn btn-primary" href="/organizador/verJuego/{{ juego.id }}">Administrar
                                                         juego</a>
                                                 {% else %}
                                                     <a class="btn btn-primary" href="/participante/juego/{{ juego.id }}">Entrar al
@@ -187,11 +187,11 @@
                                                         <a class="btn btn-info" href="/participante/juego/{{ juego.id }}">Entrar
                                                             al juego</a>
                                                     {% endif %}
-                                                    <a class="btn btn-primary" href="/organizador/verJuego//{{ juego.id }}">Administrar
+                                                    <a class="btn btn-primary" href="/organizador/verJuego/{{ juego.id }}">Administrar
                                                         juego</a>
                                                 {% else %}
                                                     {% if user.id == juego.creador %}
-                                                        <a class="btn btn-primary" href="/organizador/verJuego//{{ juego.id }}">Administrar
+                                                        <a class="btn btn-primary" href="/organizador/verJuego/{{ juego.id }}">Administrar
                                                             juego</a>
                                                     {% else %}
                                                         {% if user.id_mongo_str not in juego.participantes %}
@@ -247,7 +247,7 @@
                                                         <a class="btn btn-info" href="/participante/juego/{{ juego.id }}">Entrar
                                                             al juego</a>
                                                     {% endif %}
-                                                    <a class="btn btn-primary" href="/organizador/verJuego//{{ juego.id }}">Administrar
+                                                    <a class="btn btn-primary" href="/organizador/verJuego/{{ juego.id }}">Administrar
                                                         juego</a>
                                                 </div>
                                                 <div class="col-6">
@@ -297,7 +297,7 @@
                                                             al juego</a>
                                                     {% endif %}
                                                 {% endif %}
-                                                <a class="btn btn-primary" href="/organizador/verJuego//{{ juego.id }}">Administrar
+                                                <a class="btn btn-primary" href="/organizador/verJuego/{{ juego.id }}">Administrar
                                                     juego</a>
                                             </div>
                                             <div class="col-6">
@@ -327,7 +327,7 @@
                     </div>
                     <div class="card-body">
                         <div class="text-center">
-                            <a class="btn btn-success" href="/organizador/nuevoJuego/">P&aacute;gina de creaci&oacute;n</a>
+                            <a class="btn btn-success" href="/organizador/nuevoJuego">P&aacute;gina de creaci&oacute;n</a>
                             <br>
                             <small class="form-text text-muted"><b>
                                 <i class="help-block">Ir a la p&aacute;gina de creaci&oacute;n de juegos</i></b></small>

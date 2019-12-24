@@ -196,6 +196,9 @@ function eliminarTesoro(id) {
         alert("Error al borrar tesoro");
     }
     document.getElementById("listas").removeChild(document.getElementById("tesoro" + info[2].toString()))
+    setTimeout(function () {
+        map.updateSize();
+    }, 200);
 }
 
 
