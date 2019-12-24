@@ -20,7 +20,7 @@
         <div class="container-header text-center"><h3>Juego {{ juego.titulo }}</h3></div>
         <hr>
         <div class="row flex-x1-nowrap" style="margin-bottom: 10px;">
-            <div class="offset-lg-2 col-lg-7 col-9">
+            <div class="offset-lg-2 col-lg-7 col-md-9">
                 <div class="map" id="map"></div>
                 {% if juego.estado == False %}
                     {% for tesoro in juego.tesoros.values() %}
@@ -70,8 +70,8 @@
                     </form>
                 </div>
             </div>
-            <div class="col-3">
-                <div class="card bg-light" style="margin-top: 15px;">
+            <div class="col-md-3" style="margin: 10px 0px">
+                <div class="card bg-light">
                     <div class="card-header text-center">
                         <h3>Detalles</h3>
                     </div>
