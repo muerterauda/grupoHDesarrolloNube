@@ -17,6 +17,13 @@ def find_juego_by_id(juego_id) -> Juego:
         return __generar_juego(res)
 
 
+def find_all_juegos() -> list:
+    diccionario_busqueda = {}
+    res = juegos.find(diccionario_busqueda)
+    lista_juegos = __generar_lista_juegos(res)
+    return lista_juegos
+
+
 def find_juego_by_ganador(ganador: User) -> list:
     diccionario_busqueda = {'ganador': ganador.id}
     res = juegos.find(diccionario_busqueda)
@@ -55,6 +62,10 @@ def replace_juego_by_id(juego_id, new_juego: Juego):
 
 def update_juego_by_id(juego_id, actualizacion_juego: dict):
     juegos.update_one({"_id": ObjectId(juego_id)}, {"$set": actualizacion_juego})
+
+
+def delete_juego_by_id(juego_id):
+    juegos.delete_one({"_id": ObjectId(juego_id)})
 
 
 def __generar_lista_juegos(res: dict) -> list:

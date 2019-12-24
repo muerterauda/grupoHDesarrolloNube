@@ -37,3 +37,4 @@ class MongoException(Exception):
 
 usuarios = MongoManager('usuario', False).collection
 juegos = MongoManager('juego', False).collection
+mensajes = MongoManager('mensaje', False).collection

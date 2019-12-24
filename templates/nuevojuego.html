@@ -1,49 +1,91 @@
 {% extends "base.html" %}
 {% block head %}
     <title>Inicio</title>
-    <style>
-        .map {
-            min-height: 300px;
-            padding: 5px 5px;
-        }
-
-        .juego{
-            background: #dbefff;
-            padding: 5px;
-            box-sizing:border-box;
-            -moz-border-radius: 10px;
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-            border: 1px solid #1b98ff;
-            margin: 10px 0px;
-            text-decoration: none;
-            box-sizing: border-box;
-        }
-    </style>
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col text-center">
-            <br>
-            <input type="button" id="add_field" value="Añadir pista">
-        </div>
-    </div>
     <div class="container-fluid">
-            <form action="/recogerdatos" method="get">
-                <div id="listas">
-                    <div class="container">
+        <hr>
+        <div class="container-header text-center"><h3>Nuevo juego</h3></div>
+        <hr>
+        <form action="/recogerdatos" method="POST" id="myForm" enctype="multipart/form-data">
+            <div class="row flex-x1-nowrap" style="margin-bottom: 10px;">
+                <div class="offset-lg-2 col-lg-7 col-9">
+                    <input hidden type="text" value="0" id="nTesoros" name="nTesoros">
+                    <div class="input-group mb-3">
+                        <label class="sr-only" for="name">Nombre</label>
+                        <div class="input-group-prepend">
+                                                <span class="input-group-text"
+                                                      id="nombre"><b>Nombre</b></span>
+                        </div>
+                        <input id="name" name="nombre" class="form-control"
+                               type="text"
+                               aria-describedby="nombre" required placeholder="El nombre de tu aventura va aqu&iacute;">
+                    </div>
+                    <div class="input-group mb-3">
+                        <label class="sr-only" for="descripcion">Descripcion</label>
+                        <div class="input-group-prepend">
+                                                <span class="input-group-text"
+                                                      id="desc"><b>Descripci&oacute;n</b></span>
+                        </div>
+                        <textarea style="resize: none; height: 80px;" id="descripcion" name="descripcion" required
+                                  aria-describedby="desc"
+                                  class="form-control"
+                                  placeholder="Escribe una breve descripci&oacute;n para tu juego. ¡Con un par de frases bastar&aacute;!"></textarea>
+                    </div>
+                    <div id="listas">
                         <div class="row">
                             <div class="col align-center">
-                                <div class="map" id="map"/>
+                                <div class="map" id="map" style="min-height: 300px; padding: 5px 5px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-success">Crear juego</button>
+                </div>
+                <div class="col-3">
+                    <div class="card bg-light" style="margin-top: 15px;">
+                        <div class="card-header text-center">
+                            <h3>Explicación del mapa</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center">
+                                <b>Orden de los puntos</b>
+                                <br/>
+                                <img class="img-thumbnail rounded" src="/img/mapa.png" alt="Orden de los puntos"
+                                     width="180px" height="180px"/>
+                                <div id="extremos" style="margin-top: 10px;">
+                                    {% for i in range(1,5) %}
+                                        <div class="input-group mb-3 ">
+                                            <label class="sr-only" for="punto{{ i }}">Extremo {{ i }}</label>
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"
+                                                      id="extremo{{ i }}"
+                                                      style="font-size: small;"><b>Extremo {{ i }}</b></span>
+                                            </div>
+                                            <input readonly id="punto{{ i }}" name="punto" class="form-control"
+                                                   type="text"
+                                                   aria-describedby="extremo{{ i }}" required style="font-size: small;">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <b class="card-text text-danger" style="font-size: small;">Tras marcar los 4 puntos, la
+                                    zona se ajustará al espacio de juego.<br/> Si la zona de
+                                    juego no se visualiza bien o no le gusta:<br/> Haz click en <i>Resetear
+                                        juego</i> para empezar de nuevo. <br/> Recuerda seguir el patr&oacute;n de
+                                    dibujo de arriba.</b>
+                                <br/>
+                                <br/>
+                                <button type="button" onclick="resetearZona()"
+                                        class="btn btn-danger">Resetear zona<span
+                                        class="hidden-sm hidden-md hidden-xs"> de juego</span>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
-             <div class="col text-center">
-                <br>
-                <input type="submit" value="OK">
             </div>
+<<<<<<< HEAD
             </form>
      </div>
     <script type="text/javascript">
@@ -195,4 +237,9 @@
         });
 
     </script>
+=======
+        </form>
+    </div>
+    <script type="text/javascript" src="/js/nuevoJuego.js"></script>
+>>>>>>> develoment
 {% endblock %}

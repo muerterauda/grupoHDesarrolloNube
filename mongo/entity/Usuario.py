@@ -25,8 +25,16 @@ class User(UserMixin):
         return self.__id_mongo
 
     @property
+    def id_mongo_str(self):
+        return str(self.__id_mongo)
+
+    @property
     def get_admin(self):
         return self.__admin
+
+    @property
+    def nombre_email(self):
+        return self.id.split('@')[0]
 
     def __str__(self):
         return self.id + ", " + self.name
