@@ -41,9 +41,13 @@
                         {% for men in mensajes %}
                             <div class="card" style=" margin-bottom: 10px;">
                                 {% if juego.creador == men.creador %}
-                                    <div class="card-header text-info"><span style="font-size: small;"><i>{{ men.fecha }}</i></span> - <b>{{ men.creador }} (Organizador)</b></div>
+                                    <div class="card-header text-info"><span
+                                            style="font-size: small;"><i>{{ men.fecha }}</i></span> -
+                                        <b>{{ men.creador }} (Organizador)</b></div>
                                 {% else %}
-                                    <div class="card-header"><span style="font-size: small;"><i>{{ men.fecha }}</i></span> - <b>{{ men.creador }}</b></div>
+                                    <div class="card-header"><span
+                                            style="font-size: small;"><i>{{ men.fecha }}</i></span> -
+                                        <b>{{ men.creador }}</b></div>
                                 {% endif %}
                                 <div class="card-body">
                                     <p class="card-text">{{ men.mensaje }}</p>
@@ -54,10 +58,12 @@
                         <h6><b>No hay mensajes</b></h6>
                     {% endif %}
                     <hr>
-                    <form action="/nuevoMensajeOrganizador/{{ juego.id }}" method="post">
+                    <form action="/organizador/nuevoMensaje//{{ juego.id }}" method="post">
                         <div style="width: 100%; max-height: 100px; min-height: 100px;">
-                          <label for="nuevoMensaje"></label>
-                          <textarea id="nuevoMensaje" name="nuevoMensaje" maxlength="1000" style="width: 100%; min-height: 80px;" placeholder="Escriba aqui su comentario." required></textarea>
+                            <label for="nuevoMensaje"></label>
+                            <textarea id="nuevoMensaje" name="nuevoMensaje" maxlength="1000"
+                                      style="width: 100%; min-height: 80px;" placeholder="Escriba aqui su comentario."
+                                      required></textarea>
                         </div>
                         <br>
                         <button class="btn btn-success" style="margin-top: 5px;">Enviar mensaje</button>
@@ -85,8 +91,8 @@
                             <br/>
                             <b>Tesoros restantes juego:</b> {{ juego.tesoros_restantes }}
                             <div class="text-center" style="margin-top: 5px;">
-                                <a href="/reiniciarJuego/{{ juego.id }}" class="btn btn-warning">Reiniciar</a>
-                                <a href="/eliminarJuego/{{ juego.id }}" class="btn btn-danger">Borrar juego</a>
+                                <a href="/organizador/reiniciarJuego//{{ juego.id }}" class="btn btn-warning">Reiniciar</a>
+                                <a href="/organizador/eliminarJuego//{{ juego.id }}" class="btn btn-danger">Borrar juego</a>
                             </div>
                         </div>
                     </div>
@@ -142,68 +148,6 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            let centro = document.getElementById("centro").value;
-            let dimensiones = document.getElementById("dimensiones").value;
-            const markerSource = new ol.source.Vector();
-            let mapCentro = [];
-            mapCentro.push(parseFloat(centro.split(",")[1]));
-            mapCentro.push(parseFloat(centro.split(",")[0]));
-            let limiteInferior = dimensiones.split("~")[0].replace("[", "").replace("]", "");
-            let limiteInferiorArray = [];
-            limiteInferiorArray.push(parseFloat(limiteInferior.split(",")[1]));
-            limiteInferiorArray.push(parseFloat(limiteInferior.split(",")[0]));
-            limiteInferiorArray = ol.proj.transform(limiteInferiorArray, 'EPSG:4326', 'EPSG:3857');
-            let limiteSuperior = dimensiones.split("~")[1].replace("[", "").replace("]", "");
-            let limiteSuperiorArray = [];
-            limiteSuperiorArray.push(parseFloat(limiteSuperior.split(",")[1]));
-            limiteSuperiorArray.push(parseFloat(limiteSuperior.split(",")[0]));
-            limiteSuperiorArray = ol.proj.transform(limiteSuperiorArray, 'EPSG:4326', 'EPSG:3857');
-            new ol.Map({
-                target: 'map',
-                layers: [
-                    new ol.layer.Tile({
-                        source: new ol.source.OSM()
-                    }),
-                    new ol.layer.Vector({
-                        source: markerSource
-                    })
-                ],
-                view: new ol.View({
-                    extent: [limiteInferiorArray[0] - 500, limiteInferiorArray[1] - 500, limiteSuperiorArray[0] + 1000, limiteSuperiorArray[1] + 1000],
-                    center: ol.proj.fromLonLat(mapCentro),
-                    zoom: -5
-                })
-            });
-
-            var coordinadas = document.getElementsByClassName("tesoro");
-            for (let tesoro of coordinadas) {
-                let lon = tesoro.value.split(",")[0];
-                let lat = tesoro.value.split(",")[1].split("~")[0];
-                let id = tesoro.value.split(",")[1].split("~")[1];
-                var iconFeature = new ol.Feature({
-                    geometry: new ol.geom.Point(ol.proj.transform([lat, lon], 'EPSG:4326',
-                        'EPSG:3857')),
-                    population: 4000,
-                    rainfall: 500
-                });
-
-                var myStyle = new ol.style.Style({
-                    image: new ol.style.Circle({
-                        radius: 10,
-                        fill: new ol.style.Fill({color: 'yellow'}),
-                        stroke: new ol.style.Stroke({
-                            color: [255, 204, 0], width: 2
-                        })
-                    }),
-                    text: new ol.style.Text({
-                        text: id,
-                    })
-                });
-                iconFeature.setStyle(myStyle);
-                markerSource.addFeature(iconFeature);
-            }
-        })
-    </script>
+    <script type="text/javascript" src="/js/centroYDimensiones.js"></script>
+    <script type="text/javascript" src="/js/visualizar.js"></script>
 {% endblock %}

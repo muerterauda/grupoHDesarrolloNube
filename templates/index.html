@@ -25,23 +25,18 @@
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active" id="activos-tab" data-toggle="tab" href="#activos"
-                           role="tab" aria-controls="activos" aria-selected="true" onclick="recargarMapas(this.id)">Mis
-                            juegos activos</a>
+                           role="tab" aria-controls="activos" aria-selected="true" onclick="recargarMapas()">Mis
+                            Juegos
+                            activos</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id=finalizados-tab" data-toggle="tab" href="#finalizados"
                            role="tab" aria-controls="finalizados" aria-selected="false"
-                           onclick="recargarMapas(this.id)">Mis juegos finalizados</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="administracion-tab" data-toggle="tab" href="#administracion" role="tab"
-                           aria-controls="administracion" aria-selected="false" onclick="recargarMapas(this.id)">Mis
-                            juegos
-                            creados</a>
+                           onclick="recargarMapas()">Mis Juegos finalizados</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="todosActivos-tab" data-toggle="tab" href="#todosActivos" role="tab"
-                           aria-controls="todosActivos" aria-selected="false" onclick="recargarMapas(this.id)">Todos
+                           aria-controls="todosActivos" aria-selected="false" onclick="recargarMapas()">Todos
                             los
                             juegos activos</a>
                     </li>
@@ -49,11 +44,17 @@
                         <li class="nav-item">
                             <a class="nav-link" id="todosAcabados-tab" data-toggle="tab" href="#todosAcabados"
                                role="tab"
-                               aria-controls="todosAcabados" aria-selected="false" onclick="recargarMapas(this.id)">Todos
+                               aria-controls="todosAcabados" aria-selected="false" onclick="recargarMapas()">Todos
                                 los
                                 juegos acabados</a>
                         </li>
                     {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" id="administracion-tab" data-toggle="tab" href="#administracion" role="tab"
+                           aria-controls="administracion" aria-selected="false" onclick="recargarMapas()">Mis
+                            juegos
+                            creados</a>
+                    </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="activos" role="tabpanel" aria-labelledby="activos-tab">
@@ -77,12 +78,12 @@
                                                         encontrados: {{ juego.participantes[user.id_mongo_str]['tesoros'] }}</li>
                                                 </ul>
                                                 {% if user.get_admin %}
-                                                    <a class="btn btn-info" href="/juego/{{ juego.id }}">Entrar al
+                                                    <a class="btn btn-info" href="/participante/juego/{{ juego.id }}">Entrar al
                                                         juego</a>
-                                                    <a class="btn btn-primary" href="/verJuego/{{ juego.id }}">Visualizar
+                                                    <a class="btn btn-primary" href="/organizador/verJuego/{{ juego.id }}">Visualizar
                                                         juego</a>
                                                 {% else %}
-                                                    <a class="btn btn-primary" href="/juego/{{ juego.id }}">Entrar al
+                                                    <a class="btn btn-primary" href="/participante/juego/{{ juego.id }}">Entrar al
                                                         juego</a>
                                                 {% endif %}
                                             </div>
@@ -125,12 +126,12 @@
                                                         encontrados: {{ juego.participantes[user.id_mongo_str]['tesoros'] }}</li>
                                                 </ul>
                                                 {% if user.get_admin %}
-                                                    <a class="btn btn-info" href="/juego/{{ juego.id }}">Entrar al
+                                                    <a class="btn btn-info" href="/participante/juego/{{ juego.id }}">Entrar al
                                                         juego</a>
-                                                    <a class="btn btn-primary" href="/verJuego/{{ juego.id }}">Administrar
+                                                    <a class="btn btn-primary" href="/organizador/verJuego/{{ juego.id }}">Administrar
                                                         juego</a>
                                                 {% else %}
-                                                    <a class="btn btn-primary" href="/juego/{{ juego.id }}">Entrar al
+                                                    <a class="btn btn-primary" href="/participante/juego/{{ juego.id }}">Entrar al
                                                         juego</a>
                                                 {% endif %}
                                             </div>
@@ -180,25 +181,25 @@
                                                 </ul>
                                                 {% if user.get_admin %}
                                                     {% if user.id_mongo_str not in juego.participantes %}
-                                                        <a href="/anadirJuego/{{ juego.id }}" class="btn btn-info"
+                                                        <a href="/participante/anadirJuego/{{ juego.id }}" class="btn btn-info"
                                                            style="margin-top: 5px;">Unirme al juego</a>
                                                     {% else %}
-                                                        <a class="btn btn-info" href="/juego/{{ juego.id }}">Entrar
+                                                        <a class="btn btn-info" href="/participante/juego/{{ juego.id }}">Entrar
                                                             al juego</a>
                                                     {% endif %}
-                                                    <a class="btn btn-primary" href="/verJuego/{{ juego.id }}">Administrar
+                                                    <a class="btn btn-primary" href="/organizador/verJuego/{{ juego.id }}">Administrar
                                                         juego</a>
                                                 {% else %}
                                                     {% if user.id == juego.creador %}
-                                                        <a class="btn btn-primary" href="/verJuego/{{ juego.id }}">Administrar
+                                                        <a class="btn btn-primary" href="/organizador/verJuego/{{ juego.id }}">Administrar
                                                             juego</a>
                                                     {% else %}
                                                         {% if user.id_mongo_str not in juego.participantes %}
-                                                            <a href="/anadirJuego/{{ juego.id }}"
+                                                            <a href="/participante/anadirJuego/{{ juego.id }}"
                                                                class="btn btn-primary" style="margin-top: 5px;">Unirme
                                                                 al juego</a>
                                                         {% else %}
-                                                            <a class="btn btn-primary" href="/juego/{{ juego.id }}">Entrar
+                                                            <a class="btn btn-primary" href="/participante/juego/{{ juego.id }}">Entrar
                                                                 al juego</a>
                                                         {% endif %}
                                                     {% endif %}
@@ -243,10 +244,10 @@
                                                         <li>Ganador: {{ juego.ganador }}</li>
                                                     </ul>
                                                     {% if user.id_mongo_str in juego.participantes %}
-                                                        <a class="btn btn-info" href="/juego/{{ juego.id }}">Entrar
+                                                        <a class="btn btn-info" href="/participante/juego/{{ juego.id }}">Entrar
                                                             al juego</a>
                                                     {% endif %}
-                                                    <a class="btn btn-primary" href="/verJuego/{{ juego.id }}">Administrar
+                                                    <a class="btn btn-primary" href="/organizador/verJuego/{{ juego.id }}">Administrar
                                                         juego</a>
                                                 </div>
                                                 <div class="col-6">
@@ -289,14 +290,14 @@
                                                 </ul>
                                                 {% if user.get_admin %}
                                                     {% if user.id_mongo_str not in juego.participantes %}
-                                                        <a href="/anadirJuego/{{ juego.id }}" class="btn btn-info"
+                                                        <a href="/participante/anadirJuego/{{ juego.id }}" class="btn btn-info"
                                                            style="margin-top: 5px;">Unirme al juego</a>
                                                     {% else %}
-                                                        <a class="btn btn-info" href="/juego/{{ juego.id }}">Entrar
+                                                        <a class="btn btn-info" href="/participante/juego/{{ juego.id }}">Entrar
                                                             al juego</a>
                                                     {% endif %}
                                                 {% endif %}
-                                                <a class="btn btn-primary" href="/verJuego/{{ juego.id }}">Administrar
+                                                <a class="btn btn-primary" href="/organizador/verJuego/{{ juego.id }}">Administrar
                                                     juego</a>
                                             </div>
                                             <div class="col-6">
@@ -326,7 +327,7 @@
                     </div>
                     <div class="card-body">
                         <div class="text-center">
-                            <a class="btn btn-success" href="/nuevoJuego">P&aacute;gina de creaci&oacute;n</a>
+                            <a class="btn btn-success" href="/organizador/nuevoJuego">P&aacute;gina de creaci&oacute;n</a>
                             <br>
                             <small class="form-text text-muted"><b>
                                 <i class="help-block">Ir a la p&aacute;gina de creaci&oacute;n de juegos</i></b></small>
@@ -337,121 +338,5 @@
         </div>
 
     </div>
-
-    <script type="text/javascript">
-        var maps = [];
-        $(document).ready(function () {
-            let todosMapas = document.getElementsByClassName("map");
-            for (let m of todosMapas) {
-                let centro = m.getElementsByClassName("centro")[0].value;
-                let dimensiones = m.getElementsByClassName("dimensiones")[0].value;
-                const markerSource = new ol.source.Vector();
-                let mapCentro = [];
-                mapCentro.push(parseFloat(centro.split(",")[1]));
-                mapCentro.push(parseFloat(centro.split(",")[0]));
-                let limiteInferior = dimensiones.split("~")[0].replace("[", "").replace("]", "");
-                let limiteInferiorArray = [];
-                limiteInferiorArray.push(parseFloat(limiteInferior.split(",")[1]));
-                limiteInferiorArray.push(parseFloat(limiteInferior.split(",")[0]));
-                limiteInferiorArray = ol.proj.transform(limiteInferiorArray, 'EPSG:4326', 'EPSG:3857');
-                let limiteSuperior = dimensiones.split("~")[1].replace("[", "").replace("]", "");
-                let limiteSuperiorArray = [];
-                limiteSuperiorArray.push(parseFloat(limiteSuperior.split(",")[1]));
-                limiteSuperiorArray.push(parseFloat(limiteSuperior.split(",")[0]));
-                limiteSuperiorArray = ol.proj.transform(limiteSuperiorArray, 'EPSG:4326', 'EPSG:3857');
-                maps.push(new ol.Map({
-                    target: m.id,
-                    layers: [
-                        new ol.layer.Tile({
-                            source: new ol.source.OSM()
-                        }),
-                        new ol.layer.Vector({
-                            source: markerSource
-                        })
-                    ],
-                    view: new ol.View({
-                        extent: [limiteInferiorArray[0], limiteInferiorArray[1], limiteSuperiorArray[0], limiteSuperiorArray[1]],
-                        center: ol.proj.fromLonLat(mapCentro),
-                        zoom: 0
-                    })
-                }))
-            }
-        });
-
-        function recargarMapas() {
-            for (let m of maps) {
-                setTimeout(function () {
-                    m.updateSize();
-                }, 200);
-            }
-        }
-
-        const markerSource = new ol.source.Vector();
-        var map = new ol.Map({
-            target: 'map',
-            layers: [
-                new ol.layer.Tile({
-                    source: new ol.source.OSM()
-                }),
-                new ol.layer.Vector({
-                    source: markerSource
-                })
-            ],
-            view: new ol.View({
-                center: ol.proj.fromLonLat([-4.4785522, 36.7151063]),
-                zoom: 4
-            })
-        });
-
-        var puntosPuestos = new Map();
-
-        map.on('click', function (evt) {
-            var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
-            addMarker(pos[0], pos[1]);
-            var x = map.getFeaturesAtPixel(evt.pixel);
-            for (var y of x) {
-                markerSource.removeFeature(y);
-                alert("eliminado" + y.ol_iud)
-            }
-        });
-
-        function addMarker(lon, lat) {
-            console.log('lon:', lon);
-            console.log('lat:', lat);
-            /* for (var icono of puntosPuestos.values()) {
-                 markerSource.removeFeature(icono);
-             }*/
-            var iconFeature = new ol.Feature({
-                geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326',
-                    'EPSG:3857')),
-                population: 4000,
-                rainfall: 500
-            });
-
-            var myStyle = new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 7,
-                    fill: new ol.style.Fill({color: 'yellow'}),
-                    stroke: new ol.style.Stroke({
-                        color: [255, 204, 0], width: 2
-                    })
-                })
-            });
-            iconFeature.setStyle(myStyle);
-            markerSource.addFeature(iconFeature);
-            puntosPuestos.set(lon + lat, iconFeature);
-        }
-
-
-        $('#unirse-juego').click(function () {
-            $("#overlay").addClass("active");
-            $("#popup").addClass("active");
-        });
-
-        $('#btn-cerrar-popup').click(function () {
-            $("#overlay").removeClass("active");
-            $("#popup").removeClass("active");
-        });
-
-    </script>
+    <script type="text/javascript" src="/js/index.js"></script>
 {% endblock %}

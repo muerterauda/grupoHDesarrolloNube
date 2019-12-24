@@ -4,16 +4,18 @@ from pymongo import MongoClient
 
 class MongoManager:
 
-    def __init__(self, collection_name, online: bool=False):
+    def __init__(self, collection_name, online: bool = False):
         """
         Crea la instancia conectada a la collecion en cuestion.
         sqlite: tfg
         :param collection_name: nombre de la conexion
         """
         if online:
-           self.collection = MongoClient('mongodb+srv://GrupoH:H6keoAzQKEXBg46j@desarrollonubegrupoh-0rfcm.gcp.mongodb.net/test?retryWrites=true&w=majority')['pruebaNube'][collection_name]
+            self.collection = MongoClient(
+                'mongodb+srv://GrupoH:H6keoAzQKEXBg46j@desarrollonubegrupoh-0rfcm.gcp.mongodb.net/test?retryWrites=true&w=majority')[
+                'pruebaNube'][collection_name]
         else:
-           self.collection = MongoClient('localhost', 27017)['pruebaNube'][collection_name]
+            self.collection = MongoClient('localhost', 27017)['pruebaNube'][collection_name]
 
     @staticmethod
     def bson_encoder(s):
