@@ -78,12 +78,12 @@
                                                         encontrados: {{ juego.participantes[user.id_mongo_str]['tesoros'] }}</li>
                                                 </ul>
                                                 {% if user.get_admin %}
-                                                    <a class="btn btn-info" href="/juego/{{ juego.id }}">Entrar al
+                                                    <a class="btn btn-info" href="/participante/juego/{{ juego.id }}">Entrar al
                                                         juego</a>
-                                                    <a class="btn btn-primary" href="/verJuego/{{ juego.id }}">Visualizar
+                                                    <a class="btn btn-primary" href="/organizador/verJuego//{{ juego.id }}">Visualizar
                                                         juego</a>
                                                 {% else %}
-                                                    <a class="btn btn-primary" href="/juego/{{ juego.id }}">Entrar al
+                                                    <a class="btn btn-primary" href="/participante/juego/{{ juego.id }}">Entrar al
                                                         juego</a>
                                                 {% endif %}
                                             </div>
@@ -126,12 +126,12 @@
                                                         encontrados: {{ juego.participantes[user.id_mongo_str]['tesoros'] }}</li>
                                                 </ul>
                                                 {% if user.get_admin %}
-                                                    <a class="btn btn-info" href="/juego/{{ juego.id }}">Entrar al
+                                                    <a class="btn btn-info" href="/participante/juego/{{ juego.id }}">Entrar al
                                                         juego</a>
-                                                    <a class="btn btn-primary" href="/verJuego/{{ juego.id }}">Administrar
+                                                    <a class="btn btn-primary" href="/organizador/verJuego//{{ juego.id }}">Administrar
                                                         juego</a>
                                                 {% else %}
-                                                    <a class="btn btn-primary" href="/juego/{{ juego.id }}">Entrar al
+                                                    <a class="btn btn-primary" href="/participante/juego/{{ juego.id }}">Entrar al
                                                         juego</a>
                                                 {% endif %}
                                             </div>
@@ -181,25 +181,25 @@
                                                 </ul>
                                                 {% if user.get_admin %}
                                                     {% if user.id_mongo_str not in juego.participantes %}
-                                                        <a href="/anadirJuego/{{ juego.id }}" class="btn btn-info"
+                                                        <a href="/participante/anadirJuego/{{ juego.id }}" class="btn btn-info"
                                                            style="margin-top: 5px;">Unirme al juego</a>
                                                     {% else %}
-                                                        <a class="btn btn-info" href="/juego/{{ juego.id }}">Entrar
+                                                        <a class="btn btn-info" href="/participante/juego/{{ juego.id }}">Entrar
                                                             al juego</a>
                                                     {% endif %}
-                                                    <a class="btn btn-primary" href="/verJuego/{{ juego.id }}">Administrar
+                                                    <a class="btn btn-primary" href="/organizador/verJuego//{{ juego.id }}">Administrar
                                                         juego</a>
                                                 {% else %}
                                                     {% if user.id == juego.creador %}
-                                                        <a class="btn btn-primary" href="/verJuego/{{ juego.id }}">Administrar
+                                                        <a class="btn btn-primary" href="/organizador/verJuego//{{ juego.id }}">Administrar
                                                             juego</a>
                                                     {% else %}
                                                         {% if user.id_mongo_str not in juego.participantes %}
-                                                            <a href="/anadirJuego/{{ juego.id }}"
+                                                            <a href="/participante/anadirJuego/{{ juego.id }}"
                                                                class="btn btn-primary" style="margin-top: 5px;">Unirme
                                                                 al juego</a>
                                                         {% else %}
-                                                            <a class="btn btn-primary" href="/juego/{{ juego.id }}">Entrar
+                                                            <a class="btn btn-primary" href="/participante/juego/{{ juego.id }}">Entrar
                                                                 al juego</a>
                                                         {% endif %}
                                                     {% endif %}
@@ -244,10 +244,10 @@
                                                         <li>Ganador: {{ juego.ganador }}</li>
                                                     </ul>
                                                     {% if user.id_mongo_str in juego.participantes %}
-                                                        <a class="btn btn-info" href="/juego/{{ juego.id }}">Entrar
+                                                        <a class="btn btn-info" href="/participante/juego/{{ juego.id }}">Entrar
                                                             al juego</a>
                                                     {% endif %}
-                                                    <a class="btn btn-primary" href="/verJuego/{{ juego.id }}">Administrar
+                                                    <a class="btn btn-primary" href="/organizador/verJuego//{{ juego.id }}">Administrar
                                                         juego</a>
                                                 </div>
                                                 <div class="col-6">
@@ -290,14 +290,14 @@
                                                 </ul>
                                                 {% if user.get_admin %}
                                                     {% if user.id_mongo_str not in juego.participantes %}
-                                                        <a href="/anadirJuego/{{ juego.id }}" class="btn btn-info"
+                                                        <a href="/participante/anadirJuego/{{ juego.id }}" class="btn btn-info"
                                                            style="margin-top: 5px;">Unirme al juego</a>
                                                     {% else %}
-                                                        <a class="btn btn-info" href="/juego/{{ juego.id }}">Entrar
+                                                        <a class="btn btn-info" href="/participante/juego/{{ juego.id }}">Entrar
                                                             al juego</a>
                                                     {% endif %}
                                                 {% endif %}
-                                                <a class="btn btn-primary" href="/verJuego/{{ juego.id }}">Administrar
+                                                <a class="btn btn-primary" href="/organizador/verJuego//{{ juego.id }}">Administrar
                                                     juego</a>
                                             </div>
                                             <div class="col-6">
@@ -327,7 +327,7 @@
                     </div>
                     <div class="card-body">
                         <div class="text-center">
-                            <a class="btn btn-success" href="/nuevoJuego">P&aacute;gina de creaci&oacute;n</a>
+                            <a class="btn btn-success" href="/organizador/nuevoJuego/">P&aacute;gina de creaci&oacute;n</a>
                             <br>
                             <small class="form-text text-muted"><b>
                                 <i class="help-block">Ir a la p&aacute;gina de creaci&oacute;n de juegos</i></b></small>

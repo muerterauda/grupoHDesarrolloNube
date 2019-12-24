@@ -1,4 +1,3 @@
-import base64
 import json
 import os
 
@@ -10,13 +9,9 @@ from mysqlx import Auth
 from requests.exceptions import HTTPError
 from requests_oauthlib import OAuth2Session
 
-from mongo.entity.Juego import Juego
-from mongo.entity.Mensaje import Mensaje
-from mongo.entity.Tesoro import Tesoro
 from mongo.entity.Usuario import User
 from mongo.repository.juego_repository import find_juego_by_creador_and_estado, find_juego_by_participante_and_estado, \
-    find_juego_by_id, save_juego, delete_juego_by_id, find_juego_by_estado
-from mongo.repository.mensaje_repository import find_all_mensajes_by_juego, save_mensaje, delete_all_mensajes_by_juego
+    find_juego_by_estado
 from mongo.repository.usuario_repository import find_user_by_id, replace_user_by_id, update_user_by_id, save_user
 from servicios.organizador import organizador_bp
 from servicios.participante import participante_bp
@@ -81,21 +76,6 @@ def get_google_auth(state=None, token=None):
         redirect_uri=Auth.REDIRECT_URI,
         scope=Auth.SCOPE)
     return oauth
-
-
-@app.route('/js/<path:path>')
-def send_js(path):
-    return send_from_directory('resources/static/js', path)
-
-
-@app.route('/css/<path:path>')
-def send_css(path):
-    return send_from_directory('resources/static/css', path)
-
-
-@app.route('/img/<path:path>')
-def send_img(path):
-    return send_from_directory('resources/static/img', path)
 
 
 @app.route('/login')
@@ -183,9 +163,12 @@ def logout():
 @login_required
 def inicio():
     user = current_user
-    mis_juegos_activos = find_juego_by_participante_and_estado(user, True)
     mis_juegos_acabados = find_juego_by_participante_and_estado(user, False)
     juegos_activos = find_juego_by_estado(True)
+    mis_juegos_activos = []
+    for juego in juegos_activos:
+        if user.id_mongo in juego.participantes:
+            mis_juegos_activos.append(juego)
     if user.get_admin:
         juegos_acabados = find_juego_by_participante_and_estado(user, False)
     else:
@@ -196,8 +179,23 @@ def inicio():
                            juegos_creados=juegos_creados, user=user)
 
 
-app.register_blueprint(participante_bp, url_prefix="")
-app.register_blueprint(organizador_bp, url_prefix="")
+@app.route('/js/<path:path>')
+def send_js(path):
+    return send_from_directory('resources/static/js', path)
+
+
+@app.route('/css/<path:path>')
+def send_css(path):
+    return send_from_directory('resources/static/css', path)
+
+
+@app.route('/img/<path:path>')
+def send_img(path):
+    return send_from_directory('resources/static/img', path)
+
+
+app.register_blueprint(participante_bp, url_prefix="/participante/")
+app.register_blueprint(organizador_bp, url_prefix="/organizador/")
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

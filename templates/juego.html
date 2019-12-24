@@ -107,7 +107,7 @@
                         <h6><b>No hay mensajes</b></h6>
                     {% endif %}
                     <hr>
-                    <form action="/nuevoMensaje/{{ juego.id }}" method="post">
+                    <form action="/participante/nuevoMensaje/{{ juego.id }}" method="post">
                         <div style="width: 100%; max-height: 100px; min-height: 100px;">
                             <label for="nuevoMensaje"></label>
                             <textarea id="nuevoMensaje" name="nuevoMensaje" maxlength="1000"
@@ -145,7 +145,7 @@
                                 <div class="text-center" style="margin-top: 5px;">
                                     <a href="#" class="btn btn-primary" style="margin-top: 5px;" id="encontrar-tesoro">Localizar
                                         tesoro</a>
-                                    <a href="/abandonarJuego/{{ juego.id }}" class="btn btn-danger"
+                                    <a href="/participante/abandonarJuego/{{ juego.id }}" class="btn btn-danger"
                                        style="margin-top: 5px;">Abandonar juego</a>
                                 </div>
                             {% endif %}
@@ -232,7 +232,7 @@
                     </ul>
                 </div>
             </div>
-            <form id="insertar-tesoro" method="post" action="/verAciertos/{{ juego.id }}"
+            <form id="insertar-tesoro" method="post" action="/participante/verAciertos/{{ juego.id }}"
                   enctype="multipart/form-data">
                 <div class="map" id="map_popup" style="height: 500px;"></div>
                 <div id="tesorosID"></div>

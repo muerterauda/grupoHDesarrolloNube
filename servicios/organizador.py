@@ -51,7 +51,7 @@ def visualizar_juego_creador(id):
                            limite_inferior=juego.dimensiones[3])
 
 
-@organizador_bp.route("/nuevoMensajeOrganizador/<id>", methods=['POST'])
+@organizador_bp.route("/nuevoMensaje/<id>", methods=['POST'])
 @login_required
 def nuevo_mensaje_organizador(id):
     user = current_user
@@ -68,11 +68,9 @@ def nuevo_juego():
     return render_template("nuevojuego.html", user=user, image=url_for('static', filename='img/mapa.png'))
 
 
-@organizador_bp.route("/recogerdatos", methods=['POST'])
+@organizador_bp.route("/recogerDatos", methods=['POST'])
 @login_required
 def recoger_datos_creacion():
-    # print(request.args)
-    """Almacena el todos los tesoros en la variable juego"""
     tesoros = {}
     i = 1
     nombre = request.values.get("nombre")

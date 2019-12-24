@@ -81,7 +81,7 @@ def recoger_datos_jugador(id):
                                                 imagen_tesoro=imagen_marcado, descubridor=user)
             if encontrado is True:
                 recien_encontrados.append(t)
-        except Exception as e:
+        except Exception:
             error = True
     save_juego(juego)
     if juego.ganador == user.id:
