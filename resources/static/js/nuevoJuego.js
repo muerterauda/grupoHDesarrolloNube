@@ -69,11 +69,11 @@ map.on('click', function (evt) {
             if (fase === 1) {
                 addMarker(pos[0], pos[1], evt, azul, azul_relleno);
                 area.push(pos);
-                console.log(area);
+                // console.log(area);
                 document.getElementById("punto" + area.length.toString()).value = pos[1].toString() + " , " + pos[0].toString();
 
                 if (area.length === 4) {
-                    console.log("area llena");
+                    // console.log("area llena");
                     fase = 2;
                     let x_med = 0;
                     let y_med = 0;
@@ -135,27 +135,47 @@ function addMarker(lon, lat, evt, color, relleno) {
     iconFeature.setStyle(myStyle);
     markerSource.addFeature(iconFeature);
     if (fase !== 1) {
-        $('#listas').append('<div class="row tesoro" id="tesoro' + x + '">\
-                        <div class="row align-items-center">\
-                            <div class="col">\
-                                <br>\
-                                <p> ID tesoro: ' + x + '</p>\
+        $('#listas').append('<div class="card bg-light tesoro" id="tesoro' + x + '" style="margin-top: 10px;">\
+                            <div class="card-header text-center">\
+                                <h5>Tesoro con identificador: ' + x + '</h5>\
                                 <input hidden type="text" name="coordenadas" value="' + lon + ', ' + lat + '"/>\
                             </div>\
-                            <div class="col">\
-                                <br>\
-                                <p>Pista Texto: <input type="text" required name="pista_texto"></p>\
-                            </div>\
-                            \<div class="col">\
-                              <br>\
-                                <p>Pista Imagen: <input type="file"  accept="image/*" required name="pista_imagen"></p>\
-                            </div>\
-                            <div class="col">\
-                              <br>\
-                                <button class="btn btn-danger eliminarTesoro" onclick="eliminarTesoro(this.id)" type="button" id="eliminar' + evt.pixel + 'eliminar' + x + '">Eliminar tesoro</button>\
+                            <div class="card-body">\
+                                <div class="card-text">\
+                                    <div class="input-group mb-3">\
+                                        <label class="sr-only" for="pista_texto' + x + '">Pista</label>\
+                                        <div class="input-group-prepend">\
+                                                <span class="input-group-text"\
+                                                      id="pt' + x + '"><b>Pista</b></span>\
+                                        </div>\
+                                        <input type="text" class="form-control" required id="pista_texto' + x + '"\
+                                               name="pista_texto"\
+                                               placeholder="Escriba una pista para poder encontrar el tesoro"\
+                                               aria-describedby="pt' + x + '">\
+                                    </div>\
+                                    <div class="input-group mb-3">\
+                                        <div class="input-group-prepend">\
+                                            <span class="input-group-text" id="inputGroupFileAddon' + x + '"><b>Pista visual</b></span>\
+                                        </div>\
+                                        <div class="custom-file">\
+                                            <input type="file" accept="image/*" class="custom-file-input" id="inputGroupFile' + x + '"\
+                                                   aria-describedby="inputGroupFileAddon' + x + '" name="pista_imagen" required placeholder="Escoge una imagen">\
+                                            <label class="custom-file-label" for="inputGroupFile' + x + '">Escoge una imagen</label>\
+                                        </div>\
+                                    </div>\
+                                    <div class="text-center">\
+                                        <button class="btn btn-danger eliminarTesoro" onclick="eliminarTesoro(this.id)"\
+                                            type="button" id="eliminar' + evt.pixel + 'eliminar' + x + '">Eliminar tesoro</button>\
+                                    </div>\
+                                </div>\
                             </div>\
                         </div>\
-                        </div>');
+                        <script>\
+                        $("#inputGroupFile' + x + '").on("change",function(){\
+                        var fileName = $(this).val();\
+                        $(this).next(".custom-file-label").html(fileName);\
+                        })\
+                        </script>');
         x++;
         document.getElementById("nTesoros").value = x;
     }

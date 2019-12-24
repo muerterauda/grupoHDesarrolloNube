@@ -13,6 +13,10 @@ def find_all_mensajes_by_juego(id_juego: str):
     return lista_mensajes
 
 
+def delete_all_mensajes_by_juego(juego_id):
+    mensajes.delete_many({"juego": juego_id})
+
+
 def __generar_lista_juegos(res: dict) -> list:
     lista_mensajes = []
     for x in res:

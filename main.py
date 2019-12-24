@@ -16,12 +16,10 @@ from mongo.entity.Tesoro import Tesoro
 from mongo.entity.Usuario import User
 from mongo.repository.juego_repository import find_juego_by_creador_and_estado, find_juego_by_participante_and_estado, \
     find_juego_by_id, save_juego, delete_juego_by_id, find_juego_by_estado
-from mongo.repository.mensaje_repository import find_all_mensajes_by_juego, save_mensaje
+from mongo.repository.mensaje_repository import find_all_mensajes_by_juego, save_mensaje, delete_all_mensajes_by_juego
 from mongo.repository.usuario_repository import find_user_by_id, replace_user_by_id, update_user_by_id, save_user
-
-#
-# GOOGLE_LOGIN_CLIENT_ID = "433051237268-etqt25o974bg52mmto23hs4lrg141ihq.apps.googleusercontent.com"
-# GOOGLE_LOGIN_CLIENT_SECRET = "MuH32nfjnOETmzIaNAP9vPoQ"
+from servicios.organizador import organizador_bp
+from servicios.participante import participante_bp
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -198,175 +196,8 @@ def inicio():
                            juegos_creados=juegos_creados, user=user)
 
 
-@app.route('/nuevoJuego')
-@login_required
-def nuevo_juego():
-    user = current_user
-    return render_template("nuevojuego.html", user=user, image=url_for('static', filename='img/mapa.png'))
-
-
-@app.route("/nuevoMensaje/<id>", methods=['POST'])
-def nuevo_mensaje(id):
-    user = current_user
-    mensaje = request.values.get("nuevoMensaje")
-    m = Mensaje(user=user, juego=id, mensaje=mensaje)
-    save_mensaje(m)
-    return redirect(url_for('ver_juego', id=id))
-
-
-@app.route("/nuevoMensajeOrganizador/<id>", methods=['POST'])
-def nuevo_mensaje_organizador(id):
-    user = current_user
-    mensaje = request.values.get("nuevoMensaje")
-    m = Mensaje(user=user, juego=id, mensaje=mensaje)
-    save_mensaje(m)
-    return redirect(url_for('visualizar_juego_creador', id=id))
-
-
-@app.route("/juego/<id>")
-def ver_juego(id):
-    user = current_user
-    mensajes = find_all_mensajes_by_juego(id_juego=id)
-    mensajes.sort(key=lambda x: x.fecha, reverse=False)
-    juego = find_juego_by_id(id)
-    encontrados = {}
-    if user.id_mongo in juego.participantes:
-        encontrados = juego.get_tesoros(user)
-    return render_template("juego.html", juego=juego, user=user, encontrados=encontrados, mensajes=mensajes,
-                           centro_lon=juego.centro[0],
-                           centro_lat=juego.centro[1], limite_superior=juego.dimensiones[1],
-                           limite_inferior=juego.dimensiones[3])
-
-
-@app.route("/anadirJuego/<id>", methods=['GET'])
-def anadir_participante_juego(id):
-    user = current_user
-    juego = find_juego_by_id(id)
-    juego.add_participante(user)
-    save_juego(juego)
-    if user.id_mongo in juego.participantes:
-        jugando = True
-    else:
-        jugando = False
-    return render_template("juego.html", juego=juego, user=user, jugando=jugando, centro_lon=juego.centro[0],
-                           centro_lat=juego.centro[1], limite_superior=juego.dimensiones[1],
-                           limite_inferior=juego.dimensiones[3])
-
-
-@app.route("/verJuego/<id>")
-def visualizar_juego_creador(id):
-    user = current_user
-    mensajes = find_all_mensajes_by_juego(id_juego=id)
-    mensajes.sort(key=lambda x: x.fecha, reverse=False)
-    juego = find_juego_by_id(id)
-    return render_template("visualizar.html", juego=juego, user=user, centro_lon=juego.centro[0], mensajes=mensajes,
-                           centro_lat=juego.centro[1], limite_superior=juego.dimensiones[1],
-                           limite_inferior=juego.dimensiones[3])
-
-
-"""Funcion para eliminar un participante del juego"""
-
-
-@app.route("/abandonarJuego/<id>")
-def abandonar_juego(id):
-    user = current_user
-    juego = find_juego_by_id(id)
-    juego.remove_participante(user)
-    save_juego(juego)
-
-    return redirect(url_for('inicio'))
-
-
-"""Funcion para reiniciar la partida"""
-
-
-@app.route("/reiniciarJuego/<id>")
-def reiniciar_juego(id):
-    user = current_user
-    juego = find_juego_by_id(id)
-    if user.id == juego.creador or user.get_admin():
-        juego.reset_game()
-        save_juego(juego)
-    centro_lon = juego.centro[0]
-    centro_lat = juego.centro[1]
-    return render_template("visualizar.html", juego=juego, user=user, centro_lon=juego.centro[0],
-                           centro_lat=juego.centro[1], limite_superior=juego.dimensiones[1],
-                           limite_inferior=juego.dimensiones[3])
-
-
-@app.route("/eliminarJuego/<id>")
-def eliminar_juego(id):
-    user = current_user
-    juego = find_juego_by_id(id)
-    if user.id == juego.creador or user.get_admin():
-        delete_juego_by_id(id)
-
-    return redirect(url_for('inicio'))
-
-
-@app.route("/verAciertos/<id>", methods=['POST'])
-def recoger_datos_jugador(id):
-    user = current_user
-    juego = find_juego_by_id(id)
-    puntos_coor = request.values.getlist("puntoMarcado")
-    tesoros_id = request.values.getlist("tesoroMarcado")
-    imagenes = request.files.getlist("imagenMarcado")
-    error = False
-    recien_encontrados = []
-    mensaje = None
-    for p, t, imagen in zip(puntos_coor, tesoros_id, imagenes):
-        try:
-            imagen_marcado = base64.b64encode(imagen.read()).decode('utf-8')
-            encontrado = juego.encontrar_tesoro(identificador_tesoro=int(t), latitud=p.split(",")[0],
-                                                longitud=p.split(",")[1],
-                                                imagen_tesoro=imagen_marcado, descubridor=user)
-            if encontrado is True:
-                recien_encontrados.append(t)
-        except Exception as e:
-            error = True
-    save_juego(juego)
-    if juego.ganador == user.id:
-        mensaje = "ganador"
-    elif error is True or len(recien_encontrados) == 0:
-        mensaje = "ninguno"
-    elif error is False:
-        mensaje = "acierto"
-    encontrados = juego.get_tesoros(user)
-    mensajes = find_all_mensajes_by_juego(id_juego=id)
-    mensajes.sort(key=lambda x: x.fecha, reverse=False)
-    return render_template("juego.html", juego=juego, user=user, jugando=True, encontrados=encontrados, mensaje=mensaje,
-                           mensajes=mensajes,
-                           recienEncontrados=recien_encontrados, centro_lon=juego.centro[0],
-                           centro_lat=juego.centro[1], limite_superior=juego.dimensiones[1],
-                           limite_inferior=juego.dimensiones[3])
-
-
-@app.route("/recogerdatos", methods=['POST'])
-def recoger_datos_creacion():
-    # print(request.args)
-    """Almacena el todos los tesoros en la variable juego"""
-    tesoros = {}
-    i = 1
-    nombre = request.values.get("nombre")
-    desc = request.values.get("descripcion")
-    coord = request.values.getlist("punto")
-    dimensiones = []
-    for elem in coord:
-        dimensiones.append((float(elem.split(",")[0]), float(elem.split(",")[1])))
-    for coordenada, imagen, texto in zip(request.values.getlist("coordenadas"),
-                                         request.files.getlist("pista_imagen"),
-                                         request.values.getlist("pista_texto")):
-        pista_imagen = base64.b64encode(imagen.read()).decode('utf-8')
-        tesoro = Tesoro(i, float(coordenada.split(",")[0]), float(coordenada.split(",")[1]),
-                        pista_texto=texto,
-                        pista_imagen=pista_imagen)
-        tesoros[i] = tesoro
-        i += 1
-    juego = Juego(diccionario_tesoros=tesoros, creador=current_user, dimensiones=dimensiones, titulo=nombre,
-                  descripcion=desc)
-    save_juego(juego)
-    return redirect(url_for('inicio'))
-
+app.register_blueprint(participante_bp, url_prefix="")
+app.register_blueprint(organizador_bp, url_prefix="")
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
