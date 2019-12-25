@@ -58,7 +58,7 @@ def nuevo_mensaje_organizador(id):
     mensaje = request.values.get("nuevoMensaje")
     m = Mensaje(user=user, juego=id, mensaje=mensaje)
     save_mensaje(m)
-    return redirect(url_for('visualizar_juego_creador', id=id))
+    return redirect(url_for('CAZATESORO_organizador.visualizar_juego_creador', id=id))
 
 
 @organizador_bp.route('/nuevoJuego')
