@@ -178,6 +178,7 @@ function addMarker(lon, lat, evt, color, relleno) {
                         </script>');
         x++;
         document.getElementById("nTesoros").value = x;
+        iconFeature.setId("eliminar" + evt.pixel + "eliminar" + (x-1));
     }
     setTimeout(function () {
         map.updateSize();
@@ -185,13 +186,12 @@ function addMarker(lon, lat, evt, color, relleno) {
 }
 
 function eliminarTesoro(id) {
+
     let info = id.toString().split('eliminar');
-    var pixeles = info[1].split(",");
-    var x = map.getFeaturesAtPixel(pixeles);
-    if (x.length > 0) {
-        for (var y of x) {
-            markerSource.removeFeature(y);
-        }
+    var x=markerSource.getFeatureById(id);
+
+    if (x != null) {
+         markerSource.removeFeature(x);
     } else {
         alert("Error al borrar tesoro");
     }
