@@ -289,10 +289,10 @@
                                                     <li>Tesoros restantes: {{ juego.tesoros_restantes }}</li>
                                                 </ul>
                                                 {% if user.get_admin %}
-                                                    {% if user.id_mongo_str not in juego.participantes %}
+                                                    {% if user.id_mongo_str not in juego.participantes and juego.estado %}
                                                         <a href="/participante/anadirJuego/{{ juego.id }}" class="btn btn-info"
                                                            style="margin-top: 5px;">Unirme al juego</a>
-                                                    {% else %}
+                                                    {% elif user.id_mongo_str in juego.participantes%}
                                                         <a class="btn btn-info" href="/participante/juego/{{ juego.id }}">Entrar
                                                             al juego</a>
                                                     {% endif %}
