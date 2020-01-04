@@ -138,11 +138,11 @@ def callback():
                 if user.avatar != user_data['picture']:
                     user.avatar = user_data['picture']
                     cambiado = True
-                user.tokens = json.dumps(token)
+                user.access_tokens = json.dumps(token)
                 if cambiado:
                     replace_user_by_id(user.id, user)
                 else:
-                    update_user_by_id(user.id, {"tokens": user.tokens})
+                    update_user_by_id(user.id, {"tokens": user.access_tokens})
             # session.update('user', user)
             login_user(user)
             if next_f:
