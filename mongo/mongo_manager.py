@@ -37,6 +37,6 @@ class MongoException(Exception):
     Conexiones
 '''
 
-usuarios = MongoManager('usuario', False).collection
-juegos = MongoManager('juego', False).collection
-mensajes = MongoManager('mensaje', False).collection
+usuarios = MongoManager('usuario', True).collection
+juegos = MongoManager('juego', True).collection
+mensajes = MongoManager('mensaje', True).collection

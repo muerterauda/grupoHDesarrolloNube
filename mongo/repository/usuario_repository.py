@@ -13,7 +13,7 @@ def find_user_by_id(user_id) -> User:
 
 
 def replace_user_by_id(user_id, new_user: User):
-    usuarios.replace_one({"id": user_id}, new_user)
+    usuarios.replace_one({"id": user_id}, new_user.user_to_dict())
 
 
 def update_user_by_id(user_id, actualizacion_user: dict):

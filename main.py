@@ -25,8 +25,8 @@ class Auth:
     """Google Project Credentials"""
     CLIENT_ID = '433051237268-etqt25o974bg52mmto23hs4lrg141ihq.apps.googleusercontent.com'
     CLIENT_SECRET = 'MuH32nfjnOETmzIaNAP9vPoQ'
-    # REDIRECT_URI = 'https://nubeprueba.appspot.com/gCallback'
-    REDIRECT_URI = 'https://localhost:5000/gCallback'
+    REDIRECT_URI = 'https://nubeprueba.appspot.com/gCallback'
+    # REDIRECT_URI = 'https://localhost:5000/gCallback'
     AUTH_URI = 'https://accounts.google.com/o/oauth2/auth'
     TOKEN_URI = 'https://accounts.google.com/o/oauth2/token'
     USER_INFO = 'https://www.googleapis.com/userinfo/v2/me'
