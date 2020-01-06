@@ -1,0 +1,79 @@
+from mongo.entity.Juego import Juego
+from mongo.entity.Usuario import User
+from mongo.mongo_manager import juegos
+from bson.objectid import ObjectId
+
+
+def save_juego(juego: Juego):
+    if juego.id:
+        update_juego_by_id(juego_id=juego.id, actualizacion_juego=juego.juego_to_dict())
+    else:
+        juegos.insert_one(juego.juego_to_dict())
+
+
+def find_juego_by_id(juego_id) -> Juego:
+    res = juegos.find_one({"_id": ObjectId(juego_id)})
+    if res is not None:
+        return __generar_juego(res)
+
+
+def find_all_juegos() -> list:
+    diccionario_busqueda = {}
+    res = juegos.find(diccionario_busqueda)
+    lista_juegos = __generar_lista_juegos(res)
+    return lista_juegos
+
+
+def find_juego_by_ganador(ganador: User) -> list:
+    diccionario_busqueda = {'ganador': ganador.id}
+    res = juegos.find(diccionario_busqueda)
+    lista_juegos = __generar_lista_juegos(res)
+    return lista_juegos
+
+
+def find_juego_by_estado(estado: bool) -> list:
+    diccionario_busqueda = {'estado': estado}
+    res = juegos.find(diccionario_busqueda)
+    lista_juegos = __generar_lista_juegos(res)
+    return lista_juegos
+
+
+def find_juego_by_creador_and_estado(user: User, estado: bool = None) -> list:
+    diccionario_busqueda = {"creador": user.id}
+    if estado is not None:
+        diccionario_busqueda['estado'] = estado
+    res = juegos.find(diccionario_busqueda)
+    lista_juegos = __generar_lista_juegos(res)
+    return lista_juegos
+
+
+def find_juego_by_participante_and_estado(user: User, estado: bool = None) -> list:
+    diccionario_busqueda = {"participantes." + user.id_mongo: {"$exists": True}}
+    if estado is not None:
+        diccionario_busqueda['estado'] = estado
+    res = juegos.find(diccionario_busqueda)
+    lista_juegos = __generar_lista_juegos(res)
+    return lista_juegos
+
+
+def replace_juego_by_id(juego_id, new_juego: Juego):
+    juegos.replace_one({"_id": ObjectId(juego_id)}, new_juego)
+
+
+def update_juego_by_id(juego_id, actualizacion_juego: dict):
+    juegos.update_one({"_id": ObjectId(juego_id)}, {"$set": actualizacion_juego})
+
+
+def delete_juego_by_id(juego_id):
+    juegos.delete_one({"_id": ObjectId(juego_id)})
+
+
+def __generar_lista_juegos(res: dict) -> list:
+    lista_juegos = []
+    for x in res:
+        lista_juegos.append(__generar_juego(x))
+    return lista_juegos
+
+
+def __generar_juego(res):
+    return Juego(juego_last=res)
